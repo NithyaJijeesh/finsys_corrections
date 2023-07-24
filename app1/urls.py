@@ -838,7 +838,6 @@ urlpatterns = [
     re_path(r'^removeinv$', views.removeinv, name='removeinv'),
     re_path(r'^removeporder$', views.removeporder, name='removeporder'),
     path('customers21', views.customers21, name='customers21'),
-    path('crd_create_item', views.crd_create_item, name='crd_create_item'),
     path('create_new', views.create_new, name='create_new'),
 
 
@@ -946,4 +945,7 @@ urlpatterns = [
     # (22-07-23) Nithya--- customer, invoices, sales order, credit note,estimate (correction)--
 
     path('customer_dropdown',views.customer_dropdown,name='customer_dropdown'),
+    path('credit_item', views.credit_item, name='credit_item'),
+    path('item_dropdown', views.item_dropdown, name='item_dropdown'),
+
 ]

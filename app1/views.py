@@ -37389,9 +37389,7 @@ def customers21(request):
                               f"Customer {firstname} {lastname} already exists. Please provide a different name.")
                 return redirect('gocustomers')
             else:
-                print(request.POST['title'])
-                print(request.POST['firstname'])
-                print(request.POST['lastname'])
+                
                 customer1 = customer(title=request.POST['title'], firstname=request.POST['firstname'],
                                      lastname=request.POST['lastname'], company=request.POST['company'],
                                      location=request.POST['location'], gsttype=request.POST['gsttype'],
@@ -37404,9 +37402,13 @@ def customers21(request):
                                      shipstate=request.POST['shipstate'],
                                      shippincode=request.POST['shippincode'], shipcountry=request.POST['shipcountry'],
                                      cid=cmp1)
-
+                                     
+                
                 customer1.save()
 
+                print(firstname)
+                print(request.POST['firstname'])
+                print(request.POST['lastname'])
                
                 temp=request.POST['openbalance']
                 if temp != "":
@@ -37452,21 +37454,22 @@ def customer_dropdown(request):
 
     options = {}
     option_objects = customer.objects.filter(cid = request.session['uid'])
+    # print(option_objects)
     for option in option_objects:
-        options[option.customerid] = [option.customerid , option.firstname, option.lastname]
-
+        # print(option.customerid)
+        # print(option.title)
+        options[option.customerid] = [option.title , option.firstname, option.lastname]
+        # print(options)
     return JsonResponse(options)
 
-
-
-
-def crd_create_item(request):
+@login_required(login_url='regcomp')
+def credit_item(request):
     if 'uid' in request.session:
         if request.session.has_key('uid'):
             uid = request.session['uid']
         else:
             return redirect('/')
-        cmp1 = company.objects.get(id=request.session['uid'])
+        
         if request.method == 'POST':
             cmp1 = company.objects.get(id=request.session['uid'])
             iname = request.POST['name']
@@ -37474,23 +37477,21 @@ def crd_create_item(request):
             iunit = request.POST.get('unit')
             ihsn = request.POST['hsn']
             itax = request.POST['taxref']
-            ipcost = request.POST['pcost']
-            iscost = request.POST['salesprice']
-            #itrate = request.POST['tax']
-            ipuracc = request.POST['pur_account']
-            isalacc = request.POST['sale_account']
-            ipurdesc = request.POST['pur_desc']
-            isaledesc = request.POST['sale_desc']
+            ipcost = request.POST.get('cost_price')
+            iscost = request.POST['sell_price']
+            ipuracc = request.POST.get('cost_account')
+            isalacc = request.POST.get('sell_account')
+            ipurdesc = request.POST.get('pur_desc')
+            isaledesc = request.POST.get('sale_desc')
             iintra = request.POST['intra_st']
             iinter = request.POST['inter_st']
-            iinv = request.POST.get('invacc')
-            istock = request.POST.get('stock')
+            iinv = None if request.POST.get('invacc') is None else request.POST.get('invacc')
+            istock = 0 if request.POST.get('stock') == ' ' else request.POST.get('stock')
             istatus = request.POST['status']
             item = itemtable(name=iname,item_type=itype,unit=iunit,
                                 hsn=ihsn,tax_reference=itax,
                                 purchase_cost=ipcost,
                                 sales_cost=iscost,
-                                #tax_rate=itrate,
                                 acount_pur=ipuracc,
                                 account_sal=isalacc,
                                 pur_desc=ipurdesc,
@@ -37505,6 +37506,19 @@ def crd_create_item(request):
             return redirect('addpurchasecredit')
         return redirect('addpurchasecredit')
     return redirect('/') 
+
+
+@login_required(login_url='regcomp')
+def item_dropdown(request):
+
+    company = company.objects.get(id=request.session["uid"])
+
+    options = {}
+    option_objects = itemtable.objects.filter(cid=request.session["uid"])
+    for option in option_objects:
+        options[option.id] = [option.name]
+
+    return JsonResponse(options)
     
 def create_new(request):
     return render(request,'app1/chart_new.html')
@@ -37542,20 +37556,20 @@ def new_customer_for_retinvoice(request):
         if request.method == "POST":
             toda = date.today()
             tod = toda.strftime("%Y-%m-%d")
-            firstname = request.POST['firstname']
-            lastname = request.POST['lastname']
+            firstname = request.POST.get('firstname')
+            lastname = request.POST.get('lastname')
             if customer.objects.filter(firstname=firstname, lastname=lastname, cid=cmp1).exists():
                 messages.info(request,
                               f"Customer {firstname} {lastname} already exists. Please provide a different name.")
                 return redirect('gocustomers')
             else:
-                customer1 = customer(title=request.POST['title'], firstname=request.POST['firstname'],
-                                     lastname=request.POST['lastname'], company=request.POST['company'],
+                customer1 = customer(title=request.POST['title'], firstname=firstname,
+                                     lastname=lastname, company=request.POST['company'],
                                      location=request.POST['location'], gsttype=request.POST['gsttype'],
                                      gstin=request.POST['gstin'], panno=request.POST['panno'],
-                                     email=request.POST['email'],
-                                     website=request.POST['website'], mobile=request.POST['mobile'],
-                                     street=request.POST['street'], city=request.POST['city'],
+                                     email=request.POST['email'], website=request.POST['website'],
+                                     mobile=request.POST['mobile'], street=request.POST['street'], 
+                                     city=request.POST['city'],
                                      state=request.POST['state'],
                                      pincode=request.POST['pincode'], country=request.POST['country'],
                                      shipstreet=request.POST['shipstreet'], shipcity=request.POST['shipcity'],
@@ -39170,4 +39184,5 @@ def editpl(request,pk):
         return redirect('pricelist_viewpage',pk=pl.id)
 
 
- 
+        
+
