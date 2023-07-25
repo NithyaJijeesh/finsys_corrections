@@ -27,7 +27,7 @@
                                     <select name="customer" id="customer" class="custom-select">
                                         <option selected disabled>Select Customer</option>
                                         {% for v in vndr %}
-                                        <option value="{{ v.firstname }} {{ v.lastname }}"> {{ v.firstname }} {{ v.lastname }}</option>
+                                        <option value="{{ v.customerid }} {{ v.firstname }} {{ v.lastname }}"> {{ v.firstname }} {{ v.lastname }}</option>
                                         {% endfor %}
                                     </select>
                                     <a class="btn btn-outline-secondary ml-1" role="button" data-target="#customercreation" data-toggle="modal">+</a>
@@ -35,7 +35,7 @@
                                 </div>
                                 <div class="col-md-5 mt-3">
                                     <label>Email</label>&nbsp;
-                                    <input type="text" id="email" name="email" placeholder='Email' class="form-control">
+                                    <input type="text" id="cred_email" name="email" placeholder='Email' class="form-control">
                                 </div>
                             </div>
                             <div class="row">
@@ -147,7 +147,7 @@
                                         <td style="width: 20%;">
                                             <div class="d-flex">
                                                 <select name='items[]' id="product" class="form-control">
-                                                    <option selected>Choose..</option>
+                                                    <option selected disabled>Choose..</option>
                                                     {% for i in item %}
                                                         <option value="{{ i.name }}">
                                                             {{ i.name }}
@@ -175,29 +175,22 @@
                                         
                                         <td>
                                             <select name='tax[]' id="tax1" class="form-control tax">
-                                                <option id="ta1" value=0 text={{ cmp1.state }}></option>
+                                                <!-- <option value="0" text=" ">Choose</option> -->
+                                                <option id="ta1" value=0 text={{ cmp1.state }}>Choose</option>
                                                 <option value=28 text={{ cmp1.state }}>28.0% GST(28%)</option>
                                                 <option value=18 text={{ cmp1.state }}>18.0% GST(18%)</option>
                                                 <option value=12 text={{ cmp1.state }}>12.0% GST(12%)</option>
-                                                <option value=6 text={{ cmp1.state }}>06.0% GST(06%)</option>
-                                                <option value=5 text={{ cmp1.state }}>05.0% GST(05%)</option>
+                                                 <option value=5 text={{ cmp1.state }}>05.0% GST(05%)</option>
                                                 <option value=3 text={{ cmp1.state }}>03.0% GST(03%)</option>
-                                                <option value=.25 text={{ cmp1.state }}>0.25% GST(0.25%)</option>
-                                                <option value=0 text={{ cmp1.state }}>0.0% GST(0%)</option>
-                                                <option value=0 text={{ cmp1.state }}>Exempt GST(0%)</option>
-                                                <option value=0 text={{ cmp1.state }}>Out of Scope(0%)</option>
-                                                <option id="ta5" value=0 text=" ">Choose</option>
-                                                <option value=28 text=" ">28.0% IGST(28%)</option>
-                                                <option value=18 text=" ">18.0% IGST(18%)</option>
+                                                 <option value=0 text={{ cmp1.state }}>0.0% GST(0%)</option>
+                                                  <option id="ta5" value=0 text={{ cmp1.state }}>Choose</option>
+                                                <option value=28 text={{ cmp1.state }}>28.0% IGST(28%)</option>
+                                                <option value=18 text={{ cmp1.state }}>18.0% IGST(18%)</option>
                                                 <option value=12 text=" ">12.0% IGST(12%)</option>
-                                                <option value=6 text=" ">06.0% IGST(06%)</option>
-                                                <option value=5 text=" ">05.0% IGST(05%)</option>
+                                                 <option value=5 text=" ">05.0% IGST(05%)</option>
                                                 <option value=3 text=" ">03.0% IGST(03%)</option>
-                                                <option value=.25 text=" ">0.25% IGST(0.25%)</option>
-                                                <option value=0 text=" ">0.0% IGST(0%)</option>
-                                                <option value=0 text=" ">Exempt IGST(0%)</option>
-                                                <option value=0 text=" ">Out of Scope(0%)</option>
-                                            </select>
+                                                 <option value=0 text=" ">0.0% IGST(0%)</option>
+                                              </select>
                                         </td>
 
                                         <td style="display: none;">
@@ -974,7 +967,7 @@
                                                 <div class="col-md-6 mt-3">
                                                     <label for="validationCustom01"
                                                            style="color: white;">Stock on hand</label>
-                                                           <input type="number" name="stock" class="form-control"
+                                                           <input type="number" name="stock" class="form-control" id="stock"
                                                            style="width:540px;background-color: #2a4964; color: white;"
                                                            value="0"
                                                            >
@@ -1204,32 +1197,32 @@
         }
     
         $(document).ready(function () {
-            $('#select').on('change', function() {
-                select = $('#select').val();
-                $.ajax({
-                type: "GET",
-                url: "{% url 'getcustdata' %}",
-                data: {
-                    id: select
-                }
-                }).done(function(response) {
-                var json_data = JSON.parse(response);
-                for (key in json_data) {
-                    document.getElementById('email').value = json_data[key]['email'];
-                    document.getElementById('mailaddr').value = json_data[key]['street'] + '\n' + json_data[key]['city'] + '\n' + json_data[key]['state'] + '\n' + json_data[key]['pincode'] + '\n' + json_data[key]['country'];
-                    var invdrop=document.getElementById('inv_no');
-                    var option=document.createElement("option");
+            // $('#select').on('change', function() {
+            //     console.log($('#select').val())
+            //     $.ajax({
+            //         type : 'POST',
                     
-                    
-                    option.text=json_data[key]['invdata'];
-                    invdrop.add(option,invdrop[0]);
-                    
+            //         url: "{% url 'getcustdata' %}",
+            //         data: {
+            //             id: $('#customer').val(),
+            //             csrfmiddlewaretoken: '{{ csrf_token }}',
+            //         },
                     
 
+            //     }).done(function(response) {
+            //     var json_data = JSON.parse(response);
+            //     for (key in json_data) {
+            //         document.getElementById('email').value = json_data[key]['email'];
+            //         document.getElementById('mailaddr').value = json_data[key]['street'] + '\n' + json_data[key]['city'] + '\n' + json_data[key]['state'] + '\n' + json_data[key]['pincode'] + '\n' + json_data[key]['country'];
+            //         var invdrop=document.getElementById('inv_no');
+            //         invdrop.remove(option,invdrop[0]);
+            //         var option=document.createElement("option");
                     
-                }
-                })
-            });
+            //         option.text=json_data[key]['invdata'];
+            //         invdrop.add(option,invdrop[0]);
+            //     }
+            //     });
+            // });
 
             var $select1 = $('#plosu'),
             $select2 = $('#tax1'),
@@ -1300,29 +1293,21 @@
                                                             
                             <td>
                                 <select name='tax[]' id="tax${roinc+1}" class="form-control tax">
-                                    <option id="ta1${roinc}" value=0 text={{ cmp1.state }}></option>
+                                    <option id="ta1${roinc}" value=0 text={{ cmp1.state }}>Choose</option>
                                     <option value=28 text={{ cmp1.state }}>28.0% GST(28%)</option>
                                     <option value=18 text={{ cmp1.state }}>18.0% GST(18%)</option>
                                     <option value=12 text={{ cmp1.state }}>12.0% GST(12%)</option>
-                                    <option value=6 text={{ cmp1.state }}>06.0% GST(06%)</option>
-                                    <option value=5 text={{ cmp1.state }}>05.0% GST(05%)</option>
+                                     <option value=5 text={{ cmp1.state }}>05.0% GST(05%)</option>
                                     <option value=3 text={{ cmp1.state }}>03.0% GST(03%)</option>
-                                    <option value=.25 text={{ cmp1.state }}>0.25% GST(0.25%)</option>
-                                    <option value=0 text={{ cmp1.state }}>0.0% GST(0%)</option>
-                                    <option value=0 text={{ cmp1.state }}>Exempt GST(0%)</option>
-                                    <option value=0 text={{ cmp1.state }}>Out of Scope(0%)</option>
-                                    <option id="ta5${roinc}" value=0 text=" ">Choose</option>
+                                     <option value=0 text={{ cmp1.state }}>0.0% GST(0%)</option>
+                                     <option id="ta5${roinc}" value=0 text=" ">Choose</option>
                                     <option value=28 text=" ">28.0% IGST(28%)</option>
                                     <option value=18 text=" ">18.0% IGST(18%)</option>
                                     <option value=12 text=" ">12.0% IGST(12%)</option>
-                                    <option value=6 text=" ">06.0% IGST(06%)</option>
-                                    <option value=5 text=" ">05.0% IGST(05%)</option>
+                                     <option value=5 text=" ">05.0% IGST(05%)</option>
                                     <option value=3 text=" ">03.0% IGST(03%)</option>
-                                    <option value=.25 text=" ">0.25% IGST(0.25%)</option>
-                                    <option value=0 text=" ">0.0% IGST(0%)</option>
-                                    <option value=0 text=" ">Exempt IGST(0%)</option>
-                                    <option value=0 text=" ">Out of Scope(0%)</option>
-                                </select>
+                                     <option value=0 text=" ">0.0% IGST(0%)</option>
+                                 </select>
                             </td>        
                             <td style="display: none;"><input type="number" step="any" name='taxamount1' id="taxamount1" class="form-control taxamount"></td>
                             <td>
@@ -1341,32 +1326,32 @@
             // create customer--------------------------
 
         $(document).on("click", "#customerSave", function(){
-            // console.log($('#title').val());
-            // console.log($('#firstname').val())
+            
             $.ajax({
     
                 type : 'POST',
                 url:"{% url 'customers21' %}",
 
                 data:{
+                    
                     title : $('#title').val(),
-                    firstname : $('#firstname').val(),
-                    lastname : $('#lastname').val(),
-                    company : $("#company").val(),
+                    first_name : $('#firstname').val(),
+                    last_name : $('#lastname').val(),
+                    company_name : $("#company").val(),
                     location : $("#location").val(),
                     openbalance : $("#openbalance").val(),
-                    email : $("#cemail").val(),
+                    email : $("#email").val(),
                     website :$("#website").val(),
                     mobile :$("#mobile").val(),
                     street : $("#street").val(),
                     city : $("#city").val(),
                     state : $("#state").val(),
-                    country : $("country").val(),
+                    country : $("#country").val(),
                     pincode : $("#pincode").val(),
                     shipstreet : $("#shipstreet").val(),
                     shipcity : $("#shipcity").val(),
                     shipstate : $("#shipstate").val(),
-                    shipcountry : $("shipcountry").val(),
+                    shipcountry : $("#shipcountry").val(),
                     shippincode : $("#shippincode").val(),
                     gsttype :$("#gsttype").val(),
                     gstin :$("#gstin").val(),
@@ -1398,6 +1383,7 @@
                 success: function(data) {
                     var dropdown = $('#customer');
                     dropdown.empty();
+                dropdown.append(`<option selected>Select Customer</option>`);
                     $.each(data, function(key, value) {
                         console.log(value)
                         dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
@@ -1449,11 +1435,13 @@
                 cost_price : $("#purprice").val(),
                 sell_acc : $("#sale_account").val(),
                 cost_acc : $("#pur_account").val(),
-                sell_desc : $("#sell_desc").val(),
-                cost_desc : $("#cost_desc").val(),
+                sell_desc : $("#sale_desc").val(),
+                cost_desc : $("#pur_desc").val(),
                 intra_st : $("#intra_st").val(),
                 inter_st : $("#inter_st").val(),
-                inter_st : status1,
+                invacc : $("#invacc").val(),
+                stock : $("#inter_st").val(),
+                status : status1,
                 csrfmiddlewaretoken: '{{ csrf_token }}',
                 
                 },
@@ -1467,7 +1455,7 @@
             });
 
 
-            function reloadItem() {
+        function reloadItem() {
             $.ajax({
             url: "{% url 'item_dropdown' %}",
             type: "GET",
@@ -1476,12 +1464,12 @@
             csrfmiddlewaretoken: '{{ csrf_token }}',
 
             success: function(data) {
-                var dropdown = $('.item');
+                var dropdown = $('#product');
                 dropdown.empty();
-
+                dropdown.append(`<option selected>Select Item</option>`);
                 $.each(data, function(key, value) {
                 
-                    dropdown.append($('<option></option>').attr('value', key).text(value[0]).val(value[1]));
+                    dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
                 });
 
             },
@@ -1492,14 +1480,37 @@
             }
 
 
+
+            $(document).ready(function () {
+                $('#customer').on('change', function() {
+                    console.log($('#customer').val())
+                    $.ajax({
+                        type : 'POST',
+                        
+                        url: "{% url 'cust_details' %}",
+                        data: {
+                            id: $('#customer').val(),
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                        },
+                        
+                        success: function(data){
+                            console.log(data.email);
+                            document.getElementById('cred_email').value = data.email;
+                            document.getElementById('mailaddr').value = data.street + '\n' + data.city + '\n' + data.state + '\n' + data.country  + '\n' + data.pincode ;
+                        }
+                    });
+                });
+            });
+
+
             $(document).on('click','.remove_row',function(){
                 var row_id = $(this).attr("id");
                 $('#addr0'+row_id+'').remove();
             });
 
-            var place = document.getElementById('plosu').value;
             $(document).on('click','#product',function(){
-                
+                var place = document.getElementById('plosu').value;
+
                 select = $('#product').val();
                 $.ajax({
                     type: "GET",
@@ -1511,7 +1522,7 @@
                     
                     
                     success:function(response){
-                            console.log(response)
+                            // console.log(response)
                             data = response.hsn
                             data2 = response.qty
                             data3 = response.price
@@ -1521,18 +1532,41 @@
                             document.getElementById('hsn1').value = data;
                             document.getElementById('qtyspan').innerHTML = data2;
                             document.getElementById('unit1').value = data3;
+
+                            // taxSelect = document.getElementById("tax1");
+                            // if (place == co) {
+                            //     taxSelect.add(new Option("28.0% GST(28%)", "28"));
+                            //     taxSelect.add(new Option("18.0% GST(18%)", "18"));
+                            //     taxSelect.add(new Option("12.0% GST(12%)", "12"));
+                            //     taxSelect.add(new Option("5.0% GST(05%)", "5"));
+                            //     taxSelect.add(new Option("3.0% GST(03%)", "3"));
+                            //     taxSelect.add(new Option("0.0% GST(0%)", "0"));
+                            // } else {
+                            //     taxSelect.add(new Option("28.0% IGST(28%)", "28"));
+                            //     taxSelect.add(new Option("18.0% IGST(18%)", "18"));
+                            //     taxSelect.add(new Option("12.0% IGST(12%)", "12"));
+                            //     taxSelect.add(new Option("5.0% IGST(05%)", "5"));
+                            //     taxSelect.add(new Option("3.0% IGST(03%)", "3"));
+                            //     taxSelect.add(new Option("0.0% IGST(0%)", "0"));
+                            // }
+                            
                             if (place == '{{ cmp1.state }}'){
                                 document.getElementById('ta1').innerHTML = data4 + ' % GST';
                                 document.getElementById('ta1').value=data4;
                             } 
-                            document.getElementById('ta5').innerHTML  = data5 + ' % IGST';
-                            ocument.getElementById('ta5').value=data5;
+                            else{
+                                document.getElementById('ta5').innerHTML  = data5 + ' % IGST';
+                                document.getElementById('ta5').value=data5;
+                            }
+                            
                         }
                     
                 });
             });     
                 
             $(document).on('click','#product1',function(){
+                var place1 = document.getElementById('plosu').value;
+                console.log(place1)
                 select = $('#product1').val();
                 $.ajax({
                     type: "GET",
@@ -1551,13 +1585,15 @@
                             document.getElementById('qtyspan1').innerHTML = data2;
                               
                             document.getElementById('unit11').value = data3
-                            if (place == '{{ cmp1.state }}')
+                            if (place1 == '{{ cmp1.state }}')
                             {
                                 document.getElementById('ta11').innerHTML = data4 + ' % GST';
                                 document.getElementById('ta11').value=data4
                             }
-                            document.getElementById('ta51').innerHTML  = data5 + ' % IGST';
-                            document.getElementById('ta51').value=data5
+                            else{
+                                document.getElementById('ta51').innerHTML  = data5 + ' % IGST';
+                                document.getElementById('ta51').value=data5
+                            }
                             if (data2<1)
                             {
                             
@@ -2125,10 +2161,10 @@
                         document.getElementById('ta520').value=data5
                     }
                 });
-            
+            });
             
         });
-        });
+    
  
 
  

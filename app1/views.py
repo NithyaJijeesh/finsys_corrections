@@ -731,14 +731,7 @@ def customers(request):
                                      shipstreet=request.POST['shipstreet'], shipcity=request.POST['shipcity'],
                                      shipstate=request.POST['shipstate'],
                                      shippincode=request.POST['shippincode'], shipcountry=request.POST['shipcountry'],
-                                     cid=cmp1,
-
-                                    #  opening_balance = request.POST['openbalance'],
-
-                                     
-                                     
-                                     
-                                     )
+                                     cid=cmp1,)
 
                 customer1.save()
                
@@ -748,39 +741,19 @@ def customers(request):
                     customer1.opening_balance_due = request.POST['openbalance'] 
                     customer1.date= tod
                     customer1.save()
-                    
-                   
-
-                
 
                 if customer1.opening_balance != "":
 
                     add_cust_stat=cust_statment(
-
                     customer = customer1.firstname +" "+ customer1.lastname,
-
                     cid  = cmp1,
-
-                    
-
                     Date = tod,
-
                     Transactions="Customer Opening Balance",
-
                     Amount= customer1.opening_balance,
 
                 )
 
-
                 add_cust_stat.save()
-
-                    
-
-
-
-
-
-
 
                 return redirect('/app1/customers')
         customers = customer.objects.filter(cid=cmp1).all()
@@ -3370,10 +3343,8 @@ def invcreate2(request):
                        TCS = request.POST['TCS'],
                        grandtotal=request.POST['grandtotal'],
                        amtrecvd=request.POST['amtrecvd'], 
-                       baldue=request.POST['baldue'],
-
-
-                       )
+                       baldue=request.POST['baldue'],)
+                       
         if len(request.FILES) != 0:
             inv2.file=request.FILES['file'] 
         orderno = 'OR'+str(random.randint(1111111,9999999))
@@ -33158,7 +33129,6 @@ def create_item3(request):
             ipcost = request.POST['pcost']
             iscost = request.POST['salesprice']
             itmdate = request.POST['itmdate']
-            #itrate = request.POST['tax']
             ipuracc = request.POST['pur_account']
             isalacc = request.POST['sale_account']
             ipurdesc = request.POST['pur_desc']
@@ -33288,15 +33258,15 @@ def itemdata(request):
         else:
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
-        print(cmp1.state)
+        # print(cmp1.state)
         id = request.GET.get('id')
-        print("asdsadas")
-        print(id)
+        # print("asdsadas")
+        # print(id)
         toda = date.today()
         tod = toda.strftime("%Y-%m-%d")
         # to = toda.strftime("%d-%m-%Y")
         item = itemtable.objects.get(name=id,cid=cmp1)
-        print(item)
+        # print(item)
         hsn = item.hsn
         qty = item.stock
         price = item.purchase_cost
@@ -36991,8 +36961,7 @@ def getcustdata(request):
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
         id = request.GET.get('id')
-        print(id)
-        # import pdb; pdb.set_trace()
+         # import pdb; pdb.set_trace()
         invdata = invoice.objects.filter(customername=id, cid_id=cmp1).last()
         
         context={'invdata':invdata}
@@ -37376,77 +37345,53 @@ def change_to_new_password(request):
 @login_required(login_url='regcomp')
 def customers21(request):
     
-    try:
-        cmp1 = company.objects.get(id=request.session["uid"])
-        if request.method == "POST":
-            toda = date.today()
-            tod = toda.strftime("%Y-%m-%d")
-            firstname = request.POST['firstname']
-            lastname = request.POST['lastname']
-             
-            if customer.objects.filter(firstname=firstname, lastname=lastname, cid=cmp1).exists():
-                messages.info(request,
-                              f"Customer {firstname} {lastname} already exists. Please provide a different name.")
-                return redirect('gocustomers')
-            else:
-                
-                customer1 = customer(title=request.POST['title'], firstname=request.POST['firstname'],
-                                     lastname=request.POST['lastname'], company=request.POST['company'],
-                                     location=request.POST['location'], gsttype=request.POST['gsttype'],
-                                     gstin=request.POST['gstin'], panno=request.POST['panno'],
-                                     email=request.POST['email'],website=request.POST['website'],
-                                     mobile=request.POST['mobile'],street=request.POST['street'], 
-                                     city=request.POST['city'],state=request.POST['state'],
-                                     pincode=request.POST['pincode'], country=request.POST['country'],
-                                     shipstreet=request.POST['shipstreet'], shipcity=request.POST['shipcity'],
-                                     shipstate=request.POST['shipstate'],
-                                     shippincode=request.POST['shippincode'], shipcountry=request.POST['shipcountry'],
-                                     cid=cmp1)
-                                     
-                
+    cmp1 = company.objects.get(id=request.session["uid"])
+    if request.method == "POST":
+        toda = date.today()
+        tod = toda.strftime("%Y-%m-%d")
+        firstname = request.POST.get('first_name')
+        lastname = request.POST.get('last_name')
+            
+        if customer.objects.filter(firstname=firstname, lastname=lastname, cid=cmp1).exists():
+            return redirect('gocustomers')
+        else:
+            cust = customer(title=request.POST.get('title'), firstname=firstname,
+                            lastname=lastname, company=request.POST.get('company_name'),
+                            location=request.POST.get('location'), gsttype=request.POST.get('gsttype'),
+                            gstin=request.POST.get('gstin'), panno=request.POST.get('panno'),
+                            email=request.POST.get('email'),website=request.POST.get('website'),
+                            mobile=request.POST.get('mobile'),street=request.POST.get('street'),
+                            city=request.POST.get('city'),state=request.POST.get('state'),
+                            pincode=request.POST.get('pincode'), country=request.POST.get('country'),
+                            shipstreet=request.POST.get('shipstreet'), shipcity=request.POST.get('shipcity'),
+                            shipstate=request.POST.get('shipstate'),shippincode=request.POST.get('shippincode'), 
+                            shipcountry=request.POST.get('shipcountry'),cid=cmp1)
+            cust.save()
+            
+            customer1 = customer.objects.get(customerid = cust.customerid,cid=cmp1)
+                                    
+                            
+            temp=request.POST.get('openbalance')
+            if temp != "":
+                customer1.opening_balance =temp
+                customer1.opening_balance_due = temp
+                customer1.date= tod
                 customer1.save()
+                
+                add_cust_stat=cust_statment(
+                customer = firstname +" "+ lastname,
+                cid  = cmp1,
+                Date = tod,
+                Transactions="Customer Opening Balance",
+                Amount= temp,).save()
 
-                print(firstname)
-                print(request.POST['firstname'])
-                print(request.POST['lastname'])
-               
-                temp=request.POST['openbalance']
-                if temp != "":
-                    customer1.opening_balance = request.POST['openbalance'] 
-                    customer1.opening_balance_due = request.POST['openbalance'] 
-                    customer1.date= tod
-                    customer1.save()
-                    
-                if customer1.opening_balance != "":
+            return redirect('addpurchasecredit')
+        
+    customers = customer.objects.filter(cid=cmp1).all()
+    context = {'customers': customers, 'cmp1': cmp1}
+    return redirect('addpurchasecredit')
 
-                    add_cust_stat=cust_statment(
-
-                    customer = customer1.firstname +" "+ customer1.lastname,
-
-                    cid  = cmp1,
-
-                    Date = tod,
-
-                    Transactions="Customer Opening Balance",
-
-                    Amount= customer1.opening_balance,
-
-                )
-
-
-                add_cust_stat.save()
-
-
-
-
-                return redirect('addpurchasecredit')
-        customers = customer.objects.filter(cid=cmp1).all()
-        context = {'customers': customers, 'cmp1': cmp1}
-        return redirect('addpurchasecredit')
-    except:
-        return redirect('addpurchasecredit')
-
-           # (22-07-23) Nithya--- customer, invoices, sales order, credit note,estimate (correction)--
+# (22-07-23) Nithya--- customer, invoices, sales order, credit note,estimate (correction)--
 
 @login_required(login_url='regcomp')
 def customer_dropdown(request):
@@ -37454,12 +37399,12 @@ def customer_dropdown(request):
 
     options = {}
     option_objects = customer.objects.filter(cid = request.session['uid'])
-    # print(option_objects)
+    print(option_objects)
     for option in option_objects:
         # print(option.customerid)
-        # print(option.title)
+        print(option.title)
         options[option.customerid] = [option.title , option.firstname, option.lastname]
-        # print(options)
+        print(options)
     return JsonResponse(options)
 
 @login_required(login_url='regcomp')
@@ -37472,35 +37417,16 @@ def credit_item(request):
         
         if request.method == 'POST':
             cmp1 = company.objects.get(id=request.session['uid'])
-            iname = request.POST['name']
-            itype = request.POST['type']
-            iunit = request.POST.get('unit')
-            ihsn = request.POST['hsn']
-            itax = request.POST['taxref']
-            ipcost = request.POST.get('cost_price')
-            iscost = request.POST['sell_price']
-            ipuracc = request.POST.get('cost_account')
-            isalacc = request.POST.get('sell_account')
-            ipurdesc = request.POST.get('pur_desc')
-            isaledesc = request.POST.get('sale_desc')
-            iintra = request.POST['intra_st']
-            iinter = request.POST['inter_st']
-            iinv = None if request.POST.get('invacc') is None else request.POST.get('invacc')
-            istock = 0 if request.POST.get('stock') == ' ' else request.POST.get('stock')
-            istatus = request.POST['status']
-            item = itemtable(name=iname,item_type=itype,unit=iunit,
-                                hsn=ihsn,tax_reference=itax,
-                                purchase_cost=ipcost,
-                                sales_cost=iscost,
-                                acount_pur=ipuracc,
-                                account_sal=isalacc,
-                                pur_desc=ipurdesc,
-                                sale_desc=isaledesc,
-                                intra_st=iintra,
-                                inter_st=iinter,
-                                inventry=iinv,
-                                stock=istock,
-                                status=istatus,
+                   
+            item = itemtable(name=request.POST.get('name'),item_type=request.POST.get('type'),unit=request.POST.get('unit'),
+                                hsn=request.POST.get('hsn'),tax_reference=request.POST.get('taxref'),
+                                purchase_cost=request.POST.get('cost_price'),sales_cost=request.POST.get('sell_price'),
+                                acount_pur=request.POST.get('cost_acc'),account_sal=request.POST.get('sell_acc'),
+                                pur_desc=request.POST.get('cost_desc'),sale_desc=request.POST.get('sell_desc'),
+                                intra_st=request.POST.get('intra_st'),inter_st=request.POST.get('inter_st'), 
+                                inventry=None if request.POST.get('invacc') is None else request.POST.get('invacc'),
+                                stock=0 if request.POST.get('stock') == ' ' else request.POST.get('stock'),
+                                status=request.POST.get('status'),
                                 cid=cmp1)
             item.save()
             return redirect('addpurchasecredit')
@@ -37511,7 +37437,7 @@ def credit_item(request):
 @login_required(login_url='regcomp')
 def item_dropdown(request):
 
-    company = company.objects.get(id=request.session["uid"])
+    company1 = company.objects.get(id=request.session["uid"])
 
     options = {}
     option_objects = itemtable.objects.filter(cid=request.session["uid"])
@@ -37519,6 +37445,32 @@ def item_dropdown(request):
         options[option.id] = [option.name]
 
     return JsonResponse(options)
+
+
+
+@login_required(login_url='regcomp')
+def cust_details(request):
+    if 'uid' in request.session:
+        if request.session.has_key('uid'):
+            uid = request.session['uid']
+        else:
+            return redirect('/')
+        comp = company.objects.get(id=request.session['uid'])
+        id = request.POST.get('id').split(" ")[0]
+        print(id)
+        cust = customer.objects.get(customerid = id, cid = request.session['uid'])
+          
+        email = cust.email
+        street = cust.street
+        city = cust.city
+        state = cust.state
+        pincode = cust.pincode
+        country = cust.country
+       
+    return JsonResponse({'email': email,'street': street,'city':city,'pincode': pincode,"state": state,'country' : country},safe=False)
+
+
+    # ---------------------------------------------------------------------------------------------------------------------------
     
 def create_new(request):
     return render(request,'app1/chart_new.html')
