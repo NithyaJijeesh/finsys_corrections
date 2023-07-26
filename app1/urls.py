@@ -944,7 +944,7 @@ urlpatterns = [
 
     # (22-07-23) Nithya--- customer, invoices, sales order, credit note,estimate (correction)--
 
-    path('customer_dropdown',views.customer_dropdown,name='customer_dropdown'),
+    path('cust_dropdown',views.cust_dropdown,name='cust_dropdown'),
     path('credit_item', views.credit_item, name='credit_item'),
     path('item_dropdown', views.item_dropdown, name='item_dropdown'),
     path('cust_details', views.cust_details, name='cust_details')

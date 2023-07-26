@@ -27,7 +27,7 @@
                                     <select name="customer" id="customer" class="custom-select">
                                         <option selected disabled>Select Customer</option>
                                         {% for v in vndr %}
-                                        <option value="{{ v.customerid }} {{ v.firstname }} {{ v.lastname }}"> {{ v.firstname }} {{ v.lastname }}</option>
+                                        <option value="{{ v.customerid }} {{ v.firstname }} {{ v.lastname }}">{{v.title}} {{ v.firstname }} {{ v.lastname }}</option>
                                         {% endfor %}
                                     </select>
                                     <a class="btn btn-outline-secondary ml-1" role="button" data-target="#customercreation" data-toggle="modal">+</a>
@@ -137,6 +137,7 @@
                                         <th class="text-center">Quantity</th>
                                         <th class="text-center">Price</th>
                                         <th class="text-center">Tax (%)</th>
+                                        <th class="text-center">Discount</th>
                                         <th class="text-center">Total</th>
                                         
                                     </tr>
@@ -174,18 +175,18 @@
                                         </td>
                                         
                                         <td>
+                                            <input hidden value="{{cmp1.state}}" id="cmpstate">
                                             <select name='tax[]' id="tax1" class="form-control tax">
-                                                <!-- <option value="0" text=" ">Choose</option> -->
-                                                <option id="ta1" value=0 text={{ cmp1.state }}>Choose</option>
+                                                 <option id="ta1" value=0 text={{ cmp1.state }}>Choose</option>
                                                 <option value=28 text={{ cmp1.state }}>28.0% GST(28%)</option>
                                                 <option value=18 text={{ cmp1.state }}>18.0% GST(18%)</option>
                                                 <option value=12 text={{ cmp1.state }}>12.0% GST(12%)</option>
                                                  <option value=5 text={{ cmp1.state }}>05.0% GST(05%)</option>
                                                 <option value=3 text={{ cmp1.state }}>03.0% GST(03%)</option>
                                                  <option value=0 text={{ cmp1.state }}>0.0% GST(0%)</option>
-                                                  <option id="ta5" value=0 text={{ cmp1.state }}>Choose</option>
-                                                <option value=28 text={{ cmp1.state }}>28.0% IGST(28%)</option>
-                                                <option value=18 text={{ cmp1.state }}>18.0% IGST(18%)</option>
+                                                  <option id="ta5" value=0 text=' '>Choose</option>
+                                                <option value=28 text=' '>28.0% IGST(28%)</option>
+                                                <option value=18 text= ' '>18.0% IGST(18%)</option>
                                                 <option value=12 text=" ">12.0% IGST(12%)</option>
                                                  <option value=5 text=" ">05.0% IGST(05%)</option>
                                                 <option value=3 text=" ">03.0% IGST(03%)</option>
@@ -196,6 +197,9 @@
                                         <td style="display: none;">
                                             <input type="text" name='taxamount1' id="taxamount1" class="form-control taxamount"/>
                                         </td>
+                                        <td>
+                                            <input type="number" name='discount[]' placeholder='Enter Discount' id="disc1" class="form-control disc" step=0 min=0>
+                                         </td>
                                         <td>
                                             <input type="number" name='total[]' id="total1" placeholder='0.00' class="form-control total"/>
                                         </td>
@@ -248,6 +252,22 @@
                                     <div class="col-sm-4 mt-2"><label for="a" class="text-center">Tax Amount</label></div>
                                     <div class="col-sm-1 mt-2">:</div>
                                     <div class="col-sm-7 mt-2"><input type="number" step="any" name='taxamount' id="tax_amount" placeholder='0.00' 
+                                        class="form-control"/>
+                                    </div>
+                                    <div class="col-sm-4 m-0 p-0"></div>
+                                </div>
+                                <div class="row container-fluid p-2 m-0">
+                                    <div class="col-sm-4 mt-2"><label for="a" class="text-center">Shipping Charge</label></div>
+                                    <div class="col-sm-1 mt-2">:</div>
+                                    <div class="col-sm-7 mt-2"><input type="number" step="any" name='ship' id="ship" placeholder='0.00' 
+                                        class="form-control"/>
+                                    </div>
+                                    <div class="col-sm-4 m-0 p-0"></div>
+                                </div>
+                                <div class="row container-fluid p-2 m-0">
+                                    <div class="col-sm-4 mt-2"><label for="a" class="text-center">Adjustment</label></div>
+                                    <div class="col-sm-1 mt-2">:</div>
+                                    <div class="col-sm-7 mt-2"><input type="number" step="any" name='adj' id="adj" placeholder='0.00' 
                                         class="form-control"/>
                                     </div>
                                     <div class="col-sm-4 m-0 p-0"></div>
@@ -1036,30 +1056,29 @@
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script>
-        // $(document).ready(function () {
-        //     var i = 1;
-        //     $("#add_row").click(function () {
-        //         b = i - 1;
-        //         $('#addr' + i).html($('#addr' + b).html()).find('td:first-child').html(i + 1);
-        //         $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
-        //         i++;
-        //     });
-        //     $("#delete_row").click(function () {
-        //         if (i > 1) {
-        //             $("#addr" + (i - 1)).html('');
-        //             i--;
-        //         }
-        //         calc();
-        //     });
+        $(document).ready(function () {
+            var i = 1;
+            $("#add_row").click(function () {
+                b = i - 1;
+                $('#addr' + i).html($('#addr' + b).html()).find('td:first-child').html(i + 1);
+                $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
+                i++;
+            });
+            $(".remove_row").click(function () {
+                if (i > 1) {
+                    $("#addr" + (i - 1)).html('');
+                    i--;
+                }
+                calc();
+            });
+            $('#tab_logic tbody').on('keyup change', function () {
+                calc();
+            });
 
-        //     $('#tab_logic tbody').on('keyup change', function () {
-        //         calc();
-        //     });
-
-        //     $('#tax').on('keyup change', function () {
-        //         calc_total();
-        //     });
-        // });
+            $('#tax').on('keyup change', function () {
+                calc_total();
+            });
+        });
 
         function calc() {
             $('#tab_logic tbody tr').each(function () {
@@ -1068,15 +1087,17 @@
                     var qty = $(this).find('.qty').val();
                     var price = $(this).find('.price').val();
                     var tax = $(this).find('.tax').val();
-                    $(this).find('.total').val(qty * price);
-                    $(this).find('.taxamount').val((qty * price) * (tax / 100));
+                    var dis = $(this).find('.disc').val();
+                    $(this).find('.total').val((qty * price)-dis);
+                    $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
                     calc_total();
                 }
             });
         }
 
         function calc_total() {
-            total = 0;
+             
+             total = 0;
             $('.total').each(function () {
                 total += parseFloat($(this).val());
             });
@@ -1086,13 +1107,15 @@
             });
             $('#sub_total').val(total.toFixed(2));
             $('#tax_amount').val(taxamount.toFixed(2));
-            $('#grandtotal').val((taxamount + total).toFixed(2));
-            $('#baldue').val((taxamount + total).toFixed(2));
+    
+            $('#grandtotal').val((taxamount + total ).toFixed(2));
+            $('#baldue').val((taxamount + total ).toFixed(2));
 
             test()
         }
 
         function test(){
+            console.log(taxamount);
             var bc = document.getElementById("plosu").value
             d=0
             if (bc == "{{ cmp1.state }}"  ) {
@@ -1128,6 +1151,14 @@
                 document.getElementById(divId).innerHTML = "Debit Note";
             }
         }
+
+        $(document).on('change',"#ship",function(){
+            var tot = $('#grandtotal').val();
+            var sh = $("#ship").val();
+             
+            $('#grandtotal').val((parseFloat(tot)+parseFloat(sh)).toFixed(2));
+            $('#baldue').val((parseFloat(tot)+parseFloat(sh)).toFixed(2));
+        });
 
     
         $('#date').val(new Date().toJSON().slice(0,10));
@@ -1311,10 +1342,16 @@
                             </td>        
                             <td style="display: none;"><input type="number" step="any" name='taxamount1' id="taxamount1" class="form-control taxamount"></td>
                             <td>
+                                <input type="number" name='discount[]' placeholder='Enter Discount' id="disc${roinc}" class="form-control disc" step=0 min=0>
+                            </td>
+                            <td>
                                 <input type="number" name='total[]' id="total1" placeholder=0 class="form-control total" value=0 step="any">
                             </td>        
-                            
-                            <td><button type="button" id="${roinc}" class="btn btn-danger remove_row">-</button></td>
+
+                            <td>
+                                <button type="button" id="${roinc}" class="btn btn-primary clone_row fa fa-copy"></button><br>
+                                <button type="button" id="${roinc}" class="btn btn-danger remove_row fa fa-close">-</button>
+                            </td>
                             
                         </tr>
                                                     
@@ -1374,7 +1411,7 @@
         function reloadCustomer() {
 
             $.ajax({
-                url: "{% url 'customer_dropdown' %}",
+                url: "{% url 'cust_dropdown' %}",
                 type: "GET",
                 dataType: "json",
                 data: $(this).serialize(),
@@ -1386,7 +1423,7 @@
                 dropdown.append(`<option selected>Select Customer</option>`);
                     $.each(data, function(key, value) {
                         console.log(value)
-                        dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
+                        dropdown.append($('<option></option>').attr('value', key).text(value[1] + " " +value[2] + " "+ value[3]).val(value[0] + " " +value[2] + " "+ value[3]));
                     });
                 },
                 error: function(xhr, status, error) {
@@ -1440,7 +1477,7 @@
                 intra_st : $("#intra_st").val(),
                 inter_st : $("#inter_st").val(),
                 invacc : $("#invacc").val(),
-                stock : $("#inter_st").val(),
+                stock : $("#stock").val(),
                 status : status1,
                 csrfmiddlewaretoken: '{{ csrf_token }}',
                 
@@ -1507,9 +1544,8 @@
                 var row_id = $(this).attr("id");
                 $('#addr0'+row_id+'').remove();
             });
-
-            $(document).on('click','#product',function(){
-                var place = document.getElementById('plosu').value;
+            var place = document.getElementById('plosu').value;
+              $(document).on('click','#product',function(){
 
                 select = $('#product').val();
                 $.ajax({
@@ -1522,8 +1558,7 @@
                     
                     
                     success:function(response){
-                            // console.log(response)
-                            data = response.hsn
+                             data = response.hsn
                             data2 = response.qty
                             data3 = response.price
                             data4 = response.gst

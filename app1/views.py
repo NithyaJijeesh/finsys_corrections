@@ -33258,15 +33258,10 @@ def itemdata(request):
         else:
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
-        # print(cmp1.state)
         id = request.GET.get('id')
-        # print("asdsadas")
-        # print(id)
         toda = date.today()
         tod = toda.strftime("%Y-%m-%d")
-        # to = toda.strftime("%d-%m-%Y")
         item = itemtable.objects.get(name=id,cid=cmp1)
-        # print(item)
         hsn = item.hsn
         qty = item.stock
         price = item.purchase_cost
@@ -37394,7 +37389,7 @@ def customers21(request):
 # (22-07-23) Nithya--- customer, invoices, sales order, credit note,estimate (correction)--
 
 @login_required(login_url='regcomp')
-def customer_dropdown(request):
+def cust_dropdown(request):
     cmp1 = company.objects.get(id=request.session['uid'])
 
     options = {}
@@ -37403,7 +37398,7 @@ def customer_dropdown(request):
     for option in option_objects:
         # print(option.customerid)
         print(option.title)
-        options[option.customerid] = [option.title , option.firstname, option.lastname]
+        options[option.customerid] = [option.customerid, option.title , option.firstname, option.lastname]
         print(options)
     return JsonResponse(options)
 
