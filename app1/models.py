@@ -1643,6 +1643,7 @@ class salescreditnote(models.Model):
     supply = models.CharField(max_length=150,null=True)
     billno = models.CharField(max_length=100,null=True)
     subtotal = models.CharField(max_length=100,null=True)
+    shipping_charge = models.CharField(max_length=100,null=True,blank=True)
     taxamount = models.CharField(max_length=100,null=True)
     grandtotal = models.CharField(max_length=100,null=True)
 
@@ -1653,6 +1654,7 @@ class salescreditnote1(models.Model):
     quantity = models.IntegerField(null=True)
     price = models.CharField(max_length=100,null=True)
     tax = models.CharField(max_length=100,null=True)
+    discount = models.CharField(max_length=100,null=True)
     total = models.CharField(max_length=100,null=True)
 
 

@@ -26648,7 +26648,7 @@ def estcreate2(request):
 
         estimateid= estimate.objects.get(estimateid=est2.estimateid)
 
-        if len(items)==len(hsn)==len(description)==len(quantity)==len(rate)==len(tax )==len(amount) and items and hsn and description and quantity and rate and tax and amount:
+        if len(items)==len(hsn)==len(description)==len(quantity)==len(rate)==len(tax )==len(disc)==len(amount) and items and hsn and description and quantity and rate and tax and amount:
                 mapped=zip(items,hsn,description ,quantity,rate,tax,amount)
                 mapped=list(mapped)
                 for ele in mapped:
@@ -29897,12 +29897,7 @@ def getitems2(request):
     gst = item.intra_st
     sgst = item.inter_st
    
-
-
-    
-    return JsonResponse({"status":" not",'hsn':hsn,'desp':desp,'qty':qty,'price':price,'gst':gst,'sgst':sgst,
-        
-        })
+    return JsonResponse({"status":" not",'hsn':hsn,'desp':desp,'qty':qty,'price':price,'gst':gst,'sgst':sgst,} )
 @login_required(login_url='regcomp')
 def estimate_add_file(request,id):
     cmp1 = company.objects.get(id=request.session['uid'])
@@ -36988,7 +36983,8 @@ def create_credit(request):
         cmp1 = company.objects.get(id=request.session['uid'])
         if request.method == 'POST':
             debit_no = '1000'
-            pdebit = salescreditnote(customer = request.POST['customer'],
+            
+            pdebit = salescreditnote(customer = " ".join(request.POST['customer'].split(" ")[1:]),
                                     address = request.POST['address'],
                                     email=request.POST['email'],
                                     creditdate=request.POST['debitdate'],
@@ -36996,6 +36992,7 @@ def create_credit(request):
                                     billno=request.POST['billno'],
                                     subtotal=request.POST['subtotal'],
                                     taxamount=request.POST['taxamount'],
+                                    shipping_charge = request.POST.get('ship'),
                                     grandtotal=request.POST['grandtotal'],
                                     cid=cmp1
                                 )
@@ -37008,18 +37005,28 @@ def create_credit(request):
             quantity = request.POST.getlist("quantity[]")
             price = request.POST.getlist("price[]")
             tax = request.POST.getlist("tax[]")
+            discount = request.POST.getlist("discount[]")
             total = request.POST.getlist("total[]")
 
             pdeb=salescreditnote.objects.get(screditid=pdebit.screditid)
 
-            if len(items)==len(hsn)==len(quantity)==len(price)==len(tax)==len(total):
-                print(items)
-                mapped=zip(items,hsn,quantity,price,tax,total)
+            if len(items)==len(hsn)==len(quantity)==len(price)==len(tax)== len(discount)==len(total):
+                # print(items)
+                mapped=zip(items,hsn,quantity,price,tax,discount,total)
                 mapped=list(mapped)
-                print(mapped)
+                # print(mapped)
                 for ele in mapped:
+
+                    print(ele[0])
+                    print(ele[1])
+                    print(ele[2])
+                    print(ele[3])
+                    print(ele[4])
+                    print(ele[5])
+                    print(ele[6])
+
                     porderAdd,created = salescreditnote1.objects.get_or_create(items = ele[0],hsn=ele[1],quantity=ele[2],price=ele[3],
-                    tax=ele[4],total=ele[5],scredit=pdeb)
+                    tax=ele[4],discount = ele[5],total=ele[6],scredit=pdeb)
 
                     itemqty = itemtable.objects.get(name=ele[0],cid=cmp1)
                     if itemqty.stock != 0:
@@ -37350,6 +37357,7 @@ def customers21(request):
         if customer.objects.filter(firstname=firstname, lastname=lastname, cid=cmp1).exists():
             return redirect('gocustomers')
         else:
+            print(request.POST.get('email'))
             cust = customer(title=request.POST.get('title'), firstname=firstname,
                             lastname=lastname, company=request.POST.get('company_name'),
                             location=request.POST.get('location'), gsttype=request.POST.get('gsttype'),

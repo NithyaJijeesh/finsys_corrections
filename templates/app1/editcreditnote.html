@@ -3,135 +3,7 @@
     {% load static %}
 
     <!--<h1>Taxes</h1>-->
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-
-    <script>
-        $(document).ready(function () {
-            var i = 1;
-            $("#add_row").click(function () {
-                b = i - 1;
-                $('#addr' + i).html($('#addr' + b).html()).find('td:first-child').html(i + 1);
-                $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
-                i++;
-            });
-            $("#delete_row").click(function () {
-                if (i > 1) {
-                    $("#addr" + (i - 1)).html('');
-                    i--;
-                }
-                calc();
-            });
-
-            $('#tab_logic tbody').on('keyup change', function () {
-                calc();
-            });
-
-            $('#tax').on('keyup change', function () {
-                calc_total();
-            });
-        });
-
-        function calc() {
-            $('#tab_logic tbody tr').each(function () {
-                var html = $(this).html();
-                if (html != '') {
-                    var qty = $(this).find('.qty').val();
-                    var price = $(this).find('.price').val();
-                    var tax = $(this).find('.tax').val();
-                    $(this).find('.total').val(qty * price);
-                    $(this).find('.taxamount').val((qty * price) * (tax / 100));
-                    calc_total();
-                }
-            });
-        }
-
-        function calc_total() {
-            total = 0;
-            $('.total').each(function () {
-                total += parseFloat($(this).val());
-            });
-            taxamount = 0;
-            $('.taxamount').each(function () {
-                taxamount += parseFloat($(this).val());
-            });
-            $('#sub_total').val(total.toFixed(2));
-            $('#tax_amount').val(taxamount.toFixed(2));
-            $('#grandtotal').val((taxamount + total).toFixed(2));
-            $('#baldue').val((taxamount + total).toFixed(2));
-
-            test()
-        }
-
-        function test(){
-            var bc = document.getElementById("plosu").value
-            d=0
-            
-            if (bc == "{{ cmp1.state }}"  ) {
-                gst = taxamount/2
-              
-                $('#cgst').val(parseFloat(gst.toFixed(2)));
-                $('#sgst').val(parseFloat(gst.toFixed(2)));
-                $('#igst').val(parseFloat(d.toFixed(2)));
-            }
-                
-            if (bc != "{{ cmp1.state }}"  ) {
-                $('#igst').val(taxamount.toFixed(2));
-                $('#cgst').val(d.toFixed(2));
-                $('#sgst').val(d.toFixed(2));
-            }
-        }
-    </script>
-
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script>
-        function state(element) {
-            if (element.value == "Kerala" ) {
-                document.getElementById('cgst1').style.display = 'flex';
-                document.getElementById('sgst1').style.display = 'flex';
-                document.getElementById('igst1').style.display = 'none'; 
-            } else {
-                document.getElementById('cgst1').style.display = 'none';
-                document.getElementById('sgst1').style.display = 'none';
-                document.getElementById('igst1').style.display = 'flex';
-            }
-        }
-    </script>
-    </script>
-    <script>
-        function showinnum(divId, element) {
-            if (element.value) {
-                document.getElementById(divId).innerHTML = "Debit Note " + element.value;
-            } else {
-                document.getElementById(divId).innerHTML = "Debit Note";
-            }
-        }
-
-    </script>
-    <!-- <script>
-        var item_row_counter = 1
-
-        function add_item_row() {
-            old_item_row_count = item_row_counter
-            item_row_counter++;
-
-            $('#items-table-body >tr:last').clone(true).insertAfter('#items-table-body >tr:last');
-            $('#items-table-body >tr:last input').val('');
-
-            $('#items-table-body >tr:last td')[0].innerHTML = item_row_counter
-            update_amounts($('#items-table-body input[name=tax1]:last'));
-        }
-
-        function setup_rows() {
-            $("#addrow").click(function(event) {
-            event.preventDefault();
-            add_item_row();
-            });
-
-            for (var i = 0; i <= 4; i++) {
-                add_item_row();
-            }
-        }
-    </script> -->
+    
 
     <form action="{% url 'editcreditfun' pcrd.screditid %}" method="post" class="needs-validation" novalidate>
         {% csrf_token %}
@@ -876,6 +748,112 @@
 
     </div>
 
+
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var i = 1;
+            $("#add_row").click(function () {
+                b = i - 1;
+                $('#addr' + i).html($('#addr' + b).html()).find('td:first-child').html(i + 1);
+                $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
+                i++;
+            });
+            $("#delete_row").click(function () {
+                if (i > 1) {
+                    $("#addr" + (i - 1)).html('');
+                    i--;
+                }
+                calc();
+            });
+
+            $('#tab_logic tbody').on('keyup change', function () {
+                calc();
+            });
+
+            $('#tax').on('keyup change', function () {
+                calc_total();
+            });
+        });
+
+        function calc() {
+            $('#tab_logic tbody tr').each(function () {
+                var html = $(this).html();
+                if (html != '') {
+                    var qty = $(this).find('.qty').val();
+                    var price = $(this).find('.price').val();
+                    var tax = $(this).find('.tax').val();
+                    $(this).find('.total').val(qty * price);
+                    $(this).find('.taxamount').val((qty * price) * (tax / 100));
+                    calc_total();
+                }
+            });
+        }
+
+        function calc_total() {
+            total = 0;
+            $('.total').each(function () {
+                total += parseFloat($(this).val());
+            });
+            taxamount = 0;
+            $('.taxamount').each(function () {
+                taxamount += parseFloat($(this).val());
+            });
+            $('#sub_total').val(total.toFixed(2));
+            $('#tax_amount').val(taxamount.toFixed(2));
+            $('#grandtotal').val((taxamount + total).toFixed(2));
+            $('#baldue').val((taxamount + total).toFixed(2));
+
+            test()
+        }
+
+        function test(){
+            var bc = document.getElementById("plosu").value
+            d=0
+            
+            if (bc == "{{ cmp1.state }}"  ) {
+                gst = taxamount/2
+              
+                $('#cgst').val(parseFloat(gst.toFixed(2)));
+                $('#sgst').val(parseFloat(gst.toFixed(2)));
+                $('#igst').val(parseFloat(d.toFixed(2)));
+            }
+                
+            if (bc != "{{ cmp1.state }}"  ) {
+                $('#igst').val(taxamount.toFixed(2));
+                $('#cgst').val(d.toFixed(2));
+                $('#sgst').val(d.toFixed(2));
+            }
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script>
+        function state(element) {
+            if (element.value == "Kerala" ) {
+                document.getElementById('cgst1').style.display = 'flex';
+                document.getElementById('sgst1').style.display = 'flex';
+                document.getElementById('igst1').style.display = 'none'; 
+            } else {
+                document.getElementById('cgst1').style.display = 'none';
+                document.getElementById('sgst1').style.display = 'none';
+                document.getElementById('igst1').style.display = 'flex';
+            }
+        }
+    </script>
+    </script>
+    <script>
+        function showinnum(divId, element) {
+            if (element.value) {
+                document.getElementById(divId).innerHTML = "Debit Note " + element.value;
+            } else {
+                document.getElementById(divId).innerHTML = "Debit Note";
+            }
+        }
+
+    </script>
+  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
         $('#date').val(new Date().toJSON().slice(0,10));
