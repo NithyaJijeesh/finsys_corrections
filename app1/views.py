@@ -36925,8 +36925,10 @@ def start_reconcile(request,pk):
 #credit note
 def credit_note(request):
     cmp1 = company.objects.get(id=request.session['uid'])
-    pdebit = salescreditnote.objects.filter(cid=cmp1)  
-
+    pdebit = salescreditnote.objects.filter(cid=cmp1).values() 
+    for p in pdebit:
+        cust = " " . join(p['customer'].split(" ")[1:])
+        p['cust'] = cust
     return render(request,'app1/credit_note.html',{'cmp1': cmp1,'pdebit':pdebit})
 
 def addpurchasecredit(request):
@@ -36984,17 +36986,17 @@ def create_credit(request):
         if request.method == 'POST':
             debit_no = '1000'
             
-            pdebit = salescreditnote(customer = " ".join(request.POST['customer'].split(" ")[1:]),
-                                    address = request.POST['address'],
-                                    email=request.POST['email'],
-                                    creditdate=request.POST['debitdate'],
-                                    supply=request.POST['supply'],
-                                    billno=request.POST['billno'],
-                                    subtotal=request.POST['subtotal'],
-                                    taxamount=request.POST['taxamount'],
-                                    shipping_charge = request.POST.get('ship'),
-                                    grandtotal=request.POST['grandtotal'],
-                                    cid=cmp1
+            pdebit = salescreditnote(customer =request.POST['customer'],
+                                        address = request.POST['address'],
+                                        email=request.POST['email'],
+                                        creditdate=request.POST['debitdate'],
+                                        supply=request.POST['supply'],
+                                        billno=request.POST['billno'],
+                                        subtotal=request.POST['subtotal'],
+                                        taxamount=request.POST['taxamount'],
+                                        shipping_charge = request.POST.get('ship'),
+                                        grandtotal=request.POST['grandtotal'],
+                                        cid=cmp1
                                 )
             pdebit.save()
             pdebit.credit_no = int(pdebit.credit_no) + pdebit.screditid
@@ -37011,19 +37013,9 @@ def create_credit(request):
             pdeb=salescreditnote.objects.get(screditid=pdebit.screditid)
 
             if len(items)==len(hsn)==len(quantity)==len(price)==len(tax)== len(discount)==len(total):
-                # print(items)
                 mapped=zip(items,hsn,quantity,price,tax,discount,total)
                 mapped=list(mapped)
-                # print(mapped)
                 for ele in mapped:
-
-                    print(ele[0])
-                    print(ele[1])
-                    print(ele[2])
-                    print(ele[3])
-                    print(ele[4])
-                    print(ele[5])
-                    print(ele[6])
 
                     porderAdd,created = salescreditnote1.objects.get_or_create(items = ele[0],hsn=ele[1],quantity=ele[2],price=ele[3],
                     tax=ele[4],discount = ele[5],total=ele[6],scredit=pdeb)
@@ -37086,8 +37078,6 @@ def render_pdf_credit(request,id):
     # create a pdf
     pisa_status = pisa.CreatePDF(
        html, dest=response)
-    
-
 
     # if error then show some funy view
     if pisa_status.err:
@@ -37096,7 +37086,7 @@ def render_pdf_credit(request,id):
 
 
 def editcreditnote(request, id):
-    print("welcome")
+
     cmp1 = company.objects.get(id=request.session['uid'])
     pcrd=salescreditnote.objects.get(screditid=id)
     pcrd1 = salescreditnote1.objects.all().filter(scredit=id)
@@ -37104,6 +37094,9 @@ def editcreditnote(request, id):
     pbill = purchasebill.objects.all()  
     item = itemtable.objects.all() 
 
+    
+    cust= customer.objects.get(customerid = pcrd.customer.split(" ")[0])
+ 
     cgst=float(pcrd.taxamount)/2
     sgst=float(pcrd.taxamount)/2
     context={
@@ -37115,6 +37108,7 @@ def editcreditnote(request, id):
         'cgst':cgst,
         'sgst':sgst,
         'cmp1':cmp1,
+        'cust':cust,
 
 
     }
@@ -37129,7 +37123,7 @@ def editcreditfun(request,id):
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
         if request.method == 'POST':
-            vendor=request.POST['vendor']
+            vendor=request.POST['customer']
             address=request.POST['address']
             email=request.POST['email']
             supply=request.POST['supply']
@@ -37157,6 +37151,7 @@ def editcreditfun(request,id):
             quantity = request.POST.getlist("quantity[]")
             price = request.POST.getlist("price[]")
             tax = request.POST.getlist("tax[]")
+            discount = request.POST.getlist("discount[]")
             total = request.POST.getlist("total[]")
          
           
@@ -37167,9 +37162,9 @@ def editcreditfun(request,id):
             # import pdb; pdb.set_trace()
             
             
-            if len(items)==len(hsn)==len(quantity)==len(price)==len(tax)==len(total):
+            if len(items)==len(hsn)==len(quantity)==len(price)==len(tax)==len(discount) == len(total):
                 
-                mapped=zip(items,hsn,quantity,price,tax,total)
+                mapped=zip(items,hsn,quantity,price,tax,discount,total)
                 
                 mappe=list(mapped)
             
@@ -37180,13 +37175,13 @@ def editcreditfun(request,id):
                     if int(len(items))>int(count):
                         
                         created = salescreditnote1.objects.get_or_create(items = ele[0],hsn=ele[1],quantity=ele[2],price=ele[3],
-                        tax=ele[4],total=ele[5],scredit=pdebitid)
+                        tax=ele[4],discount  = ele[5],total=ele[6],scredit=pdebitid)
 
                     else:
                      
                         dbs=salescreditnote1.objects.get(scredit=pdebitid,items = ele[0],hsn=ele[1])
                         created = salescreditnote1.objects.filter(id=dbs.id,items = ele[0],hsn=ele[1]).update(items = ele[0],hsn = ele[1],quantity=ele[2],price=ele[3],
-                        tax=ele[4],total=ele[5])
+                        tax=ele[4],discount = ele[5],total=ele[6])
                         
 
             return redirect('viewcredit',id)
@@ -37195,29 +37190,6 @@ def editcreditfun(request,id):
     return redirect('/') 
 
 
-    # product = request.POST.getlist("product[]")
-    #     hsn  = request.POST.getlist("hsn[]")
-    #     description = request.POST.getlist("description[]")
-    #     qty = request.POST.getlist("qty[]")
-    #     price = request.POST.getlist("price[]")
-        
-    #     tax = request.POST.getlist("tax[]")
-    #     total = request.POST.getlist("total[]")
-
-    #     itemid = request.POST.getlist("id[]")
-
-    #     saleid=salesorder.objects.get(id =upd.id)
-    #     # import pdb; pdb.set_trace()
-    #     if len(product)==len(hsn)==len(description)==len(qty)==len(price)==len(tax)==len(total)==len(itemid) and product and hsn and description and qty and price and tax and total and itemid:
-    #         mapped=zip(product,hsn,description,qty,price,tax,total,itemid)
-    #         mapped=list(mapped)
-           
-    #         for ele in mapped:
-    #             created = sales_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],description=ele[2],
-    #             qty=ele[3],price=ele[4],tax=ele[5],total=ele[6])
-
-
-    #     return redirect('gosalesorder')
 
 @login_required(login_url='regcomp')
 def deletecredit(request, id):

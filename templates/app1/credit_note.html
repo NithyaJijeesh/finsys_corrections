@@ -69,7 +69,7 @@
                                     <tr  class="table-row " >
                                         <td><a class="idsr" style="list-style: none;"  href="{% url 'viewcredit'  p.screditid %} "> {{ p.creditdate |date:'d-m-Y' }}</a></td>
                                         <td > <a class="idsr" style="list-style: none;"  href="{% url 'viewcredit'  p.screditid %} "> CN - {{ p.credit_no }}</a></td>
-                                        <td ><a class="idsr" style="list-style: none;"  href=" {% url 'viewcredit'  p.screditid %}">{{ p.customer }}</a></td>
+                                        <td ><a class="idsr" style="list-style: none;"  href=" {% url 'viewcredit'  p.screditid %}">{{ p.cust }}</a></td>
                                         <td><a class="idsr" style="list-style: none;"  href=" {% url 'viewcredit'  p.screditid %}"> {{ p.taxamount }}</a></td>
                                         <td><a class="idsr" style="list-style: none;"  href="{% url 'viewcredit'  p.screditid %} "> {{ p.grandtotal }}</a></td>
                                     </tr> 
