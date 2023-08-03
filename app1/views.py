@@ -33253,10 +33253,10 @@ def itemdata(request):
         else:
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
-        id = request.GET.get('id')
+        name = request.GET.get('id')
         toda = date.today()
         tod = toda.strftime("%Y-%m-%d")
-        item = itemtable.objects.get(name=id,cid=cmp1)
+        item = itemtable.objects.get(name=name,cid=cmp1)
         hsn = item.hsn
         qty = item.stock
         price = item.purchase_cost

@@ -1098,7 +1098,7 @@
 
         function calc_total() {
              
-             total = 0;
+            total = 0;
             $('.total').each(function () {
                 total += parseFloat($(this).val());
             });
@@ -1108,9 +1108,10 @@
             });
             $('#sub_total').val(total.toFixed(2));
             $('#tax_amount').val(taxamount.toFixed(2));
-    
-            $('#grandtotal').val((taxamount + total ).toFixed(2));
-            $('#baldue').val((taxamount + total ).toFixed(2));
+            ship = parseFloat($("#ship").val());
+            console.log(taxamount + total + ship);
+            $('#grandtotal').val(taxamount + total + ship);
+            $('#baldue').val(taxamount + total+ship);
 
             test()
         }
@@ -1154,11 +1155,11 @@
         }
 
         $(document).on('change',"#ship",function(){
-            var tot = $('#grandtotal').val();
+            var subtot = $('#sub_total').val();
+            var tax = $('#tax_amount').val();
             var sh = $("#ship").val();
-             console.log((parseFloat(tot)+parseFloat(sh)));
-            $('#grandtotal').val((parseFloat(tot)+parseFloat(sh)).toFixed(2));
-            $('#baldue').val((parseFloat(tot)+parseFloat(sh)).toFixed(2));
+            $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
+            $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
         });
 
     
@@ -1549,6 +1550,7 @@
               $(document).on('click','#product',function(){
 
                 select = $('#product').val();
+                console.log(select)
                 $.ajax({
                     type: "GET",
                     url: "{% url 'itemdata' %}",
@@ -1615,15 +1617,13 @@
                                 document.getElementById('ta51').innerHTML  = data5 + ' % IGST';
                                 document.getElementById('ta51').value=data5
                             }
-                            if (data2<1)
-                            {
-                            
-                            
-                            document.getElementById('qtyspan1').style.color="red";
-                            }
-                            else{
-                            pass
-                            }
+                            // if (data2<1)
+                            // {                      
+                                // document.getElementById('qtyspan1').style.color="red";
+                            // }
+                            // else{
+                                // pass;
+                            // }
                         }
                     });
                 
