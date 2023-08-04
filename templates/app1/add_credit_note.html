@@ -51,7 +51,7 @@
                             <div class="row">
                                 <div class="col-md-5 mt-3">
                                     <label>Place of supply</label>&nbsp;
-                                    <select type="text" class="form-control" id="plosu" name="supply" onchange="state(this)">
+                                    <select type="text" class="form-control" id="plosu" name="supply"  >
                                         <option value="{{ cmp1.state }}" selected> {{ cmp1.state }}</option>
                                         <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
                                         <option value="Andhra Predhesh">Andhra Predhesh</option>
@@ -175,7 +175,26 @@
                                         
                                         <td>
                                             <input hidden value="{{cmp1.state}}" id="cmpstate">
-                                            <select name='tax[]' id="tax1" class="form-control tax">
+                                            <input type="text"  id="select_tax" placeholder="Tax Rate" class="form-control seltax d-flex">
+                                            <select name='tax1[]' id="tax1" class="form-control intra_tax d-none">
+                                                <option selected disabled >Select GST</option>
+                                                <option value=28 >28.0% GST(28%)</option>
+                                                <option value=18 >18.0% GST(18%)</option>
+                                                <option value=12  >12.0% GST(12%)</option>
+                                                 <option value=5  >05.0% GST(05%)</option>
+                                                <option value=3  >03.0% GST(03%)</option>
+                                                 <option value=0  >0.0% GST(0%)</option>
+                                            </select>
+                                            <select name='tax2[]' id="tax2" class="form-control inter_tax d-none">
+                                                <option selected disabled >Select IGST</option>
+                                                <option value=28 >28.0% IGST(28%)</option>
+                                                <option value=18 >18.0% IGST(18%)</option>
+                                                <option value=12  >12.0% IGST(12%)</option>
+                                                 <option value=5  >05.0% IGST(05%)</option>
+                                                <option value=3  >03.0% IGST(03%)</option>
+                                                 <option value=0  >0.0% IGST(0%)</option>
+                                            </select>
+                                            <!-- <select name='tax[]' id="tax1" class="form-control tax">
                                                  <option id="ta1" value=0 text={{ cmp1.state }}>Choose</option>
                                                 <option value=28 text={{ cmp1.state }}>28.0% GST(28%)</option>
                                                 <option value=18 text={{ cmp1.state }}>18.0% GST(18%)</option>
@@ -190,7 +209,7 @@
                                                  <option value=5 text=" ">05.0% IGST(05%)</option>
                                                 <option value=3 text=" ">03.0% IGST(03%)</option>
                                                  <option value=0 text=" ">0.0% IGST(0%)</option>
-                                              </select>
+                                              </select> -->
                                         </td>
 
                                         <td style="display: none;">
@@ -258,7 +277,7 @@
                                 <div class="row container-fluid p-2 m-0">
                                     <div class="col-sm-4 mt-2"><label for="a" class="text-center">Shipping Charge</label></div>
                                     <div class="col-sm-1 mt-2">:</div>
-                                    <div class="col-sm-7 mt-2"><input type="number" step="any" name='ship' id="ship" placeholder='0.00' 
+                                    <div class="col-sm-7 mt-2"><input type="number" step="any" name='ship' id="ship" placeholder='0.00'  value=0
                                         class="form-control"/>
                                     </div>
                                     <div class="col-sm-4 m-0 p-0"></div>
@@ -1055,7 +1074,10 @@
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script>
+       
         $(document).ready(function () {
+            
+
             var i = 1;
             $("#add_row").click(function () {
                 b = i - 1;
@@ -1085,10 +1107,16 @@
                 if (html != '') {
                     var qty = $(this).find('.qty').val();
                     var price = $(this).find('.price').val();
-                    var tax = $(this).find('.tax').val();
+
                     var dis = $(this).find('.disc').val();
-                    // $(this).find('.total').val(qty * price);
-                    // $(this).find('.taxamount').val((qty * price) * (tax / 100));
+                    var bc = document.getElementById("plosu").value;
+                    var compstate = document.getElementById("cmpstate").value;
+                    if(bc==compstate){
+                        tax = $(this).find('.intra_tax').val();
+                    }
+                    else{
+                        tax = $(this).find('.inter_tax').val();
+                    }
                     $(this).find('.total').val((qty * price)-dis);
                     $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
                     calc_total();
@@ -1109,18 +1137,21 @@
             $('#sub_total').val(total.toFixed(2));
             $('#tax_amount').val(taxamount.toFixed(2));
             ship = parseFloat($("#ship").val());
-            console.log(taxamount + total + ship);
-            $('#grandtotal').val(taxamount + total + ship);
-            $('#baldue').val(taxamount + total+ship);
+            // console.log( ship);
+            gtot = taxamount + total + ship;
+            $('#grandtotal').val(gtot.toFixed(2));
+            $('#baldue').val(gtot.toFixed(2));
 
             test()
         }
 
         function test(){
             console.log(taxamount);
-            var bc = document.getElementById("plosu").value
+           
+            var bc = document.getElementById("plosu").value;
+            var compstate = document.getElementById("cmpstate").value;
             d=0
-            if (bc == "{{ cmp1.state }}"  ) {
+            if (bc == compstate  ) {
                 gst = taxamount/2
                 $('#cgst').val(parseFloat(gst.toFixed(2)));
                 $('#sgst').val(parseFloat(gst.toFixed(2)));
@@ -1134,17 +1165,7 @@
             }
         }
      
-        function state(element) {
-            if (element.value == "Kerala" ) {
-                document.getElementById('cgst1').style.display = 'flex';
-                document.getElementById('sgst1').style.display = 'flex';
-                document.getElementById('igst1').style.display = 'none'; 
-            } else {
-                document.getElementById('cgst1').style.display = 'none';
-                document.getElementById('sgst1').style.display = 'none';
-                document.getElementById('igst1').style.display = 'flex';
-            }
-        }
+        
      
         function showinnum(divId, element) {
             if (element.value) {
@@ -1162,6 +1183,11 @@
             $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
         });
 
+        $(document).on("change", "#adj", function(){
+            var round = parseFloat($("#grandtotal").val()) + parseFloat($("#adj").val()) 
+            $("#grandtotal").val(round);
+            $('#baldue').val(round);
+        });
     
         $('#date').val(new Date().toJSON().slice(0,10));
 
@@ -1229,7 +1255,7 @@
             }
         }
     
-        $(document).ready(function () {
+        // $(document).ready(function () {
             // $('#select').on('change', function() {
             //     console.log($('#select').val())
             //     $.ajax({
@@ -1257,33 +1283,33 @@
             //     });
             // });
 
-            var $select1 = $('#plosu'),
-            $select2 = $('#tax1'),
-            $select3 = $('#tax2'),
-            $select4 = $('#tax3'),
-            $select5 = $('#tax4'),
-            $options = $select2.find('option'),
-            $options1 = $select3.find('option'),
-            $options2 = $select4.find('option'),
-            $options3 = $select5.find('option');
-            if ($options1.value == '{{ cmp1.state }}') {
-                $options1.text = "{{ cmp1.state }}"
-            }
-            $select1.on('change', function() {
-                if (this.value == "{{ cmp1.state }}") {
-                    $select2.html($options.filter('[text="' + this.value + '"]'));
-                    $select3.html($options1.filter('[text="' + this.value + '"]'));
-                    $select4.html($options2.filter('[text="' + this.value + '"]'));
-                    $select5.html($options3.filter('[text="' + this.value + '"]'));
-                } 
-                else {
-                    $select2.html($options.filter('[text="' + " " + '"]'));
-                    $select3.html($options1.filter('[text="' + " " + '"]'));
-                    $select4.html($options2.filter('[text="' + " " + '"]'));
-                    $select5.html($options3.filter('[text="' + " " + '"]'));
-                }
-            }).trigger('change');
-        })
+        //     var $select1 = $('#plosu'),
+        //     $select2 = $('#tax1'),
+        //     $select3 = $('#tax2'),
+        //     $select4 = $('#tax3'),
+        //     $select5 = $('#tax4'),
+        //     $options = $select2.find('option'),
+        //     $options1 = $select3.find('option'),
+        //     $options2 = $select4.find('option'),
+        //     $options3 = $select5.find('option');
+        //     if ($options1.value == '{{ cmp1.state }}') {
+        //         $options1.text = "{{ cmp1.state }}"
+        //     }
+        //     $select1.on('change', function() {
+        //         if (this.value == "{{ cmp1.state }}") {
+        //             $select2.html($options.filter('[text="' + this.value + '"]'));
+        //             $select3.html($options1.filter('[text="' + this.value + '"]'));
+        //             $select4.html($options2.filter('[text="' + this.value + '"]'));
+        //             $select5.html($options3.filter('[text="' + this.value + '"]'));
+        //         } 
+        //         else {
+        //             $select2.html($options.filter('[text="' + " " + '"]'));
+        //             $select3.html($options1.filter('[text="' + " " + '"]'));
+        //             $select4.html($options2.filter('[text="' + " " + '"]'));
+        //             $select5.html($options3.filter('[text="' + " " + '"]'));
+        //         }
+        //     }).trigger('change');
+        // })
      
         $(document).ready(function(){
             $("#tab_logic").on('click', '.demo', function() {
@@ -1297,6 +1323,8 @@
             var roinc = 0
             $('#addrow').click(function(){
                 roinc++
+             
+                
                 $('#items-table-body').append(
                     `
                         <tr id='addr0${roinc}'>
@@ -1325,22 +1353,27 @@
                             </td>                
                                                             
                             <td>
-                                <select name='tax[]' id="tax${roinc+1}" class="form-control tax">
-                                    <option id="ta1${roinc}" value=0 text={{ cmp1.state }}>Choose</option>
-                                    <option value=28 text={{ cmp1.state }}>28.0% GST(28%)</option>
-                                    <option value=18 text={{ cmp1.state }}>18.0% GST(18%)</option>
-                                    <option value=12 text={{ cmp1.state }}>12.0% GST(12%)</option>
-                                     <option value=5 text={{ cmp1.state }}>05.0% GST(05%)</option>
-                                    <option value=3 text={{ cmp1.state }}>03.0% GST(03%)</option>
-                                     <option value=0 text={{ cmp1.state }}>0.0% GST(0%)</option>
-                                     <option id="ta5${roinc}" value=0 text=" ">Choose</option>
-                                    <option value=28 text=" ">28.0% IGST(28%)</option>
-                                    <option value=18 text=" ">18.0% IGST(18%)</option>
-                                    <option value=12 text=" ">12.0% IGST(12%)</option>
-                                     <option value=5 text=" ">05.0% IGST(05%)</option>
-                                    <option value=3 text=" ">03.0% IGST(03%)</option>
-                                     <option value=0 text=" ">0.0% IGST(0%)</option>
-                                 </select>
+                                <input type="text"  id="select_tax" placeholder="Tax Rate" class="form-control seltax d-flex">
+
+                                <select name='tax1[]' id="tax1${roinc}" class="form-control intra_tax d-none">
+                                    <option selected disabled > Select GST</option>
+                                    <option value=28 >28.0% GST(28%)</option>
+                                    <option value=18 >18.0% GST(18%)</option>
+                                    <option value=12  >12.0% GST(12%)</option>
+                                        <option value=5  >05.0% GST(05%)</option>
+                                    <option value=3  >03.0% GST(03%)</option>
+                                        <option value=0  >0.0% GST(0%)</option>
+                                </select>
+                                <select name='tax2[]' id="tax2${roinc}" class="form-control inter_tax d-none">
+                                    <option selected disabled  >Select IGST</option>
+                                    <option value=28 >28.0% IGST(28%)</option>
+                                    <option value=18 >18.0% IGST(18%)</option>
+                                    <option value=12  >12.0% IGST(12%)</option>
+                                        <option value=5  >05.0% IGST(05%)</option>
+                                    <option value=3  >03.0% IGST(03%)</option>
+                                        <option value=0  >0.0% IGST(0%)</option>
+                                </select>
+                                
                             </td>        
                             <td style="display: none;"><input type="number" step="any" name='taxamount1' id="taxamount1" class="form-control taxamount"></td>
                             <td>
@@ -1361,6 +1394,7 @@
                 );
             });
 
+            
 
             // create customer--------------------------
 
@@ -1586,7 +1620,57 @@
                     
                 });
             });     
+
+            $(document).on("click",".seltax",function(){
                 
+                $(".seltax").removeClass('d-flex');
+                $(".seltax").addClass('d-none');
+
+                console.log($("#plosu").val());
+                console.log($("#cmpstate").val());
+
+                if($("#plosu").val() == $("#cmpstate").val()){
+                    console.log("yes");
+                    $(".inter_tax").removeClass('d-flex');
+                    $(".inter_tax").addClass('d-none');
+
+                    $(".intra_tax").removeClass('d-none');
+                    $(".intra_tax").addClass('d-flex');
+                    
+                }
+                else{
+                    console.log("no");
+                    $(".intra_tax").removeClass('d-flex');
+                    $(".intra_tax").addClass('d-none');
+
+                    $(".inter_tax").removeClass('d-none');
+                    $(".inter_tax").addClass('d-flex');
+                }
+
+            });
+
+            $(document).on('change','#plosu',function()   {
+                $(".seltax").removeClass('d-none');
+                $(".seltax").addClass('d-flex');
+                $(".intra_tax").removeClass('d-flex');
+                $(".intra_tax").addClass('d-none');
+                $(".inter_tax").removeClass('d-flex');
+                $(".inter_tax").addClass('d-none');
+                var bc = document.getElementById("plosu").value;
+                var compstate = document.getElementById("cmpstate").value;
+                if (bc == compstate ) {
+                    document.getElementById('cgst1').style.display = 'flex';
+                    document.getElementById('sgst1').style.display = 'flex';
+                    document.getElementById('igst1').style.display = 'none'; 
+
+                } else {
+                    document.getElementById('cgst1').style.display = 'none';
+                    document.getElementById('sgst1').style.display = 'none';
+                    document.getElementById('igst1').style.display = 'flex';
+
+                }
+                    
+            });
             $(document).on('click','#product1',function(){
                 var place1 = document.getElementById('plosu').value;
                 console.log(place1)
@@ -2339,6 +2423,7 @@
             inventorytrack.style.display = track.checked ? "flex" : "none";
         } 
 
+       
         
     </script>
 {% endblock %}

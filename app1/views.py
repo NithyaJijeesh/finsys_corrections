@@ -37006,9 +37006,19 @@ def create_credit(request):
             hsn = request.POST.getlist("hsn[]")
             quantity = request.POST.getlist("quantity[]")
             price = request.POST.getlist("price[]")
-            tax = request.POST.getlist("tax[]")
+            if request.POST['supply'] == cmp1.state:
+                tax = request.POST.getlist("tax1[]")
+            else:
+                tax = request.POST.getlist("tax2[]")
             discount = request.POST.getlist("discount[]")
             total = request.POST.getlist("total[]")
+            print(items)
+            print(hsn)
+            print(quantity)
+            print(price)
+            print(tax)
+            print(discount)
+            print(total)
 
             pdeb=salescreditnote.objects.get(screditid=pdebit.screditid)
 
@@ -37150,7 +37160,10 @@ def editcreditfun(request,id):
             hsn = request.POST.getlist("hsn[]")
             quantity = request.POST.getlist("quantity[]")
             price = request.POST.getlist("price[]")
-            tax = request.POST.getlist("tax[]")
+            if request.POST['supply'] == cmp1.state:
+                tax = request.POST.getlist("tax1[]")
+            else:
+                tax = request.POST.getlist("tax2[]")
             discount = request.POST.getlist("discount[]")
             total = request.POST.getlist("total[]")
          
