@@ -143,12 +143,12 @@
                                     </tr>
                                     </thead>
                                     <tbody id="items-table-body">
-                                    <tr id='addr0'>
-                                        <td>1</td>
+                                    <tr id='addr01'>
+                                        <td id="nnum1">1</td>
                                         <td style="width: 20%;">
                                             <div class="d-flex">
-                                                <select name='items[]' id="product" class="form-control">
-                                                    <option selected disabled>Choose..</option>
+                                                <select name='items[]' id="product1" class=" product form-control">
+                                                    <option selected disabled>Select Items</option>
                                                     {% for i in item %}
                                                         <option value="{{ i.name }}"> {{ i.name }}
                                                         </option>
@@ -164,7 +164,7 @@
                                         <td>
                                                
                                             <input type="number" name='quantity[]'  style="margin-top: 21px;" placeholder='Enter Qty' id="qty1" class="form-control qty" step=0 min=0>
-                                                <div><span>Available Qty :</span> <span id="qtyspan"class=''></span></div>
+                                                <div><span>Available Qty :</span> <span id="qtyspan1"class=''></span></div>
                                             
 
                                         </td>
@@ -176,7 +176,7 @@
                                         <td>
                                             <input hidden value="{{cmp1.state}}" id="cmpstate">
                                             <input type="text"  id="select_tax" placeholder="Tax Rate" class="form-control seltax d-flex">
-                                            <select name='tax1[]' id="tax1" class="form-control intra_tax d-none">
+                                            <select name='tax1[]' id="tax11" class="form-control tax intra_tax d-none">
                                                 <option selected disabled >Select GST</option>
                                                 <option value=28 >28.0% GST(28%)</option>
                                                 <option value=18 >18.0% GST(18%)</option>
@@ -185,7 +185,7 @@
                                                 <option value=3  >03.0% GST(03%)</option>
                                                  <option value=0  >0.0% GST(0%)</option>
                                             </select>
-                                            <select name='tax2[]' id="tax2" class="form-control inter_tax d-none">
+                                            <select name='tax2[]' id="tax21" class="form-control tax inter_tax d-none">
                                                 <option selected disabled >Select IGST</option>
                                                 <option value=28 >28.0% IGST(28%)</option>
                                                 <option value=18 >18.0% IGST(18%)</option>
@@ -221,10 +221,14 @@
                                         <td>
                                             <input type="number" name='total[]' id="total1" placeholder='0.00' class="form-control total"/>
                                         </td>
+                                        <td>
+                                            <button type="button" id="1" class="btn btn-primary font-weight-bold clone_row fa fa-copy my-1"></button><br>
+                                            <button type="button" id="1" class="btn btn-danger remove_row fa fa-close"></button>
+                                        </td>
                                     </tr>
                                     </tbody>
                                     <tr>
-                                        <td style="border: none;"><a class="btn btn-outline-secondary ml-1" role="button" id="addrow" onclick="add_item_row()">+</a></td>
+                                        <td style="border: none;"><a class="btn btn-outline-secondary ml-1" role="button" id="addrow" >+</a></td>
                                     </tr>
                                 </table>
                             </div>
@@ -752,7 +756,7 @@
                                                             <label for="unit" style="color: white;">Unit
                                                                 </label>
                                                             <div class="d-flex">
-                                                                <select class="custom-select" name="unit" id="unit"
+                                                                <select class="custom-select" name="unit" id="unit_itm"
                                                                         required
                                                                         style="background-color: #2a4964; color: white;">
                                                                         <option selected disabled value="">Choose...</option>
@@ -815,7 +819,7 @@
                                                         <div class="col-md-6 mt-3">
                                                             <label for="hsn" style="color: white;">HSN
                                                                 Code</label>
-                                                        <input type="text" name="hsn" class="form-control" id="hsn"
+                                                        <input type="text" name="hsn" class="form-control" id="hsn_itm"
                                                                    style="background-color: #2a4964; color: white;"
                                                                   
                                                                    placeholder="Enter a valid HSN code" required>
@@ -1076,7 +1080,19 @@
     <script>
        
         $(document).ready(function () {
-            
+            var bc = document.getElementById("plosu").value;
+            var compstate = document.getElementById("cmpstate").value;
+            if (bc == compstate ) {
+                document.getElementById('cgst1').style.display = 'flex';
+                document.getElementById('sgst1').style.display = 'flex';
+                document.getElementById('igst1').style.display = 'none'; 
+
+            } else {
+                document.getElementById('cgst1').style.display = 'none';
+                document.getElementById('sgst1').style.display = 'none';
+                document.getElementById('igst1').style.display = 'flex';
+
+            }
 
             var i = 1;
             $("#add_row").click(function () {
@@ -1085,110 +1101,15 @@
                 $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
                 i++;
             });
-            $(".remove_row").click(function () {
-                if (i > 1) {
-                    $("#addr" + (i - 1)).html('');
-                    i--;
-                }
-                calc();
-            });
-            $('#tab_logic tbody').on('keyup change', function () {
-                calc();
-            });
+            // $(".remove_row").click(function () {
+            //     if (i > 1) {
+            //         $("#addr" + (i - 1)).html('');
+            //         i--;
+            //     }
+            //     calc();
+            // });
+            
 
-            $('#tax').on('keyup change', function () {
-                calc_total();
-            });
-        });
-
-        function calc() {
-            $('#tab_logic tbody tr').each(function () {
-                var html = $(this).html();
-                if (html != '') {
-                    var qty = $(this).find('.qty').val();
-                    var price = $(this).find('.price').val();
-
-                    var dis = $(this).find('.disc').val();
-                    var bc = document.getElementById("plosu").value;
-                    var compstate = document.getElementById("cmpstate").value;
-                    if(bc==compstate){
-                        tax = $(this).find('.intra_tax').val();
-                    }
-                    else{
-                        tax = $(this).find('.inter_tax').val();
-                    }
-                    $(this).find('.total').val((qty * price)-dis);
-                    $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
-                    calc_total();
-                }
-            });
-        }
-
-        function calc_total() {
-             
-            total = 0;
-            $('.total').each(function () {
-                total += parseFloat($(this).val());
-            });
-            taxamount = 0;
-            $('.taxamount').each(function () {
-                taxamount += parseFloat($(this).val());
-            });
-            $('#sub_total').val(total.toFixed(2));
-            $('#tax_amount').val(taxamount.toFixed(2));
-            ship = parseFloat($("#ship").val());
-            // console.log( ship);
-            gtot = taxamount + total + ship;
-            $('#grandtotal').val(gtot.toFixed(2));
-            $('#baldue').val(gtot.toFixed(2));
-
-            test()
-        }
-
-        function test(){
-            console.log(taxamount);
-           
-            var bc = document.getElementById("plosu").value;
-            var compstate = document.getElementById("cmpstate").value;
-            d=0
-            if (bc == compstate  ) {
-                gst = taxamount/2
-                $('#cgst').val(parseFloat(gst.toFixed(2)));
-                $('#sgst').val(parseFloat(gst.toFixed(2)));
-                $('#igst').val(parseFloat(d.toFixed(2)));
-            }
-                
-            if (bc != "{{ cmp1.state }}"  ) {
-                $('#igst').val(taxamount.toFixed(2));
-                $('#cgst').val(d.toFixed(2));
-                $('#sgst').val(d.toFixed(2));
-            }
-        }
-     
-        
-     
-        function showinnum(divId, element) {
-            if (element.value) {
-                document.getElementById(divId).innerHTML = "Debit Note " + element.value;
-            } else {
-                document.getElementById(divId).innerHTML = "Debit Note";
-            }
-        }
-
-        $(document).on('change',"#ship",function(){
-            var subtot = $('#sub_total').val();
-            var tax = $('#tax_amount').val();
-            var sh = $("#ship").val();
-            $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
-            $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
-        });
-
-        $(document).on("change", "#adj", function(){
-            var round = parseFloat($("#grandtotal").val()) + parseFloat($("#adj").val()) 
-            $("#grandtotal").val(round);
-            $('#baldue').val(round);
-        });
-    
         $('#date').val(new Date().toJSON().slice(0,10));
 
         
@@ -1318,20 +1239,23 @@
                 alert(col1);
             });
         });
+
+
      
         $(document).ready(function(){
-            var roinc = 0
+            var roinc = $("#items-table-body tr").length;
             $('#addrow').click(function(){
+
                 roinc++
-             
+                console.log(roinc);
                 
                 $('#items-table-body').append(
                     `
                         <tr id='addr0${roinc}'>
-                            <td>${roinc+1}</td>
+                            <td id = 'nnum${roinc}'>${roinc}</td>
                             <td style="width: 20%;">
                                 <div class="d-flex">
-                                    <select name='items[]' id="product${roinc}" class="form-control">
+                                    <select name='items[]' id="product${roinc}" class = "product form-control" >
                                         <option value=" " selected>Select Item</option>
                                         {% for i in item %}
                                             <option value="{{ i.name }}">{{ i.name }}</option>
@@ -1343,19 +1267,19 @@
                                 </div>
                             </td>
                             <td>
-                                <input type="text" name='hsn[]' id="hsn1${roinc}" placeholder='Enter HSN Code' class="form-control"/>
+                                <input type="text" name='hsn[]' id="hsn${roinc}" placeholder='Enter HSN Code' class="form-control"/>
                             </td>                
-                            <td><input type="number" name='quantity[]' placeholder='Enter Qty' id="qty1" style="margin-top: 21px;" class="form-control qty" step=0 min=0>
+                            <td><input type="number" name='quantity[]' placeholder='Enter Qty' id="qty${roinc}" style="margin-top: 21px;" class="form-control qty" step=0 min=0>
                                 <div><span>Available Qty :</span> <span id="qtyspan${roinc}"class=''></span></div>
                             </td>                
                             <td>
-                                <input type="number" name='price[]' id="unit1${roinc}" placeholder='Enter Unit Price' class="form-control price" step="0.00" min="0">
+                                <input type="number" name='price[]' id="unit${roinc}" placeholder='Enter Unit Price' class="form-control price" step="0.00" min="0">
                             </td>                
                                                             
                             <td>
                                 <input type="text"  id="select_tax" placeholder="Tax Rate" class="form-control seltax d-flex">
 
-                                <select name='tax1[]' id="tax1${roinc}" class="form-control intra_tax d-none">
+                                <select name='tax1[]' id="tax1${roinc}" class="form-control tax intra_tax d-none">
                                     <option selected disabled > Select GST</option>
                                     <option value=28 >28.0% GST(28%)</option>
                                     <option value=18 >18.0% GST(18%)</option>
@@ -1364,7 +1288,7 @@
                                     <option value=3  >03.0% GST(03%)</option>
                                         <option value=0  >0.0% GST(0%)</option>
                                 </select>
-                                <select name='tax2[]' id="tax2${roinc}" class="form-control inter_tax d-none">
+                                <select name='tax2[]' id="tax2${roinc}" class="form-control tax inter_tax d-none">
                                     <option selected disabled  >Select IGST</option>
                                     <option value=28 >28.0% IGST(28%)</option>
                                     <option value=18 >18.0% IGST(18%)</option>
@@ -1380,7 +1304,7 @@
                                 <input type="number" name='discount[]' placeholder='Enter Discount' id="disc${roinc}" class="form-control disc" step=0 min=0>
                             </td>
                             <td>
-                                <input type="number" name='total[]' id="total1" placeholder=0 class="form-control total" value=0 step="any">
+                                <input type="number" name='total[]' id="total${roinc}" placeholder=0 class="form-control total" value=0 step="any">
                             </td>        
 
                             <td>
@@ -1395,7 +1319,165 @@
             });
 
             
+            // calculation---------------------------
 
+            $(document).on('change', '.product',function(){ 
+                
+                console.log('y');
+                var n = $(this).attr("id").slice(7);
+                console.log(n);
+                $.ajax({
+                url: "{% url 'itemdata' %}",
+                type : 'GET',
+                data:{
+                    id : $(this).val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                
+                success: function(response) {
+                    data = response.hsn
+                    data2 = response.qty
+                    data3 = response.price
+                    data4 = response.gst
+                    data5 = response.sgst
+
+                    console.log(data)
+                    
+                    document.getElementById('hsn'+n).value = data;
+                    document.getElementById('qtyspan'+n).innerHTML = data2;
+                    document.getElementById('unit'+n).value = data3;
+
+                },
+                });
+                
+
+            });
+
+            $(document).on('click','.remove_row',function(){
+                var row_id = $(this).attr("id");
+                $('#addr0'+row_id+'').remove();
+                $('#items-table-body #nnum').each(function(index) {
+                    $(this).text(index + 1);
+                });
+                calc();
+            });
+        
+
+            $(document).on('click','.clone_row',function(){
+                var roinc = $("#items-table-body tr").length;
+                var originalRow = $(this).closest('#items-table-body tr'); 
+                var clonedRow = originalRow.clone();
+                clonedRow.find('.product').each(function() {
+                    $(this).val(originalRow.find('.product').val());
+                });
+                clonedRow.find('.intra_tax').each(function() {
+                    $(this).val(originalRow.find('.intra_tax').val());
+                });
+                clonedRow.find('.inter_tax').each(function() {
+                    $(this).val(originalRow.find('.inter_tax').val());
+                });
+                originalRow.after(clonedRow);
+                $('#items-table-body #nnum').each(function(index) {
+                    $(this).text(index + 1);
+                });
+                calc();
+                
+            });
+            $('#items-table-body').on('keyup change', function () {
+                calc();
+            });
+
+            $('#tax').on('keyup change', function () {
+                calc_total();
+            });
+        });
+
+        function calc() {
+            $('#tab_logic tbody tr').each(function () {
+                var html = $(this).html();
+                if (html != '') {
+                    var qty = $(this).find('.qty').val();
+                    var price = $(this).find('.price').val();
+
+                    var dis = $(this).find('.disc').val();
+                    var bc = $("#plosu").val();
+                    var compstate = $("#cmpstate").val();
+                    if(bc==compstate){
+                        tax = $(this).find('.intra_tax').val();
+                    }
+                    else{
+                        tax = $(this).find('.inter_tax').val();
+                    }
+                    $(this).find('.total').val((qty * price)-dis);
+                    $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
+                    calc_total();
+                }
+            });
+        }
+
+        function calc_total() {
+             
+            total = 0;
+            $('.total').each(function () {
+                total += parseFloat($(this).val());
+            });
+            taxamount = 0;
+            $('.taxamount').each(function () {
+                taxamount += parseFloat($(this).val());
+            });
+            $('#sub_total').val(total.toFixed(2));
+            $('#tax_amount').val(taxamount.toFixed(2));
+            ship = parseFloat($("#ship").val());
+            // console.log( ship);
+            gtot = taxamount + total + ship;
+            $('#grandtotal').val(gtot.toFixed(2));
+            $('#baldue').val(gtot.toFixed(2));
+
+            test()
+        }
+
+        function test(){
+                     
+            var bc = $("#plosu").val();
+            var compstate = $("#cmpstate").val();
+            d=0
+            if (bc == compstate  ) {
+                gst = taxamount/2
+                $('#cgst').val(parseFloat(gst.toFixed(2)));
+                $('#sgst').val(parseFloat(gst.toFixed(2)));
+                $('#igst').val(parseFloat(d.toFixed(2)));
+            }
+                
+            if (bc != "{{ cmp1.state }}"  ) {
+                $('#igst').val(taxamount.toFixed(2));
+                $('#cgst').val(d.toFixed(2));
+                $('#sgst').val(d.toFixed(2));
+            }
+
+           
+        }
+        function showinnum(divId, element) {
+            if (element.value) {
+                document.getElementById(divId).innerHTML = "Debit Note " + element.value;
+            } else {
+                document.getElementById(divId).innerHTML = "Debit Note";
+            }
+        }
+
+        $(document).on('change',"#ship",function(){
+            var subtot = $('#sub_total').val();
+            var tax = $('#tax_amount').val();
+            var sh = $("#ship").val();
+            $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
+            $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
+        });
+
+        $(document).on("change", "#adj", function(){
+            var round = parseFloat($("#grandtotal").val()) + parseFloat($("#adj").val()) 
+            $("#grandtotal").val(round);
+            $('#baldue').val(round);
+        });
+    
             // create customer--------------------------
 
         $(document).on("click", "#customerSave", function(){
@@ -1501,8 +1583,8 @@
             data:{
                 type : $("#type").val(),
                 name : $("#item_name").val(),
-                unit : $("#unit").val(),
-                hsn : $("#hsn").val(),
+                unit : $("#unit_itm").val(),
+                hsn : $("#hsn_itm").val(),
                 taxref : tax,
                 sell_price : $("#saleprice").val(),
                 cost_price : $("#purprice").val(),
@@ -1537,7 +1619,7 @@
             csrfmiddlewaretoken: '{{ csrf_token }}',
 
             success: function(data) {
-                var dropdown = $('#product');
+                var dropdown = $('.product');
                 dropdown.empty();
                 dropdown.append(`<option selected>Select Item</option>`);
                 $.each(data, function(key, value) {
@@ -1580,47 +1662,47 @@
                 var row_id = $(this).attr("id");
                 $('#addr0'+row_id+'').remove();
             });
-            var place = document.getElementById('plosu').value;
-              $(document).on('click','#product',function(){
 
-                select = $('#product').val();
-                console.log(select)
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
+            
+            // $(document).on('click','#product1',function(){
+            //     var place = document.getElementById('plosu').value;
+            //     select = $('#product1').val();
+            //     console.log(select)
+            //     $.ajax({
+            //         type: "GET",
+            //         url: "{% url 'itemdata' %}",
+            //         data: {
+            //             id: select
+            //         },
                     
-                    },
-                    
-                    
-                    success:function(response){
-                             data = response.hsn
-                            data2 = response.qty
-                            data3 = response.price
-                            data4 = response.gst
-                            data5 = response.sgst
+            //         success:function(response){
+            //                  data = response.hsn
+            //                 data2 = response.qty
+            //                 data3 = response.price
+            //                 data4 = response.gst
+            //                 data5 = response.sgst
                             
-                            document.getElementById('hsn1').value = data;
-                            document.getElementById('qtyspan').innerHTML = data2;
-                            document.getElementById('unit1').value = data3;
+            //                 document.getElementById('hsn1').value = data;
+            //                 document.getElementById('qtyspan1').innerHTML = data2;
+            //                 document.getElementById('unit1').value = data3;
 
                        
                             
-                            if (place == '{{ cmp1.state }}'){
-                                document.getElementById('ta1').innerHTML = data4 + ' % GST';
-                                document.getElementById('ta1').value=data4;
-                            } 
-                            else{
-                                document.getElementById('ta5').innerHTML  = data5 + ' % IGST';
-                                document.getElementById('ta5').value=data5;
-                            }
+            //                 if (place == '{{ cmp1.state }}'){
+            //                     document.getElementsByClassName('intra_tax').innerHTML = data4 + ' % GST';
+            //                     document.getElementsByClassName('intra_tax').value=data4;
+            //                 } 
+            //                 else{
+            //                     document.getElementsByClassName('inter_tax').innerHTML  = data5 + ' % IGST';
+            //                     document.getElementsByClassName('inter_tax').value=data5;
+            //                 }
                             
-                        }
+            //             }
                     
-                });
-            });     
+            //     });
+            // });     
 
+            
             $(document).on("click",".seltax",function(){
                 
                 $(".seltax").removeClass('d-flex');
@@ -1670,602 +1752,6 @@
 
                 }
                     
-            });
-            $(document).on('click','#product1',function(){
-                var place1 = document.getElementById('plosu').value;
-                console.log(place1)
-                select = $('#product1').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                            console.log(response)
-                            data = response.hsn
-                            data2 = response.qty
-                            data3 = response.price
-                            data4 = response.gst
-                            data5 = response.sgst
-                            document.getElementById('hsn11').value = data
-                            document.getElementById('qtyspan1').innerHTML = data2;
-                              
-                            document.getElementById('unit11').value = data3
-                            if (place1 == '{{ cmp1.state }}')
-                            {
-                                document.getElementById('ta11').innerHTML = data4 + ' % GST';
-                                document.getElementById('ta11').value=data4
-                            }
-                            else{
-                                document.getElementById('ta51').innerHTML  = data5 + ' % IGST';
-                                document.getElementById('ta51').value=data5
-                            }
-                            // if (data2<1)
-                            // {                      
-                                // document.getElementById('qtyspan1').style.color="red";
-                            // }
-                            // else{
-                                // pass;
-                            // }
-                        }
-                    });
-                
-            });
-
-            $(document).on('click','#product2',function(){
-                select = $('#product2').val();
-                
-                $.ajax({
-                    
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    
-                    success:function(response){
-                        
-                        console.log(response)
-                        data = response.hsn
-                        data1 = response.qty
-                        data2 = response.price
-                        data3 = response.gst
-                        data4 = response.sgst
-                        
-                        document.getElementById('hsn12').value = data
-                        document.getElementById('qtyspan2').innerHTML = data1;
-                        document.getElementById('unit12').value = data2            
-                        if (place == '{{ cmp1.state }}')
-                        {   
-                            
-                            
-                            document.getElementById('ta12').innerHTML = data3 + ' % GST';
-                            document.getElementById('ta12').value=data3
-                        } 
-                        document.getElementById('ta52').innerHTML  = data4 + ' % IGST';
-                        document.getElementById('ta52').value=data4
-                        
-                    }
-                });
-            });
-
-            $(document).on('click','#product3',function(){
-                select = $('#product3').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data1 = response.qty
-                        data2 = response.price
-                        data3 = response.gst
-                        data4 = response.sgst
-                        document.getElementById('hsn13').value = data
-                        document.getElementById('qtyspan3').innerHTML = data1;
-                        document.getElementById('unit13').value = data2
-                        if (place == '{{ cmp1.state }}')
-                        {
-                            document.getElementById('ta13').innerHTML = data3 + ' % GST';
-                            document.getElementById('ta13').value=data3
-                        }          
-                        document.getElementById('ta53').innerHTML  = data4 + ' % IGST';
-                        document.getElementById('ta53').value=data4
-                    }
-                });
-            });
-            
-            $(document).on('click','#product4',function(){
-                select = $('#product4').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst
-                        document.getElementById('hsn14').value = data
-                        document.getElementById('qtyspan4').innerHTML = data2;
-                        document.getElementById('unit14').value = data3
-                        if (place == '{{ cmp1.state }}')
-                        {
-                            document.getElementById('ta14').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta14').value=data4
-                        } 
-                        document.getElementById('ta54').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta54').value=data5       
-                    }
-                });          
-            });
-
-            $(document).on('click','#product5',function(){
-                select = $('#product5').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst
-                        document.getElementById('hsn15').value = data
-                        document.getElementById('qtyspan5').innerHTML = data2;
-                        document.getElementById('unit15').value = data3
-                        if (place == '{{ cmp1.state }}'){
-                            document.getElementById('ta15').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta15').value=data4
-                        }    
-                        document.getElementById('ta55').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta55').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product6',function(){
-                select = $('#product6').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst
-                        document.getElementById('hsn16').value = data
-                        document.getElementById('qtyspan6').innerHTML = data2;
-                        document.getElementById('unit16').value = data3
-                        if (place == '{{ cmp1.state }}'){
-                            document.getElementById('ta16').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta16').value=data4
-                        } 
-                        document.getElementById('ta56').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta56').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product7',function(){
-                select = $('#product7').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn  
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst
-                        document.getElementById('hsn17').value = data 
-                        document.getElementById('qtyspan7').innerHTML = data2;
-                        document.getElementById('unit17').value = data3
-                        if (place == '{{ cmp1.state }}'){
-                            document.getElementById('ta17').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta17').value=data4
-                        } 
-                        document.getElementById('ta57').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta57').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product8',function(){
-                select = $('#product8').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst        
-                        document.getElementById('hsn18').value = data        
-                        document.getElementById('qtyspan8').innerHTML = data2;
-                        document.getElementById('unit18').value = data3
-                        if (place == '{{ cmp1.state }}'){
-                            document.getElementById('ta18').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta18').value=data4
-                        }         
-                        document.getElementById('ta58').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta58').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product9',function(){
-                select = $('#product9').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                                console.log(response)
-                                data = response.hsn
-                                
-                                data2 = response.qty
-                                data3 = response.price
-                                data4 = response.gst
-                        data5 = response.sgst       
-                        document.getElementById('hsn19').value = data   
-                        document.getElementById('qtyspan9').innerHTML = data2;
-                        document.getElementById('unit19').value = data3        
-                        if (place == '{{ cmp1.state }}'){
-                            document.getElementById('ta19').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta19').value=data4
-                        }         
-                        document.getElementById('ta59').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta59').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product10',function(){
-                select = $('#product10').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst       
-                        document.getElementById('hsn110').value = data
-                        document.getElementById('qtyspan10').innerHTML = data2;
-                        document.getElementById('unit110').value = data3        
-                        if (place == '{{ cmp1.state }}'){
-                            document.getElementById('ta110').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta110').value=data4    
-                        }         
-                        document.getElementById('ta510').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta510').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product11',function(){
-                select = $('#product11').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst                      
-                        document.getElementById('hsn111').value = data
-                        document.getElementById('qtyspan11').innerHTML = data2;
-                        document.getElementById('unit111').value = data3        
-                        if (place == '{{ cmp1.state }}'){
-                            document.getElementById('ta111').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta111').value=data4
-                        }         
-                        document.getElementById('ta511').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta511').value=data5        
-                    }
-                });
-            });
-
-            $(document).on('click','#product12',function(){
-                select = $('#product12').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst
-                        document.getElementById('hsn112').value = data
-                        document.getElementById('qtyspan12').innerHTML = data2;
-                        document.getElementById('unit112').value = data3
-                        if (place == '{{ cmp1.state }}')
-                        {
-                            document.getElementById('ta112').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta112').value=data4
-                        } 
-                        document.getElementById('ta512').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta512').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product13',function(){
-                select = $('#product13').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst       
-                        document.getElementById('hsn113').value = data
-                        document.getElementById('qtyspan13').innerHTML = data2;
-                        document.getElementById('unit113').value = data3        
-                        if (place == '{{ cmp1.state }}')
-                        {
-                            document.getElementById('ta113').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta113').value=data4
-                        }        
-                        document.getElementById('ta513').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta513').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product14',function(){
-                select = $('#product14').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst       
-                        document.getElementById('hsn114').value = data
-                        document.getElementById('qtyspan14').innerHTML = data2;
-                        document.getElementById('unit114').value = data3        
-                        if (place == '{{ cmp1.state }}')
-                        {
-                            document.getElementById('ta114').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta114').value=data4
-                        }        
-                        document.getElementById('ta514').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta514').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product15',function(){
-                select = $('#product15').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data1 = response.desp
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst
-                        document.getElementById('hsn115').value = data
-                        document.getElementById('description15').value = data1
-                        document.getElementById('qtyspan15').innerHTML = data2;
-                        document.getElementById('unit115').value = data3
-                        if (place == '{{ cmp1.state }}'){
-                            document.getElementById('ta115').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta115').value=data4
-                        } 
-                        document.getElementById('ta515').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta515').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product16',function(){
-                select = $('#product16').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst        
-                        document.getElementById('hsn116').value = data
-                        document.getElementById('qtyspan16').innerHTML = data2;
-                        document.getElementById('unit116').value = data3        
-                        if (place == '{{ cmp1.state }}')
-                        {
-                            document.getElementById('ta116').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta116').value=data4
-                        }        
-                        document.getElementById('ta516').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta516').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product17',function(){
-                select = $('#product17').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst
-                        document.getElementById('hsn117').value = data
-                        document.getElementById('qtyspan17').innerHTML = data2;
-                        document.getElementById('unit117').value = data3
-                        if (place == '{{ cmp1.state }}')
-                        {
-                            document.getElementById('ta117').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta117').value=data4
-
-                        } 
-                        document.getElementById('ta517').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta517').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product18',function(){
-                select = $('#product18').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst        
-                        document.getElementById('hsn118').value = data
-                        document.getElementById('qtyspan18').innerHTML = data2;
-                        document.getElementById('unit118').value = data3        
-                        if (place == '{{ cmp1.state }}')
-                        {
-                            document.getElementById('ta118').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta118').value=data4
-                        }         
-                        document.getElementById('ta518').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta518').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product19',function(){
-                select = $('#product19').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                            console.log(response)
-                            data = response.hsn
-                            data2 = response.qty
-                            data3 = response.price
-                            data4 = response.gst
-                            data5 = response.sgst   
-                            document.getElementById('hsn119').value = data
-                            document.getElementById('qtyspan19').innerHTML = data2;
-                            document.getElementById('unit119').value = data3        
-                        if (place == '{{ cmp1.state }}')
-                        {
-                            document.getElementById('ta119').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta119').value=data4
-                        }         
-                        document.getElementById('ta519').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta519').value=data5
-                    }
-                });
-            });
-
-            $(document).on('click','#product120',function(){
-                select = $('#product120').val();
-                $.ajax({
-                    type: "GET",
-                    url: "{% url 'itemdata' %}",
-                    data: {
-                    id: select
-                    },
-                    success:function(response){
-                        console.log(response)
-                        data = response.hsn
-                        data2 = response.qty
-                        data3 = response.price
-                        data4 = response.gst
-                        data5 = response.sgst
-                        document.getElementById('hsn120').value = data
-                        document.getElementById('qtyspan20').innerHTML = data2;
-                        document.getElementById('unit120').value = data3
-                        if (place == '{{ cmp1.state }}')
-                        {
-                            document.getElementById('ta120').innerHTML = data4 + ' % GST';
-                            document.getElementById('ta120').value=data4
-                        } 
-                        document.getElementById('ta520').innerHTML  = data5 + ' % IGST';
-                        document.getElementById('ta520').value=data5
-                    }
-                });
             });
             
         });

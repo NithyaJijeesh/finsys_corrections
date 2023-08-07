@@ -1105,6 +1105,23 @@
                 }
                 calc();
             });
+            $(document).on('click','.remove_row',function(){
+                var row_id = $(this).attr("id");
+                $('#addr0'+row_id+'').remove();
+                calc();
+            });
+
+            $(document).ready(function() {
+                $('.clone_row').click(function() {
+                    var originalRow = $(this).closest('tr');
+                    var clonedRow = originalRow.clone();
+
+                    clonedRow.find('input').val('');
+
+                    originalRow.after(clonedRow);
+                });
+                calc();
+            });
             $('#tab_logic tbody').on('keyup change', function () {
                 calc();
             });
@@ -1603,10 +1620,7 @@
             });
 
 
-            $(document).on('click','.remove_row',function(){
-                var row_id = $(this).attr("id");
-                $('#addr0'+row_id+'').remove();
-            });
+          
             var place = document.getElementById('plosu').value;
               $(document).on('click','#product',function(){
 
