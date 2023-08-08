@@ -144,7 +144,7 @@
                                     </thead>
                                     <tbody id="items-table-body">
                                     <tr id='addr01'>
-                                        <td id="nnum1">1</td>
+                                        <td class="nnum">1</td>
                                         <td style="width: 20%;">
                                             <div class="d-flex">
                                                 <select name='items[]' id="product1" class=" product form-control">
@@ -194,22 +194,7 @@
                                                 <option value=3  >03.0% IGST(03%)</option>
                                                  <option value=0  >0.0% IGST(0%)</option>
                                             </select>
-                                            <!-- <select name='tax[]' id="tax1" class="form-control tax">
-                                                 <option id="ta1" value=0 text={{ cmp1.state }}>Choose</option>
-                                                <option value=28 text={{ cmp1.state }}>28.0% GST(28%)</option>
-                                                <option value=18 text={{ cmp1.state }}>18.0% GST(18%)</option>
-                                                <option value=12 text={{ cmp1.state }}>12.0% GST(12%)</option>
-                                                 <option value=5 text={{ cmp1.state }}>05.0% GST(05%)</option>
-                                                <option value=3 text={{ cmp1.state }}>03.0% GST(03%)</option>
-                                                 <option value=0 text={{ cmp1.state }}>0.0% GST(0%)</option>
-                                                  <option id="ta5" value=0 text=' '>Choose</option>
-                                                <option value=28 text=' '>28.0% IGST(28%)</option>
-                                                <option value=18 text= ' '>18.0% IGST(18%)</option>
-                                                <option value=12 text=" ">12.0% IGST(12%)</option>
-                                                 <option value=5 text=" ">05.0% IGST(05%)</option>
-                                                <option value=3 text=" ">03.0% IGST(03%)</option>
-                                                 <option value=0 text=" ">0.0% IGST(0%)</option>
-                                              </select> -->
+                                          
                                         </td>
 
                                         <td style="display: none;">
@@ -222,7 +207,7 @@
                                             <input type="number" name='total[]' id="total1" placeholder='0.00' class="form-control total"/>
                                         </td>
                                         <td>
-                                            <button type="button" id="1" class="btn btn-primary font-weight-bold clone_row fa fa-copy my-1"></button><br>
+                                            <button type="button" id="1" class="btn btn-primary font-weight-bold clone_row fa fa-copy my-1" style="background-color:rgb(41, 104, 69);"></button><br>
                                             <button type="button" id="1" class="btn btn-danger remove_row fa fa-close"></button>
                                         </td>
                                     </tr>
@@ -1243,16 +1228,17 @@
 
      
         $(document).ready(function(){
-            var roinc = $("#items-table-body tr").length;
+            
             $('#addrow').click(function(){
-
-                roinc++
-                console.log(roinc);
+                var roinc = $("#items-table-body tr").length;
+                // console.log(roinc)
+                roinc++;
+                // console.log(roinc);
                 
                 $('#items-table-body').append(
                     `
                         <tr id='addr0${roinc}'>
-                            <td id = 'nnum${roinc}'>${roinc}</td>
+                            <td class = 'nnum'>${roinc}</td>
                             <td style="width: 20%;">
                                 <div class="d-flex">
                                     <select name='items[]' id="product${roinc}" class = "product form-control" >
@@ -1299,7 +1285,7 @@
                                 </select>
                                 
                             </td>        
-                            <td style="display: none;"><input type="number" step="any" name='taxamount1' id="taxamount1" class="form-control taxamount"></td>
+                            <td style="display: none;"><input type="number" step="any" name='taxamount1' id="taxamount${roinc}" class="form-control taxamount"></td>
                             <td>
                                 <input type="number" name='discount[]' placeholder='Enter Discount' id="disc${roinc}" class="form-control disc" step=0 min=0>
                             </td>
@@ -1308,7 +1294,7 @@
                             </td>        
 
                             <td>
-                                <button type="button" id="${roinc}" class="btn btn-primary font-weight-bold clone_row fa fa-copy my-1"></button><br>
+                                <button type="button" id="${roinc}" class="btn  font-weight-bold clone_row fa fa-copy my-1" style="background-color:rgb(41, 104, 69);"></button><br>
                                 <button type="button" id="${roinc}" class="btn btn-danger remove_row fa fa-close"></button>
                             </td>
                             
@@ -1323,9 +1309,9 @@
 
             $(document).on('change', '.product',function(){ 
                 
-                console.log('y');
+                // console.log('y');
                 var n = $(this).attr("id").slice(7);
-                console.log(n);
+                // console.log(n);
                 $.ajax({
                 url: "{% url 'itemdata' %}",
                 type : 'GET',
@@ -1355,10 +1341,9 @@
 
             $(document).on('click','.remove_row',function(){
                 var row_id = $(this).attr("id");
+                // console.log(row_id);
                 $('#addr0'+row_id+'').remove();
-                $('#items-table-body #nnum').each(function(index) {
-                    $(this).text(index + 1);
-                });
+                
                 calc();
             });
         
@@ -1367,6 +1352,19 @@
                 var roinc = $("#items-table-body tr").length;
                 var originalRow = $(this).closest('#items-table-body tr'); 
                 var clonedRow = originalRow.clone();
+
+                // var newId = parseInt(clonedRow.attr('id').replace('addr0', ''))+1;
+                clonedRow.attr('id', 'addr0' +(roinc+1));
+
+                clonedRow.find('.nnum').text(roinc+1);
+
+                clonedRow.find('[id]').each(function() {
+                    var oldId = $(this).attr('id');
+                    var newId = oldId.replace(/\d+/, roinc+1);
+                    console.log(newId)
+                    $(this).attr('id', newId );
+                });
+
                 clonedRow.find('.product').each(function() {
                     $(this).val(originalRow.find('.product').val());
                 });
@@ -1377,9 +1375,7 @@
                     $(this).val(originalRow.find('.inter_tax').val());
                 });
                 originalRow.after(clonedRow);
-                $('#items-table-body #nnum').each(function(index) {
-                    $(this).text(index + 1);
-                });
+                
                 calc();
                 
             });

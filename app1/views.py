@@ -37012,13 +37012,7 @@ def create_credit(request):
                 tax = request.POST.getlist("tax2[]")
             discount = request.POST.getlist("discount[]")
             total = request.POST.getlist("total[]")
-            print(items)
-            print(hsn)
-            print(quantity)
-            print(price)
-            print(tax)
-            print(discount)
-            print(total)
+          
 
             pdeb=salescreditnote.objects.get(screditid=pdebit.screditid)
 
