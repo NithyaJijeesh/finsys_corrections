@@ -26565,6 +26565,69 @@ def goestimate(request):
     }
     return render(request,'app1/goestimate.html',context)
 
+def est_num_asc(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    est1 = estimate.objects.filter(cid=cmp1).order_by("estimateno")
+    context = {
+        'est1' :est1,
+        'cmp1': cmp1
+
+    }
+    return render(request,'app1/goestimate.html',context)
+
+def est_num_desc(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    est1 = estimate.objects.filter(cid=cmp1).order_by("-estimateno")
+
+    context = {
+        'est1' :est1,
+        'cmp1': cmp1
+
+    }
+    return render(request,'app1/goestimate.html',context)
+
+def est_cust_asc(request):
+
+    cmp1 = company.objects.get(id=request.session["uid"])
+    est1 = estimate.objects.filter(cid=cmp1).order_by("customer")
+    context = {
+        'est1' :est1,
+        'cmp1': cmp1
+
+    }
+    return render(request,'app1/goestimate.html',context)
+def est_cust_desc(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    est1 = estimate.objects.filter(cid=cmp1).order_by("-customer")
+
+    context = {
+        'est1' :est1,
+        'cmp1': cmp1
+
+    }
+    return render(request,'app1/goestimate.html',context)
+
+def est_date_asc(request):
+    cmp = company.objects.get(id=request.session["uid"])
+    est1 = estimate.objects.filter(cid=cmp).order_by("estimatedate")
+
+    context = {
+        'est1' :est1,
+        'cmp1': cmp
+
+    }
+    return render(request,'app1/goestimate.html',context)
+def est_date_desc(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    est1 = estimate.objects.filter(cid=cmp1).order_by("-estimatedate")
+
+    context = {
+        'est1' :est1,
+        'cmp1': cmp1
+
+    }
+    return render(request,'app1/goestimate.html',context)
+
 @login_required(login_url='regcomp')
 def estindex2(request):
     try:
@@ -36931,6 +36994,57 @@ def credit_note(request):
         p['cust'] = cust
     return render(request,'app1/credit_note.html',{'cmp1': cmp1,'pdebit':pdebit})
 
+def credit_num_asc(request):
+    cmp1 = company.objects.get(id=request.session['uid'])
+    pdebit = salescreditnote.objects.filter(cid=cmp1).order_by('credit_no').values() 
+    for p in pdebit:
+        cust = " " . join(p['customer'].split(" ")[1:])
+        p['cust'] = cust
+    return render(request,'app1/credit_note.html',{'cmp1': cmp1,'pdebit':pdebit})
+
+def credit_num_desc(request):
+    cmp1 = company.objects.get(id=request.session['uid'])
+    pdebit = salescreditnote.objects.filter(cid=cmp1).order_by('-credit_no').values() 
+    for p in pdebit:
+        cust = " " . join(p['customer'].split(" ")[1:])
+        p['cust'] = cust
+    return render(request,'app1/credit_note.html',{'cmp1': cmp1,'pdebit':pdebit})
+
+def credit_cust_asc(request):
+    cmp1 = company.objects.get(id=request.session['uid'])
+    pdebit = salescreditnote.objects.filter(cid=cmp1).order_by('customer').values() 
+    for p in pdebit:
+        cust = " " . join(p['customer'].split(" ")[1:])
+        p['cust'] = cust
+    return render(request,'app1/credit_note.html',{'cmp1': cmp1,'pdebit':pdebit})
+
+def credit_cust_desc(request):
+    cmp1 = company.objects.get(id=request.session['uid'])
+    pdebit = salescreditnote.objects.filter(cid=cmp1).order_by('-customer').values() 
+    for p in pdebit:
+        cust = " " . join(p['customer'].split(" ")[1:])
+        p['cust'] = cust
+    return render(request,'app1/credit_note.html',{'cmp1': cmp1,'pdebit':pdebit})
+
+def credit_date_asc(request):
+    cmp1 = company.objects.get(id=request.session['uid'])
+    pdebit = salescreditnote.objects.filter(cid=cmp1).order_by('creditdate').values() 
+    for p in pdebit:
+        cust = " " . join(p['customer'].split(" ")[1:])
+        p['cust'] = cust
+    return render(request,'app1/credit_note.html',{'cmp1': cmp1,'pdebit':pdebit})
+
+def credit_date_desc(request):
+    cmp1 = company.objects.get(id=request.session['uid'])
+    pdebit = salescreditnote.objects.filter(cid=cmp1).order_by('-creditdate').values() 
+    for p in pdebit:
+        cust = " " . join(p['customer'].split(" ")[1:])
+        p['cust'] = cust
+    return render(request,'app1/credit_note.html',{'cmp1': cmp1,'pdebit':pdebit})
+
+
+    
+
 def addpurchasecredit(request):
     if 'uid' in request.session:
         if request.session.has_key('uid'):
@@ -36985,7 +37099,7 @@ def create_credit(request):
         cmp1 = company.objects.get(id=request.session['uid'])
         if request.method == 'POST':
             debit_no = '1000'
-            
+            print(request.POST.get('note'))
             pdebit = salescreditnote(customer =request.POST['customer'],
                                         address = request.POST['address'],
                                         email=request.POST['email'],
@@ -36996,6 +37110,7 @@ def create_credit(request):
                                         taxamount=request.POST['taxamount'],
                                         shipping_charge = request.POST.get('ship'),
                                         grandtotal=request.POST['grandtotal'],
+                                        description=request.POST.get('note'),
                                         cid=cmp1
                                 )
             pdebit.save()
@@ -37047,9 +37162,11 @@ def viewcredit(request,id):
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
         pcrd=salescreditnote.objects.get(screditid=id)
+        print(pcrd.customer.split(" ")[0])
+        cust = customer.objects.get(customerid = pcrd.customer.split(" ")[0])
         pcrd1 = salescreditnote1.objects.all().filter(scredit=id)
-        print("sdfdfds")
-        return render(request,'app1/viewcreditnote.html',{'cmp1': cmp1,'pcrd':pcrd,'pdeb':pcrd1})
+        # print("sdfdfds")
+        return render(request,'app1/viewcreditnote.html',{'cmp1': cmp1,'pcrd':pcrd,'pdeb':pcrd1, 'cust' : cust})
     return redirect('credit_note')
 
 def render_pdf_credit(request,id):
@@ -37135,6 +37252,7 @@ def editcreditfun(request,id):
             subtotal=request.POST['subtotal']
             taxamount=request.POST['taxamount']
             grandtotal=request.POST['grandtotal']
+            description=request.POST.get('note'),
             pdebt=salescreditnote.objects.get(screditid=id)
             pdebt.customer = vendor
             pdebt.address = address
@@ -39118,5 +39236,69 @@ def editpl(request,pk):
         return redirect('pricelist_viewpage',pk=pl.id)
 
 
-        
+@login_required(login_url='regcomp')
+def gocustomers_asc(request):
+
+    try:
+        cmp1 = company.objects.get(id=request.session["uid"])
+        custo = customer.objects.filter(cid=cmp1).order_by('firstname', 'lastname')
+
+        for i in custo:
+            custname = i.firstname + " " + i.lastname
+            
+            statment = cust_statment.objects.filter(customer=custname, cid=cmp1)
+            debit = 0
+            credit = 0
+            total1 = 0
+            
+            for j in statment:
+                if j.Amount:
+                    debit += j.Amount
+                if j.Payments:
+                    credit += j.Payments
+
+            total1 = debit - credit
+            print(total1)
+            i.receivables = total1
+            i.save()
+
+        context = {'customers': custo, 'cmp1': cmp1}
+        return render(request, 'app1/customers.html', context)
+    except:
+        return redirect('godash')
+
+    
+@login_required(login_url='regcomp')
+def gocustomers_desc(request):
+
+    try:
+        cmp1 = company.objects.get(id=request.session["uid"])
+        custo = customer.objects.filter(cid=cmp1).order_by('-firstname', '-lastname')
+
+        for i in custo:
+            custname = i.firstname + " " + i.lastname
+            
+            statment = cust_statment.objects.filter(customer=custname, cid=cmp1)
+            debit = 0
+            credit = 0
+            total1 = 0
+            
+            for j in statment:
+                if j.Amount:
+                    debit += j.Amount
+                if j.Payments:
+                    credit += j.Payments
+
+            total1 = debit - credit
+            print(total1)
+            i.receivables = total1
+            i.save()
+
+        context = {'customers': custo, 'cmp1': cmp1}
+        return render(request, 'app1/customers.html', context)
+    except:
+        return redirect('godash')
+
+
+
 

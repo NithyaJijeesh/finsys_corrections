@@ -947,6 +947,22 @@ urlpatterns = [
     path('cust_dropdown',views.cust_dropdown,name='cust_dropdown'),
     path('credit_item', views.credit_item, name='credit_item'),
     path('item_dropdown', views.item_dropdown, name='item_dropdown'),
-    path('cust_details', views.cust_details, name='cust_details')
+    path('cust_details', views.cust_details, name='cust_details'),
+    
+    path('gocustomers_asc', views.gocustomers_asc, name='gocustomers_asc'),
+    path('gocustomers_desc', views.gocustomers_desc, name='gocustomers_desc'),
+    path('credit_num_asc', views.credit_num_asc, name='credit_num_asc'),
+    path('credit_num_desc', views.credit_num_desc, name='credit_num_desc'),
+    path('credit_cust_asc', views.credit_cust_asc, name='credit_cust_asc'),
+    path('credit_cust_desc', views.credit_cust_desc, name='credit_cust_desc'),
+    path('credit_date_asc', views.credit_date_asc, name='credit_date_asc'),
+    path('credit_date_desc', views.credit_date_desc, name='credit_date_desc'),
+
+    path('est_num_asc', views.est_num_asc, name='est_num_asc'),
+    path('est_num_desc', views.est_num_desc, name='est_num_desc'),
+    path('est_cust_asc', views.est_cust_asc, name='est_cust_asc'),
+    path('estcredit_cust_desc', views.est_cust_desc, name='est_cust_desc'),
+    path('est_date_asc', views.est_date_asc, name='est_date_asc'),
+    path('est_date_desc', views.est_date_desc, name='est_date_desc'),
 
 ]

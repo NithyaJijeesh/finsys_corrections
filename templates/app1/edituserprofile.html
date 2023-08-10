@@ -150,6 +150,7 @@
                                     <option value="Registered Business - Composition">Registered Business - Composition (Business that is registered under composition scheme in gst)</option>
                                     <option value="unregistered Business">Unregistered Business (Business that has not been registered under gst)</option>
                                     <option value="Overseas">Overseas (Import/Export of supply outside india)</option>
+                                    <option value="Consumer">Consumer</option>
                                     <option value="Special Economic Zone (SEZ)">Special Economic Zone (SEZ) (Business that is located in a special economic zone of india or a SEZ developer)</option>
                                     <option value="Demed Exports">Demed Exports (Supply of woods to an exports oriented unit or againsed advanced authorization or export promotion capital woods)</option>
                                     <option value="Tax Deductor">Tax Deductor (State of central gov,government agencies or local authority)</option>
@@ -233,26 +234,30 @@
 
     <script>
         $(document).ready(function() {
-    $("#gsttype").change(function() {
-      var x=$('#gsttype').val();
-      if(x=="unregistered Business") 
-      {
-        $(".gstrow").removeClass('d-block');
-        $(".gstrow").addClass('d-none');
+            $("#gsttype").change(function() {
+            var x=$('#gsttype').val();
+            if(x=="unregistered Business") 
+            {
+                $(".gstrow").removeClass('d-block');
+                $(".gstrow").addClass('d-none');
 
-      }
-      else if(x == 'Overseas'){
-        $(".gstrow").removeClass('d-block');
-        $(".gstrow").addClass('d-none');
-      }
-      else 
-      {
-        $(".gstrow").removeClass('d-none');
-        $(".gstrow").addClass('d-block');
-      }
-    
-    });
-  });
+            }
+            else if(x == 'Overseas'){
+                $(".gstrow").removeClass('d-block');
+                $(".gstrow").addClass('d-none');
+            }
+            else if(x == 'Consumer'){
+                $(".gstrow").removeClass('d-block');
+                $(".gstrow").addClass('d-none');
+            }
+            else 
+            {
+                $(".gstrow").removeClass('d-none');
+                $(".gstrow").addClass('d-block');
+            }
+            
+            });
+        });
 
 
     $(document).ready(function() {

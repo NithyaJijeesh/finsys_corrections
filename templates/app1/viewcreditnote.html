@@ -289,7 +289,7 @@
                                 </div>
                                 <div class="col-5">
                                     <p>INVOICE TO,</p>
-                                    <h5>{{pcrd.customer}}</h5>
+                                    <h5>{{cust.title}} {{cust.firstname}} {{cust.lastname}}</h5>
                                     <p class="address col-6" style="margin-left: -14px;" > {{ pcrd.address}} </p>   
                                 </div>
                             </div>
@@ -316,6 +316,7 @@
                                     <td>Quantity</td>
                                     <td>Rate</td>
                                     <td>Tax</td>
+                                    <td>Discount</td>
                                     <td>Total</td>
                                 </tr>
                             </thead>
@@ -327,6 +328,7 @@
                                         <td class="text-center" style="color:#000">{{ pordr.quantity }}</td>
                                         <td class="text-center" style="color:#000">{{ pordr.price  }}</td>
                                         <td class="text-center" style="color:#000">{{ pordr.tax  }}%</td>
+                                        <td class="text-center" style="color:#000">{{ pordr.discount|default:0}}</td>
                                         <td class="text-center" style="color:#000">{{ pordr.total }}</td>
                                     </tr>
                                 {% endfor %} 
@@ -338,7 +340,7 @@
                         <div class="row">
                             <div class="col-8">
                                 <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
-                                <p style="color:black">{{pcrd.note}}</p>
+                                <p style="color:black" class="p-2">{{pcrd.description}}</p>
                             </div>
                             <div class="col-4">
                                 <table class="table border-0 table-hover">
@@ -346,10 +348,34 @@
                                         <td style="color:black">Sub Total :</td>
                                         <td style="color:black">{{pcrd.subtotal}}</td>
                                     </tr>
+                                    <tr class="d-none" >
+                                        <td id="cmp">
+                                            {{cmp1.state}}
+                                        </td>
+                                        <td id="sply">
+                                            {{pcrd.supply}}
+                                        </td>
+                                    </tr>
+                                    <tr class="igstrow d-none" >
+                                        <td style="color:black">IGST</td>
+                                        <td style="color:black" id="igst">{{pcrd.taxamount}}</td>
+                                    </tr>
+                                    <tr class="gstrow d-none">
+                                        <td style="color:black">CGST</td>
+                                        <td style="color:black" id="cgst"></td>
+                                    </tr>
+                                    <tr class="gstrow d-none">
+                                        <td style="color:black">SGST</td>
+                                        <td style="color:black" id="sgst"></td>
+                                    </tr>
                                
                                     <tr>
                                         <td style="color:black">Tax Amount</td>
                                         <td style="color:black">{{pcrd.taxamount}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:black">Shpping Charge</td>
+                                        <td style="color:black">{{pcrd.shipping_charge}}</td>
                                     </tr>
                                     <tfoot>
                                         <tr>
@@ -461,6 +487,9 @@
                                                 <td style="width: 16%;text-align: right;" id="" class="pcs-itemtable-header pcs-itemtable-breakword">
                                                     Price
                                                 </td>
+                                                <td style="width: 16%;text-align: right;" id="" class="pcs-itemtable-header pcs-itemtable-breakword">
+                                                    Discount
+                                                </td>
                                                 <td style="width: 17%;text-align: right;" id="" class="pcs-itemtable-header pcs-itemtable-breakword">
                                                     Total
                                                 </td>
@@ -481,6 +510,9 @@
                                                     </td>
                                                     <td valign="top" style="text-align:right;word-wrap: break-word;" >
                                                         <span>{{ p.price }}</span>
+                                                    </td>
+                                                    <td valign="top" style="text-align:right;word-wrap: break-word;" >
+                                                        <span>{{ p.discount|default:0 }}</span>
                                                     </td>
                                                     <td valign="top" style="text-align:right;word-wrap: break-word;" >
                                                         <span>{{ p.total }}</span>
@@ -504,9 +536,26 @@
                                                     <td align="right" style="padding: 5px 10px 5px 0;">Sub Total</td>
                                                     <td valign="middle" align="right" >{{ pcrd.subtotal }}</td>
                                                 </tr>
+                                                <tr class="igstrow d-none" >
+                                                    <td align="right" style="padding: 5px 10px 5px 0;">IGST</td>
+                                                    <td valign="middle" align="right" >{{ pcrd.taxamount }}</td>
+                                                </tr>
+                                                <tr class="gstrow d-none">
+                                                    <td align="right" style="padding: 5px 10px 5px 0;">SGST</td>
+                                                    <td valign="middle" align="right" id="sgst1"> </td>
+                                                </tr>
+                                                <tr class="gstrow d-none" >
+                                                    <td align="right" style="padding: 5px 10px 5px 0;">CGST</td>
+                                                    <td valign="middle" align="right" id="cgst1"> </td>
+                                                </tr>
+
                                                 <tr>
                                                     <td align="right" style="padding: 5px 10px 5px 0;">Tax Amount</td>
                                                     <td valign="middle" align="right" >{{ pcrd.taxamount }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="right" style="padding: 5px 10px 5px 0;">Shipping Charge</td>
+                                                    <td valign="middle" align="right" >{{ pcrd.shipping_charge }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td align="right" style="padding: 5px 10px 5px 0;">Grand Total</td>
@@ -556,6 +605,32 @@
     </div> -->
 
     <script>
+        $(document).ready(function(){
+            pstate = $("#sply").html().trim();
+            cmpstate = $("#cmp").html().trim();
+            // console.log(pstate == cmpstate);
+            if(pstate == cmpstate){
+                // console.log("yes");
+                $(".igstrow").removeClass("d-print-table-row");
+                $(".igstrow").addClass("d-none");
+                $(".gstrow").removeClass("d-none");
+                $(".gstrow").addClass("d-print-table-row");
+
+                $("#sgst").html($("#igst").html()/2);
+                $("#cgst").html($("#igst").html()/2);
+
+                $("#sgst1").html($("#igst").html()/2);
+                $("#cgst1").html($("#igst").html()/2);
+            }
+            else{
+                $(".igstrow").removeClass("d-none");
+                $(".igstrow").addClass("d-print-table-row");
+                $(".gstrow").removeClass("d-print-table-row");
+                $(".gstrow").addClass("d-none");
+
+            }
+        });
+      
       $(function () {
           $('#cmd').click(function () {
               var doc = new jsPDF();
@@ -588,6 +663,8 @@
               e.preventDefault();
           }
       });
+
+      
     </script>
 
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>

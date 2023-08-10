@@ -1066,6 +1066,7 @@ class estimate(models.Model):
     CGST  =  models.CharField(max_length=100,null=True)
     SGST =  models.CharField(max_length=100,null=True)
     TCS =  models.CharField(max_length=100,null=True)
+    shipping_charge = models.CharField(max_length=100,null=True,default=0)
     subtotal = models.CharField(max_length=100,null=True)
     estimatetotal = models.CharField(max_length=100,null=True)
     file = models.FileField(upload_to='estimate',default="default.jpg")
@@ -1094,6 +1095,7 @@ class estimate_item(models.Model):
     quantity = models.CharField(max_length=100,null=True,default=0)
     rate = models.CharField(max_length=100,null=True,default=0)
     tax = models.CharField(max_length=100,null=True,default=0)
+    discount = models.CharField(max_length=100,null=True,default=0)
     total = models.CharField(max_length=100,null=True,default=0)
 
 
@@ -1646,6 +1648,7 @@ class salescreditnote(models.Model):
     shipping_charge = models.CharField(max_length=100,null=True,blank=True)
     taxamount = models.CharField(max_length=100,null=True)
     grandtotal = models.CharField(max_length=100,null=True)
+    description = models.CharField(max_length=255,null=True)
 
 class salescreditnote1(models.Model):
     scredit = models.ForeignKey(salescreditnote, on_delete=models.CASCADE,null=True)

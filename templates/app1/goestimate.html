@@ -83,7 +83,33 @@
                             style="margin-top: 8px; background-color: #2f516f;color: white;">
     
                         </div> 
-                        <div class="col-md-6"></div>
+                        <div class="col-md-1" style="width: 40%; margin-top: 9px;">
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-outline-info   text-grey fa fa-sort"
+                                        data-toggle="dropdown"> Sort by
+                                </button>
+                                <div class="dropdown-menu " style="background-color: black;">
+                                <a class="dropdown-item" href="{% url 'est_num_asc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Estimate Number </a>
+                                <a class="dropdown-item  " href="{% url 'est_num_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Estimate Number</a>
+
+                                <a class="dropdown-item " href="{% url 'est_date_asc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center; " >Date  </a>
+                                <a class="dropdown-item " href="{% url 'est_date_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date  </a>
+
+                                <a class="dropdown-item  " href="{% url 'est_cust_asc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >
+                                        Customer </a>
+                                <a class="dropdown-item  " href="{% url 'est_cust_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer </a>
+                                    
+                                        
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="col-md-5"></div>
 
                         <div class="col-md-1" style="width: 40%; margin-top: 8px;">
 
@@ -115,25 +141,27 @@
                         <table class="table table-responsive-md mt-4 table-hover" id="tbl_exporttable_to_xls">
                             <thead>
                                 <tr>
-                                    <th style="text-align: center;">Date</th>
-                                    <th style="text-align: center;">Estimate No</th>
-                                    <th style="text-align: center;">Reference Number</th>
-                                    <th style="text-align: center;">Customer Name</th>
-                                    <th style="text-align: center;">Status</th>
-                                    <th style="text-align: center;">Amount</th>
+                                    <th style="text-align: center; text-transform: uppercase;">Date</th>
+                                    <th style="text-align: center; text-transform: uppercase;">Estimate Number</th>
+                                    <th style="text-align: center; text-transform: uppercase;">Reference Number</th>
+                                    <th style="text-align: center; text-transform: uppercase;">Customer Name</th>
+                                    <th style="text-align: center; text-transform: uppercase;">Email ID</th>
+                                    <th style="text-align: center; text-transform: uppercase;">Status</th>
+                                    <th style="text-align: center; text-transform: uppercase;">Amount</th>
                                 
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for estimate in est1 %}
                                     {% if estimate.cid_id == cmp1.cid %}
-                                        <tr  class="table-row " data-href="{% url 'estimate_view' estimate.estimateid %}" >
-                                            <th style="text-align: center;">{{ estimate.estimatedate | date:'d-m-Y' }}</th>
-                                            <td style="text-align: center;">{{ estimate.estimateno }}</td>
-                                            <td style="text-align: center;"> {{ estimate.reference_number }}</td>
-                                            <td style="text-align: center;">{{ estimate.customer }}</td>
-                                            <td style="text-align: center;"> {{ estimate.status }}</td>
-                                            <td style="text-align: center;">{{ estimate.estimatetotal }}</td>
+                                        <tr  class="table-row " >
+                                            <th style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} "> {{ estimate.estimatedate | date:'d-m-Y' }}</a></th>
+                                            <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} "> {{ estimate.estimateno }}</a></td>
+                                            <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} "> {{ estimate.reference_number }}</a></td>
+                                            <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} ">{{ estimate.customer }}</a></td>
+                                            <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} ">{{ estimate.email }}</a></td>
+                                            <td style="text-align: center;"> <a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} "> {{ estimate.status }}</a></td>
+                                            <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} "> {{ estimate.estimatetotal }}</a></td>
                                             
                                         </tr>
                                     {% endif %}

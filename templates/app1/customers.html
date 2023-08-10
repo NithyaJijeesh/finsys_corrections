@@ -80,8 +80,23 @@ body{
                     <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off" 
                                 style="margin-top: 8px; background-color: #2f516f;color: white;">
                 </div>
-                <div class="col-md-6"></div>
-                <div class="col-md-1" style="width: 40%; margin-top: 8px;">
+                <div class="col-md-2" style="width: 40%; margin-top: 8px;">
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-outline-info  text-grey fa fa-sort"
+                                data-toggle="dropdown"> Sort by
+                        </button>
+                        <div class="dropdown-menu" style="background-color: black;">
+                            <a class="dropdown-item" href="{% url 'gocustomers_asc' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer A-Z</a>
+                            <a class="dropdown-item" href="{% url 'gocustomers_desc' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer Z-A</a>
+                            
+                                
+                        </div> 
+                    </div>
+                </div>
+                <div class="col-md-3"></div>
+                <div class="col-md-1 mx-5" style="width: 40%; margin-top: 8px;">
                     <div class="dropdown">
                         <button type="button" class="btn btn-outline-info dropdown-toggle text-grey fa fa-filter"
                                 data-toggle="dropdown"> filter by
@@ -98,7 +113,7 @@ body{
                     </div>
                 </div>
                 <div class="btn-group col-md-2">
-                    <a href="{% url 'goaddcust' %}" id="myBtn" class="btn btn-outline-info text-grey fa fa-plus" style="margin-top: 8px;" role="button"> Add Customer</a>
+                    <a href="{% url 'goaddcust' %}" id="myBtn" class="btn btn-outline-info text-grey fa fa-plus" style="width: 40%; margin-top: 8px;" role="button"> Add Customer</a>
                 </div>
 
             </div>
@@ -119,13 +134,13 @@ body{
                         {% for customer in customers %}
                             {% if customer.cid_id == cmp1.cid %}
                                 <tr  class="table-row " data-href="{% url 'customer_profile' customer.customerid %}">
-                                    <td>{{ customer.firstname }} {{ customer.lastname }}</td>
-                                    <td>{{ customer.gsttype }}</td>
-                                    <td>{{ customer.gstin }}</td>
-                                    <td>{{ customer.panno }}</td>
-                                    <td>{{ customer.email }}</td>
-                                    <td>{{ customer.mobile }}</td>
-                                    <td>{{customer.receivables}}</td>
+                                    <td><a class="idsr" style="list-style: none;"  href="{% url 'customer_profile' customer.customerid %} "> {{ customer.firstname }} {{ customer.lastname }}</a></td>
+                                    <td><a class="idsr" style="list-style: none;"  href="{% url 'customer_profile' customer.customerid %} "> {{ customer.gsttype }}</a></td>
+                                    <td><a class="idsr" style="list-style: none;"  href="{% url 'customer_profile' customer.customerid %} "> {{ customer.gstin }} </a></td>
+                                    <td><a class="idsr" style="list-style: none;"  href="{% url 'customer_profile' customer.customerid %} "> {{ customer.panno }}</a></td>
+                                    <td><a class="idsr" style="list-style: none;"  href="{% url 'customer_profile' customer.customerid %} "> {{ customer.email }}</a></td>
+                                    <td><a class="idsr" style="list-style: none;"  href="{% url 'customer_profile' customer.customerid %} "> {{ customer.mobile }}</a></td>
+                                    <td><a class="idsr" style="list-style: none;"  href="{% url 'customer_profile' customer.customerid %} "> {{customer.receivables}}</a></td>
                                             
                                 </tr>
                             {% endif %}
