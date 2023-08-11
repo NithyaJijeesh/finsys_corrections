@@ -146,8 +146,8 @@
                   </tr>
                 </thead>
                 <tbody id="items-table-body">
-                  <tr >
-                    <td>1</td>
+                  <tr id='addr01'>
+                    <td class="nnum">1</td>
                     <td style="width: 20%;">
 
                         <div class="d-flex">
@@ -189,8 +189,8 @@
                      
                     </td>
                     <td><input type="text" name='hsn[]' id="hsn1" placeholder='Enter HSN ' class="form-control" style="background-color: #2f516f; color: white;" /></td>
-                    <td><input type="number" name='qty[]' onchange="qtychange1(this)" placeholder='Enter Qty' id="qty1"  class="form-control qty" step=0 min=0 style="background-color: #2f516f;margin-top: 21px; color: white;" />
-                    <div><span>Available Qty :</span> <span id="qtyspan1" class=''></span></div>
+                    <td><input type="number" name='qty[]'  placeholder='Enter Qty' id="qty1"  class="form-control qty" step=0 min=0 style="background-color: #2f516f;margin-top: 21px; color: white;" />
+                    <div class="d-flex"><span>Available Qty :</span> <span id="qtyspan1" class=''></span></div>
                     </td>
                     <td><input type="number" name='price[]' id="unit1" placeholder='Enter Unit Price' class="form-control price" step="0.00" min="0" style="background-color: #2f516f; color: white;" /></td>
                     
@@ -219,7 +219,7 @@
                       </select>
                                           
                     </td>
-                    <td><input type="number" name='disc[]'  placeholder='Enter Discount' id="disc1"  class="form-control qty" step=0 min=0 style="background-color: #2f516f;  color: white;" />
+                    <td><input type="number" name='discount[]'  placeholder='Enter Discount' id="disc1" value=0 class="form-control disc" step=0 min=0 style="background-color: #2f516f;  color: white;"  />
 
                     <td><input type="number" name='total[]' id="total1" placeholder=0 class="form-control total" value=0 step="any" readonly style="background-color: #2f516f; color: white;" /></td>
                     <td style="display: none;"><input type="number" step="any" name='taxamount1' id="taxamount1" class="form-control taxamount"/></td>   
@@ -502,7 +502,7 @@
                           <div class="col-md-4 mt-3 gstrow" id="hello1" style="display: none;">
                               <div >
                                   <label for="gstin">GSTIN</label>
-                                  <input type="text" class="form-control" onchange="checkgst(this)"
+                                  <input type="text" class="form-control" onchange="showMessage(this)"
                                          id="gstin" name="gstin"
                                          style="background-color: #2f516f;color: white;"
                                          value=""
@@ -1211,140 +1211,10 @@
       $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
       i++;
     });
-    $("#delete_row").click(function() {
-      if (i > 1) {
-        $("#addr" + (i - 1)).html('');
-        i--;
-      }
-      calc();
-    });
-    $('#tab_logic tbody').on('keyup change', function() {
-      calc();
-    });
-
-    $('#tax').on('keyup change', function() {
-      calc_total();
-    });
-  });
-
-  function calc() {
-    $('#tab_logic tbody tr').each(function() {
-      var html = $(this).html();
-      if (html != '') {
-        var qty = $(this).find('.qty').val();
-        var price = $(this).find('.price').val();
-        var tax = $(this).find('.tax').val();
-        $(this).find('.total').val(parseFloat(qty * price));
-        $(this).find('.taxamount').val(parseFloat((qty * price) * (parseFloat(tax) / 100)));
-        calc_total();
-      }
-    });
-  }
-
-  function calc_total() {
-    total = 0;
-    $('.total').each(function() {
-      total += parseFloat($(this).val());
-    });
-    taxamount = 0.0;
-    $('.taxamount').each(function() {
-      taxamount += parseFloat($(this).val());
-    });
-    $('#subtotal').val(parseFloat(total.toFixed(2)));
     
-    $('#grandtotal').val(parseFloat((taxamount + total).toFixed(2)));
-    $('#baldue').val(parseFloat((taxamount + total).toFixed(2)));
-
-    calc_tcs();
-  }
-
-  function calc_tcs() {
-            tcsamount = 0;
-            var a = document.getElementById("tcs1").value
-
-            tcs=0
-            tcs =a/100 * total
-
-           
-
-           
-            $('#tcs_amount').val(parseFloat((a/100) *total.toFixed(2)));
-           
-
-            $('#grandtotal').val(parseFloat((taxamount + total+tcs).toFixed(2)));
-
-            $('#baldue').val(parseFloat((taxamount + total+tcs) .toFixed(2)));
+    });
 
 
-            
-            test()
-        }
-
-
-
-  function test(){
-
-var bc = document.getElementById("plosu").value
-
-d=0
-if (bc == "{{ cmp1.state }}" ) {
-    gst = taxamount/2
-    $('#cgst').val(parseFloat(gst.toFixed(2)));
-    $('#sgst').val(parseFloat(gst.toFixed(2)));
-    $('#igst').val(parseFloat(d.toFixed(2)));
-  
-    }
-    
-if (bc != "{{ cmp1.state }}" ) {
-    $('#tax_amount').val(parseFloat(taxamount.toFixed(2)));
-    $('#cgst').val(d.toFixed(2));
-    $('#sgst').val(d.toFixed(2));
-}
-
-}
-
-
-function calc_roundoff(){
-
-var amount =taxamount + total + tcs
-
-let x =Math.round(amount)
-
-$('#round_off').val(parseFloat(x.toFixed(2)));
-$('#grandtotal').val(parseFloat(x.toFixed(2)));
-$('#baldue').val(parseFloat(x .toFixed(2)));
-}
-
-  
-</script>
-
-<!-- <script>
-    var item_row_counter = 1
-
-    function add_item_row() {
-        old_item_row_count = item_row_counter
-        item_row_counter++;
-
-        $('#items-table-body >tr:last').clone(true).insertAfter('#items-table-body >tr:last');
-        $('#items-table-body >tr:last input').val('');
-
-        $('#items-table-body >tr:last td')[0].innerHTML = item_row_counter
-        update_amounts($('#items-table-body input[name=total1]:last'));
-    }
-
-    function setup_rows() {
-        $("#addrow").click(function(event) {
-        event.preventDefault();
-        add_item_row();
-        });
-
-        for (var i = 0; i <= 4; i++) {
-            add_item_row();
-        }
-    }
-</script> -->
-
-<script>
   $(document).ready(function(){
     $('#add').click(function(){
       var roinc = $("#items-table-body tr").length;
@@ -1371,7 +1241,7 @@ $('#baldue').val(parseFloat(x .toFixed(2)));
               </div>
             </td>
             <td><input type="text" name='hsn[]' id="hsn${roinc}" placeholder='Enter HSN Code' class="form-control" style="background-color: #2f516f; color: white;" /></td>
-            <td><input type="number" name='qty[]' onchange="qtychange1(this)" placeholder='Enter Qty' id="qty${roinc}" class="form-control qty" step=0 min=0 style="background-color: #2f516f; color: white;margin-top: 21px;" />
+            <td><input type="number" name='qty[]'  placeholder='Enter Qty' id="qty${roinc}" class="form-control qty" step=0 min=0 style="background-color: #2f516f; color: white;margin-top: 21px;" />
                 <div><span>Available Qty :</span> <span id="qtyspan${roinc}"class=''></span></div>
             </td>
             <td><input type="number" name='price[]' id="unit${roinc}" placeholder='Enter Unit Price' class="form-control price" step="0.00" min="0" style="background-color: #2f516f; color: white;" /></td>
@@ -1401,7 +1271,7 @@ $('#baldue').val(parseFloat(x .toFixed(2)));
             <td style="display: none;"><input type="number" step="any" name='taxamount${roinc}' id="taxamount${roinc}" class="form-control taxamount" /></td>
 
             <td>
-                <input type="number" name='discount[]' placeholder='Enter Discount' id="disc${roinc}" class="form-control disc" step=0 min=0>
+                <input type="number" name='discount[]' placeholder='Enter Discount' value=0 id="disc${roinc}" class="form-control disc" step=0 min=0>
             </td>
             <td><input type="number" name='total[]' id="total${roinc}" placeholder=0 class="form-control total" value=0 step="any" readonly style="background-color: #2f516f; color: white;" /></td>
             <td>
@@ -1413,6 +1283,180 @@ $('#baldue').val(parseFloat(x .toFixed(2)));
  
         );
   });
+   // calculation---------------------------
+
+   $(document).on('change', '.product',function(){ 
+                
+                var n = $(this).attr("id").slice(7);
+                $.ajax({
+                url: "{% url 'itemdata' %}",
+                type : 'GET',
+                data:{
+                    id : $(this).val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                
+                success: function(response) {
+                    data = response.hsn
+                    data2 = response.qty
+                    data3 = response.price
+                    data4 = response.gst
+                    data5 = response.sgst
+
+                    console.log(data)
+                    
+                    document.getElementById('hsn'+n).value = data;
+                    document.getElementById('qtyspan'+n).innerHTML = data2;
+                    document.getElementById('unit'+n).value = data3;
+
+                },
+                });
+                
+
+            });
+
+            $(document).on('click','.remove_row',function(){
+                var row_id = $(this).attr("id");
+                $('#addr0'+row_id+'').remove();
+                
+                calc();
+            });
+        
+
+            $(document).on('click','.clone_row',function(){
+                var roinc = $("#items-table-body tr").length;
+                var originalRow = $(this).closest('#items-table-body tr'); 
+                var clonedRow = originalRow.clone();
+
+                clonedRow.attr('id', 'addr0' +(roinc+1));
+
+                clonedRow.find('.nnum').text(roinc+1);
+
+                clonedRow.find('[id]').each(function() {
+                    var oldId = $(this).attr('id');
+                    var newId = oldId.replace(/\d+/, roinc+1);
+                    console.log(newId)
+                    $(this).attr('id', newId );
+                });
+
+                clonedRow.find('.product').each(function() {
+                    $(this).val(originalRow.find('.product').val());
+                });
+                clonedRow.find('.intra_tax').each(function() {
+                    $(this).val(originalRow.find('.intra_tax').val());
+                });
+                clonedRow.find('.inter_tax').each(function() {
+                    $(this).val(originalRow.find('.inter_tax').val());
+                });
+                originalRow.after(clonedRow);
+                
+                calc();
+                
+            });
+            $('#items-table-body').on('keyup change', function () {
+                calc();
+            });
+
+            $('#tax').on('keyup change', function () {
+                calc_total();
+            });
+        });
+
+        function calc() {
+            $('#tab_logic tbody tr').each(function () {
+                var html = $(this).html();
+                if (html != '') {
+                    var qty = $(this).find('.qty').val();
+                    
+                    var price = $(this).find('.price').val();
+
+                    var dis = $(this).find('.disc').val();
+                    console.log(qty)
+                    console.log(typeof(qty))
+                    
+                    console.log(price)
+                    console.log(typeof(price))
+                    console.log(parseFloat(dis))
+                    console.log(typeof(parseFloat(dis)))
+                    var bc = $("#plosu").val();
+                    var compstate = $("#cmpstate").val();
+                    if(bc==compstate){
+                        tax = $(this).find('.intra_tax').val();
+                    }
+                    else{
+                        tax = $(this).find('.inter_tax').val();
+                    }
+                    console.log((parseFloat(qty) *parseFloat(price))-parseFloat(dis))
+                    $(this).find('.total').val((parseFloat(qty) *parseFloat(price))-parseFloat(dis));
+                    $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
+                    calc_total();
+                }
+            });
+        }
+
+        function calc_total() {
+             
+            total = 0;
+            $('.total').each(function () {
+                total += parseFloat($(this).val());
+            });
+            taxamount = 0;
+            $('.taxamount').each(function () {
+                taxamount += parseFloat($(this).val());
+            });
+            $('#sub_total').val(total.toFixed(2));
+            $('#tax_amount').val(taxamount.toFixed(2));
+            ship = parseFloat($("#ship").val());
+            // console.log( ship);
+            gtot = taxamount + total + ship;
+            $('#grandtotal').val(gtot.toFixed(2));
+            $('#baldue').val(gtot.toFixed(2));
+
+            test()
+        }
+
+        function test(){
+                     
+            var bc = $("#plosu").val();
+            var compstate = $("#cmpstate").val();
+            d=0
+            if (bc == compstate  ) {
+                gst = taxamount/2
+                $('#cgst').val(parseFloat(gst.toFixed(2)));
+                $('#sgst').val(parseFloat(gst.toFixed(2)));
+                $('#igst').val(parseFloat(d.toFixed(2)));
+            }
+                
+            if (bc != "{{ cmp1.state }}"  ) {
+                $('#igst').val(taxamount.toFixed(2));
+                $('#cgst').val(d.toFixed(2));
+                $('#sgst').val(d.toFixed(2));
+            }
+
+           
+        }
+        function showinnum(divId, element) {
+            if (element.value) {
+                document.getElementById(divId).innerHTML = "Debit Note " + element.value;
+            } else {
+                document.getElementById(divId).innerHTML = "Debit Note";
+            }
+        }
+
+        $(document).on('change',"#ship",function(){
+            var subtot = $('#sub_total').val();
+            var tax = $('#tax_amount').val();
+            var sh = $("#ship").val();
+            $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
+            $('#baldue').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(sh)).toFixed(2));
+        });
+
+        $(document).on("change", "#adj", function(){
+            var round = parseFloat($("#grandtotal").val()) + parseFloat($("#adj").val()) 
+            $("#grandtotal").val(round);
+            $('#baldue').val(round);
+        });
+
   $(document).on('click','.remove_row',function(){
   var row_id = $(this).attr("id");
   $('#addr0'+row_id+'').remove();
@@ -1420,1014 +1464,1014 @@ $('#baldue').val(parseFloat(x .toFixed(2)));
   
 
 
-    var place = document.getElementById('plosu').value;
-  // $('#product').on('change', function() {
-    $(document).on('click','#product',function(){
-      select = $('#product').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response.price)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
-                    document.getElementById('hsn1').value = data
-                    // document.getElementById('description').value = data1
-                    document.getElementById('qtyspan').innerHTML = data2;
-                    document.getElementById('unit1').value = data3
+  //   var place = document.getElementById('plosu').value;
+  // // $('#product').on('change', function() {
+  //   $(document).on('click','#product',function(){
+  //     select = $('#product').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response.price)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
+  //                   document.getElementById('hsn1').value = data
+  //                   // document.getElementById('description').value = data1
+  //                   document.getElementById('qtyspan').innerHTML = data2;
+  //                   document.getElementById('unit1').value = data3
                     
 
                     
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta1').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta1').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta1').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta1').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta5').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta5').value=data5
-                    if (data2<1)
-                    {
+  //                   document.getElementById('ta5').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta5').value=data5
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
                   
-                }
+  //               }
       
       
-      });
-    });
+  //     });
+  //   });
 
 
     
-    $(document).on('click','#product1',function(){
-      select = $('#product1').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //   $(document).on('click','#product1',function(){
+  //     select = $('#product1').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                    
-                    document.getElementById('hsn11').value = data
-                    document.getElementById('description1').value = data1
-                    document.getElementById('qtyspan1').innerHTML = data2;
-                    document.getElementById('unit11').value = data3
+  //                   document.getElementById('hsn11').value = data
+  //                   document.getElementById('description1').value = data1
+  //                   document.getElementById('qtyspan1').innerHTML = data2;
+  //                   document.getElementById('unit11').value = data3
                     
                   
                     
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta11').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta11').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta11').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta11').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta51').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta51').value=data5
-                    if (data2<1)
-                    {
+  //                   document.getElementById('ta51').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta51').value=data5
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan1').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
-                }
+  //                     document.getElementById('qtyspan1').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
+  //               }
       
       
-      });
-    });
+  //     });
+  //   });
 
-    $(document).on('click','#product2',function(){
-      select = $('#product2').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //   $(document).on('click','#product2',function(){
+  //     select = $('#product2').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn12').value = data
-                    document.getElementById('description2').value = data1
-                    document.getElementById('qtyspan2').innerHTML = data2;
-                    document.getElementById('unit12').value = data3
-                    if (data2<1)
-                    {
+  //                   document.getElementById('hsn12').value = data
+  //                   document.getElementById('description2').value = data1
+  //                   document.getElementById('qtyspan2').innerHTML = data2;
+  //                   document.getElementById('unit12').value = data3
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan2').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan2').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
                   
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta12').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta12').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta12').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta12').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta52').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta52').value=data5
-                }
+  //                   document.getElementById('ta52').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta52').value=data5
+  //               }
       
       
-      });
-    });
-    $(document).on('click','#product3',function(){
-      select = $('#product3').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product3',function(){
+  //     select = $('#product3').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn13').value = data
-                    document.getElementById('description3').value = data1
-                    document.getElementById('qtyspan3').innerHTML = data2;
-                    document.getElementById('unit13').value = data3
-                    if (data2<1)
-                    {
+  //                   document.getElementById('hsn13').value = data
+  //                   document.getElementById('description3').value = data1
+  //                   document.getElementById('qtyspan3').innerHTML = data2;
+  //                   document.getElementById('unit13').value = data3
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan3').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan3').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
                  
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta13').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta13').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta13').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta13').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta53').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta53').value=data5
-                }
+  //                   document.getElementById('ta53').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta53').value=data5
+  //               }
 
-      });
-    });
-    $(document).on('click','#product4',function(){
-      select = $('#product4').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product4',function(){
+  //     select = $('#product4').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn14').value = data
-                    document.getElementById('description4').value = data1
-                    document.getElementById('qtyspan4').innerHTML = data2;
-                    document.getElementById('unit14').value = data3
+  //                   document.getElementById('hsn14').value = data
+  //                   document.getElementById('description4').value = data1
+  //                   document.getElementById('qtyspan4').innerHTML = data2;
+  //                   document.getElementById('unit14').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan4').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan4').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
                 
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta14').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta14').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta14').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta14').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta54').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta54').value=data5
-                }
+  //                   document.getElementById('ta54').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta54').value=data5
+  //               }
 
-      });
-    });
-    $(document).on('click','#product5',function(){
-      select = $('#product5').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product5',function(){
+  //     select = $('#product5').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn15').value = data
-                    document.getElementById('description5').value = data1
-                    document.getElementById('qtyspan5').innerHTML = data2;
-                    document.getElementById('unit15').value = data3
+  //                   document.getElementById('hsn15').value = data
+  //                   document.getElementById('description5').value = data1
+  //                   document.getElementById('qtyspan5').innerHTML = data2;
+  //                   document.getElementById('unit15').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan5').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan5').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
                 
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta15').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta15').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta15').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta15').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta55').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta55').value=data5
-                }
+  //                   document.getElementById('ta55').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta55').value=data5
+  //               }
 
-      });
-    });
+  //     });
+  //   });
 
-    $(document).on('click','#product6',function(){
-      select = $('#product6').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //   $(document).on('click','#product6',function(){
+  //     select = $('#product6').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn16').value = data
-                    document.getElementById('description6').value = data1
-                    document.getElementById('qtyspan6').innerHTML = data2;
-                    document.getElementById('unit16').value = data3
-                    if (data2<1)
-                    {
+  //                   document.getElementById('hsn16').value = data
+  //                   document.getElementById('description6').value = data1
+  //                   document.getElementById('qtyspan6').innerHTML = data2;
+  //                   document.getElementById('unit16').value = data3
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan6').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan6').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
 
                    
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta16').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta16').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta16').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta16').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta56').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta56').value=data5
-                }
+  //                   document.getElementById('ta56').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta56').value=data5
+  //               }
 
-      });
-    });
-    $(document).on('click','#product7',function(){
-      select = $('#product7').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product7',function(){
+  //     select = $('#product7').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn17').value = data
-                    document.getElementById('description7').value = data1
-                    document.getElementById('qtyspan7').innerHTML = data2;
-                    document.getElementById('unit17').value = data3
+  //                   document.getElementById('hsn17').value = data
+  //                   document.getElementById('description7').value = data1
+  //                   document.getElementById('qtyspan7').innerHTML = data2;
+  //                   document.getElementById('unit17').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan7').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan7').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
                    
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta17').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta17').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta17').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta17').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta57').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta57').value=data5
-                }
+  //                   document.getElementById('ta57').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta57').value=data5
+  //               }
 
-      });
-    });
-    $(document).on('click','#product8',function(){
-      select = $('#product8').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product8',function(){
+  //     select = $('#product8').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn18').value = data
-                    document.getElementById('description8').value = data1
-                    document.getElementById('qtyspan8').innerHTML = data2;
-                    document.getElementById('unit18').value = data3
+  //                   document.getElementById('hsn18').value = data
+  //                   document.getElementById('description8').value = data1
+  //                   document.getElementById('qtyspan8').innerHTML = data2;
+  //                   document.getElementById('unit18').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan8').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan8').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
                     
                    
                     
 
 
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta18').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta18').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta18').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta18').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta58').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta58').value=data5
-                }
+  //                   document.getElementById('ta58').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta58').value=data5
+  //               }
 
-      });
-    });
-    $(document).on('click','#product9',function(){
-      select = $('#product9').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product9',function(){
+  //     select = $('#product9').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn19').value = data
-                    document.getElementById('description9').value = data1
-                    document.getElementById('qtyspan9').innerHTML = data2;
-                    document.getElementById('unit19').value = data3
+  //                   document.getElementById('hsn19').value = data
+  //                   document.getElementById('description9').value = data1
+  //                   document.getElementById('qtyspan9').innerHTML = data2;
+  //                   document.getElementById('unit19').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan9').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan9').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
 
                    
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta19').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta19').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta19').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta19').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta59').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta59').value=data5
-                }
+  //                   document.getElementById('ta59').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta59').value=data5
+  //               }
 
-      });
-    });
-    $(document).on('click','#product10',function(){
-      select = $('#product10').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product10',function(){
+  //     select = $('#product10').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn110').value = data
-                    document.getElementById('description10').value = data1
-                    document.getElementById('qtyspan10').innerHTML = data2;
-                    document.getElementById('unit110').value = data3
+  //                   document.getElementById('hsn110').value = data
+  //                   document.getElementById('description10').value = data1
+  //                   document.getElementById('qtyspan10').innerHTML = data2;
+  //                   document.getElementById('unit110').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan10').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan10').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
 
                  
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta110').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta110').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta110').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta110').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta510').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta510').value=data5
-                }
+  //                   document.getElementById('ta510').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta510').value=data5
+  //               }
 
-      });
-    });
-    $(document).on('click','#product11',function(){
-      select = $('#product11').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product11',function(){
+  //     select = $('#product11').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn111').value = data
-                    document.getElementById('description11').value = data1
-                    document.getElementById('qtyspan11').innerHTML = data2;
-                    document.getElementById('unit111').value = data3
+  //                   document.getElementById('hsn111').value = data
+  //                   document.getElementById('description11').value = data1
+  //                   document.getElementById('qtyspan11').innerHTML = data2;
+  //                   document.getElementById('unit111').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan11').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan11').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
 
                    
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta111').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta111').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta111').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta111').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta511').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta511').value=data5
-                }
+  //                   document.getElementById('ta511').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta511').value=data5
+  //               }
       
       
-      });
-    });
+  //     });
+  //   });
 
-    $(document).on('click','#product12',function(){
-      select = $('#product12').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //   $(document).on('click','#product12',function(){
+  //     select = $('#product12').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn112').value = data
-                    document.getElementById('description12').value = data1
-                    document.getElementById('qtyspan12').innerHTML = data2;
-                    document.getElementById('unit112').value = data3
+  //                   document.getElementById('hsn112').value = data
+  //                   document.getElementById('description12').value = data1
+  //                   document.getElementById('qtyspan12').innerHTML = data2;
+  //                   document.getElementById('unit112').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan12').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan12').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
                     
                   
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta112').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta112').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta112').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta112').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta512').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta512').value=data5
-                }
+  //                   document.getElementById('ta512').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta512').value=data5
+  //               }
       
       
-      });
-    });
-    $(document).on('click','#product13',function(){
-      select = $('#product13').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product13',function(){
+  //     select = $('#product13').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn113').value = data
-                    document.getElementById('description13').value = data1
-                    document.getElementById('qtyspan13').innerHTML = data2;
-                    document.getElementById('unit113').value = data3
+  //                   document.getElementById('hsn113').value = data
+  //                   document.getElementById('description13').value = data1
+  //                   document.getElementById('qtyspan13').innerHTML = data2;
+  //                   document.getElementById('unit113').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan13').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan13').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
 
                     
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta113').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta113').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta113').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta113').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta513').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta513').value=data5
-                }
+  //                   document.getElementById('ta513').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta513').value=data5
+  //               }
 
-      });
-    });
-    $(document).on('click','#product14',function(){
-      select = $('#product14').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product14',function(){
+  //     select = $('#product14').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn114').value = data
-                    document.getElementById('description14').value = data1
-                    document.getElementById('qtyspan14').innerHTML = data2;
-                    document.getElementById('unit114').value = data3
+  //                   document.getElementById('hsn114').value = data
+  //                   document.getElementById('description14').value = data1
+  //                   document.getElementById('qtyspan14').innerHTML = data2;
+  //                   document.getElementById('unit114').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan14').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan14').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
 
                 
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta114').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta114').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta114').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta114').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta514').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta514').value=data5
-                }
+  //                   document.getElementById('ta514').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta514').value=data5
+  //               }
 
-      });
-    });
-    $(document).on('click','#product15',function(){
-      select = $('#product15').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product15',function(){
+  //     select = $('#product15').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn115').value = data
-                    document.getElementById('description15').value = data1
-                    document.getElementById('qtyspan15').innerHTML = data2;
-                    document.getElementById('unit115').value = data3
+  //                   document.getElementById('hsn115').value = data
+  //                   document.getElementById('description15').value = data1
+  //                   document.getElementById('qtyspan15').innerHTML = data2;
+  //                   document.getElementById('unit115').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan15').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan15').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
 
                  
                   
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta115').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta115').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta115').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta115').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta515').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta515').value=data5
-                }
+  //                   document.getElementById('ta515').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta515').value=data5
+  //               }
 
-      });
-    });
+  //     });
+  //   });
 
-    $(document).on('click','#product16',function(){
-      select = $('#product16').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //   $(document).on('click','#product16',function(){
+  //     select = $('#product16').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn116').value = data
-                    document.getElementById('description16').value = data1
-                    document.getElementById('qtyspan16').innerHTML = data2;
-                    document.getElementById('unit116').value = data3
+  //                   document.getElementById('hsn116').value = data
+  //                   document.getElementById('description16').value = data1
+  //                   document.getElementById('qtyspan16').innerHTML = data2;
+  //                   document.getElementById('unit116').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan16').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan16').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
 
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta116').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta116').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta116').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta116').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta516').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta516').value=data5
-                }
+  //                   document.getElementById('ta516').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta516').value=data5
+  //               }
 
-      });
-    });
-    $(document).on('click','#product17',function(){
-      select = $('#product17').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product17',function(){
+  //     select = $('#product17').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn117').value = data
-                    document.getElementById('description17').value = data1
-                    document.getElementById('qtyspan17').innerHTML = data2;
-                    document.getElementById('unit117').value = data3
+  //                   document.getElementById('hsn117').value = data
+  //                   document.getElementById('description17').value = data1
+  //                   document.getElementById('qtyspan17').innerHTML = data2;
+  //                   document.getElementById('unit117').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan17').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan17').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
 
                    
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta117').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta117').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta117').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta117').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta517').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta517').value=data5
-                }
+  //                   document.getElementById('ta517').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta517').value=data5
+  //               }
 
-      });
-    });
-    $(document).on('click','#product18',function(){
-      select = $('#product18').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product18',function(){
+  //     select = $('#product18').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn118').value = data
-                    document.getElementById('description18').value = data1
-                    document.getElementById('qtyspan18').innerHTML = data2;
-                    document.getElementById('unit118').value = data3
+  //                   document.getElementById('hsn118').value = data
+  //                   document.getElementById('description18').value = data1
+  //                   document.getElementById('qtyspan18').innerHTML = data2;
+  //                   document.getElementById('unit118').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan18').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan18').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
 
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta118').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta118').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta118').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta118').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta518').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta518').value=data5
-                }
+  //                   document.getElementById('ta518').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta518').value=data5
+  //               }
 
-      });
-    });
-    $(document).on('click','#product19',function(){
-      select = $('#product19').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product19',function(){
+  //     select = $('#product19').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn119').value = data
-                    document.getElementById('description19').value = data1
-                    document.getElementById('qtyspan19').innerHTML = data2;
-                    document.getElementById('unit119').value = data3
+  //                   document.getElementById('hsn119').value = data
+  //                   document.getElementById('description19').value = data1
+  //                   document.getElementById('qtyspan19').innerHTML = data2;
+  //                   document.getElementById('unit119').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan19').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan19').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
 
                     
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta119').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta119').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta119').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta119').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta519').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta519').value=data5
-                }
+  //                   document.getElementById('ta519').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta519').value=data5
+  //               }
 
-      });
-    });
-    $(document).on('click','#product120',function(){
-      select = $('#product120').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems2' %}",
-        data: {
-          id: select
-        },
-        success:function(response){
-                    console.log(response)
-                    data = response.hsn
-                    data1 = response.desp
-                    data2 = response.qty
-                    data3 = response.price
-                    data4 = response.gst
-                    data5 = response.sgst
+  //     });
+  //   });
+  //   $(document).on('click','#product120',function(){
+  //     select = $('#product120').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems2' %}",
+  //       data: {
+  //         id: select
+  //       },
+  //       success:function(response){
+  //                   console.log(response)
+  //                   data = response.hsn
+  //                   data1 = response.desp
+  //                   data2 = response.qty
+  //                   data3 = response.price
+  //                   data4 = response.gst
+  //                   data5 = response.sgst
                     
-                    document.getElementById('hsn120').value = data
-                    document.getElementById('description20').value = data1
-                    document.getElementById('qtyspan20').innerHTML = data2;
-                    document.getElementById('unit120').value = data3
+  //                   document.getElementById('hsn120').value = data
+  //                   document.getElementById('description20').value = data1
+  //                   document.getElementById('qtyspan20').innerHTML = data2;
+  //                   document.getElementById('unit120').value = data3
 
-                    if (data2<1)
-                    {
+  //                   if (data2<1)
+  //                   {
                       
                       
-                      document.getElementById('qtyspan20').style.color="red";
-                    }
-                    else{
-                      pass
-                    }
+  //                     document.getElementById('qtyspan20').style.color="red";
+  //                   }
+  //                   else{
+  //                     pass
+  //                   }
 
                    
                     
                     
-                    if (place == '{{ cmp1.state }}')
-                    {
-                      document.getElementById('ta120').innerHTML = data4 + ' % GST';
-                      document.getElementById('ta120').value=data4
+  //                   if (place == '{{ cmp1.state }}')
+  //                   {
+  //                     document.getElementById('ta120').innerHTML = data4 + ' % GST';
+  //                     document.getElementById('ta120').value=data4
 
-                    } 
+  //                   } 
                     
-                    document.getElementById('ta520').innerHTML  = data5 + ' % IGST';
-                    document.getElementById('ta520').value=data5
-                }
+  //                   document.getElementById('ta520').innerHTML  = data5 + ' % IGST';
+  //                   document.getElementById('ta520').value=data5
+  //               }
 
-      });
-    });
+  //     });
+  //   });
  
     
    
@@ -2438,683 +2482,683 @@ $('#baldue').val(parseFloat(x .toFixed(2)));
 
 
 
-  });
+  // });
 
  
-  function state(element) {
+  // function state(element) {
       
-      if (element.value == 'Kerala' ) {
-          document.getElementById('CGST').style.display = 'block';
-          document.getElementById('SGST').style.display = 'block';
-          document.getElementById('IGST').style.display = 'none';
+  //     if (element.value == 'Kerala' ) {
+  //         document.getElementById('CGST').style.display = 'block';
+  //         document.getElementById('SGST').style.display = 'block';
+  //         document.getElementById('IGST').style.display = 'none';
           
           
-      } else {
-          document.getElementById('CGST').style.display = 'none';
-          document.getElementById('SGST').style.display = 'none';
-          document.getElementById('IGST').style.display = 'block';
-      }
-  }
+  //     } else {
+  //         document.getElementById('CGST').style.display = 'none';
+  //         document.getElementById('SGST').style.display = 'none';
+  //         document.getElementById('IGST').style.display = 'block';
+  //     }
+  // }
  
-  function showinp(divId, element) {
-    if (element.value == 'Add New Term') {
-      document.getElementById(divId).style.display = 'block';
-    } else {
-      document.getElementById(divId).style.display = 'none';
-    }
-  }
+  // function showinp(divId, element) {
+  //   if (element.value == 'Add New Term') {
+  //     document.getElementById(divId).style.display = 'block';
+  //   } else {
+  //     document.getElementById(divId).style.display = 'none';
+  //   }
+  // }
 
-  function addtemopt(element) {
-    var opt = document.getElementById('trmopt');
+  // function addtemopt(element) {
+  //   var opt = document.getElementById('trmopt');
 
-    if (element.value) {
-      opt.value = element.value;
-      opt.innerHTML = element.value;
-    } else {
-      pass
-    }
-  }
+  //   if (element.value) {
+  //     opt.value = element.value;
+  //     opt.innerHTML = element.value;
+  //   } else {
+  //     pass
+  //   }
+  // }
 
-  function qtychange1(element) {
-    var tx = parseInt(element.value);
-    document.getElementById('qty11').value = parseInt(document.getElementById('qty111').value) * tx;
-    document.getElementById('qty12').value = parseInt(document.getElementById('qty121').value) * tx;
-    document.getElementById('qty13').value = parseInt(document.getElementById('qty131').value) * tx;
-    document.getElementById('qty14').value = parseInt(document.getElementById('qty141').value) * tx;
-  }
+  // function qtychange1(element) {
+  //   var tx = parseInt(element.value);
+  //   document.getElementById('qty11').value = parseInt(document.getElementById('qty111').value) * tx;
+  //   document.getElementById('qty12').value = parseInt(document.getElementById('qty121').value) * tx;
+  //   document.getElementById('qty13').value = parseInt(document.getElementById('qty131').value) * tx;
+  //   document.getElementById('qty14').value = parseInt(document.getElementById('qty141').value) * tx;
+  // }
 
-  function qtychange2(element) {
-    var tx = parseInt(element.value);
-    document.getElementById('qty21').value = parseInt(document.getElementById('qty211').value) * tx;
-    document.getElementById('qty22').value = parseInt(document.getElementById('qty221').value) * tx;
-    document.getElementById('qty23').value = parseInt(document.getElementById('qty231').value) * tx;
-    document.getElementById('qty24').value = parseInt(document.getElementById('qty241').value) * tx;
-  }
+  // function qtychange2(element) {
+  //   var tx = parseInt(element.value);
+  //   document.getElementById('qty21').value = parseInt(document.getElementById('qty211').value) * tx;
+  //   document.getElementById('qty22').value = parseInt(document.getElementById('qty221').value) * tx;
+  //   document.getElementById('qty23').value = parseInt(document.getElementById('qty231').value) * tx;
+  //   document.getElementById('qty24').value = parseInt(document.getElementById('qty241').value) * tx;
+  // }
 
-  function qtychange3(element) {
-    var tx = parseInt(element.value);
-    document.getElementById('qty31').value = parseInt(document.getElementById('qty311').value) * tx;
-    document.getElementById('qty32').value = parseInt(document.getElementById('qty321').value) * tx;
-    document.getElementById('qty33').value = parseInt(document.getElementById('qty331').value) * tx;
-    document.getElementById('qty34').value = parseInt(document.getElementById('qty341').value) * tx;
-  }
+  // function qtychange3(element) {
+  //   var tx = parseInt(element.value);
+  //   document.getElementById('qty31').value = parseInt(document.getElementById('qty311').value) * tx;
+  //   document.getElementById('qty32').value = parseInt(document.getElementById('qty321').value) * tx;
+  //   document.getElementById('qty33').value = parseInt(document.getElementById('qty331').value) * tx;
+  //   document.getElementById('qty34').value = parseInt(document.getElementById('qty341').value) * tx;
+  // }
 
-  function qtychange4(element) {
-    var tx = parseInt(element.value);
-    document.getElementById('qty41').value = parseInt(document.getElementById('qty411').value) * tx;
-    document.getElementById('qty42').value = parseInt(document.getElementById('qty421').value) * tx;
-    document.getElementById('qty43').value = parseInt(document.getElementById('qty431').value) * tx;
-    document.getElementById('qty44').value = parseInt(document.getElementById('qty441').value) * tx;
-  }
+  // function qtychange4(element) {
+  //   var tx = parseInt(element.value);
+  //   document.getElementById('qty41').value = parseInt(document.getElementById('qty411').value) * tx;
+  //   document.getElementById('qty42').value = parseInt(document.getElementById('qty421').value) * tx;
+  //   document.getElementById('qty43').value = parseInt(document.getElementById('qty431').value) * tx;
+  //   document.getElementById('qty44').value = parseInt(document.getElementById('qty441').value) * tx;
+  // }
  
-  $(document).ready(function() {
-    $('#select').on('change', function() {
-      select = $('#select').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getdata' %}",
-        data: {
-          id: select
-        }
-      }).done(function(response) {
-        var json_data = JSON.parse(response);
-        for (key in json_data) {
-          document.getElementById('email').value = json_data[key]['email']
+  // $(document).ready(function() {
+  //   $('#select').on('change', function() {
+  //     select = $('#select').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getdata' %}",
+  //       data: {
+  //         id: select
+  //       }
+  //     }).done(function(response) {
+  //       var json_data = JSON.parse(response);
+  //       for (key in json_data) {
+  //         document.getElementById('email').value = json_data[key]['email']
           
-          document.getElementById('bname').value = json_data[key]['firstname'] + ' ' + json_data[key]['lastname'] + '\n' + json_data[key]['company'] + '\n' + json_data[key]['street'] + '\n' + json_data[key]['city'] + '\n' + json_data[key]['state'] + '\n' + json_data[key]['pincode'] + '\n' + json_data[key]['country'];
-        }
-      })
-    });
-    $('#product').on('change', function() {
-      select = $('#product').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems' %}",
-        data: {
-          id: select
-        }
-      }).done(function(response) {
-        var json_data = JSON.parse(response);
-        for (key in json_data) {
+  //         document.getElementById('bname').value = json_data[key]['firstname'] + ' ' + json_data[key]['lastname'] + '\n' + json_data[key]['company'] + '\n' + json_data[key]['street'] + '\n' + json_data[key]['city'] + '\n' + json_data[key]['state'] + '\n' + json_data[key]['pincode'] + '\n' + json_data[key]['country'];
+  //       }
+  //     })
+  //   });
+  //   $('#product').on('change', function() {
+  //     select = $('#product').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems' %}",
+  //       data: {
+  //         id: select
+  //       }
+  //     }).done(function(response) {
+  //       var json_data = JSON.parse(response);
+  //       for (key in json_data) {
           
-          document.getElementById('hsn1').value = json_data[key]['hsn'];
-          document.getElementById('description').value = json_data[key]['description'];
-          document.getElementById('qty1').value = 0;
-          if (json_data[key]['initialqty'] == '' || json_data[key]['initialqty'] == undefined) {
-            document.getElementById('qtyspan').innerHTML = '';
-          } else {
-            document.getElementById('qtyspan').innerHTML = 'Available Quantity : ' + json_data[key]['initialqty'];
-          }
-          if (json_data[key]['item'] == 'bundle') {
-            document.getElementById('unit1').value = 0;
-            document.getElementById('unit1').style.display = 'none';
-            document.getElementById('tax1').style.display = 'none';
-            document.getElementById('total1').style.display = 'none';
-            if (json_data[key]['qty1'] == undefined || json_data[key]['qty1'] == 0) {
-              document.getElementById('bun1').style.display = 'none';
-            } else {
-              document.getElementById('bun1').style.display = 'table-row';
-              document.getElementById('product11').value = json_data[key]['product1'];
-              document.getElementById('hsn11').value = json_data[key]['hsn1'];
-              document.getElementById('description11').value = json_data[key]['description1'];
-              document.getElementById('qty11').value = json_data[key]['qty1'];
-              document.getElementById('qty111').value = json_data[key]['qty1'];
-              document.getElementById('unit11').value = json_data[key]['price1'];
-              document.getElementById('total11').value = json_data[key]['total1'];
-              document.getElementById('tax11').value = json_data[key]['tax1'];
-            }
-            if (json_data[key]['qty2'] == undefined || json_data[key]['qty2'] == 0) {
-              document.getElementById('bun2').style.display = 'none';
-            } else {
-              document.getElementById('bun2').style.display = 'table-row';
-              document.getElementById('product12').value = json_data[key]['product2'];
-              document.getElementById('hsn12').value = json_data[key]['hsn2'];
-              document.getElementById('description12').value = json_data[key]['description2'];
-              document.getElementById('qty12').value = json_data[key]['qty2'];
-              document.getElementById('qty121').value = json_data[key]['qty2'];
-              document.getElementById('unit12').value = json_data[key]['price2'];
-              document.getElementById('total12').value = json_data[key]['total2'];
-              document.getElementById('tax12').value = json_data[key]['tax2'];
-            }
-            if (json_data[key]['qty3'] == undefined || json_data[key]['qty3'] == 0) {
-              document.getElementById('bun3').style.display = 'none';
-            } else {
-              document.getElementById('bun3').style.display = 'table-row';
-              document.getElementById('product13').value = json_data[key]['product3'];
-              document.getElementById('hsn13').value = json_data[key]['hsn3'];
-              document.getElementById('description13').value = json_data[key]['description3'];
-              document.getElementById('qty13').value = json_data[key]['qty3'];
-              document.getElementById('qty131').value = json_data[key]['qty3'];
-              document.getElementById('unit13').value = json_data[key]['price3'];
-              document.getElementById('total13').value = json_data[key]['total3'];
-              document.getElementById('tax13').value = json_data[key]['tax3'];
-            }
-            if (json_data[key]['qty4'] == undefined || json_data[key]['qty4'] == 0) {
-              document.getElementById('bun4').style.display = 'none';
-            } else {
-              document.getElementById('bun4').style.display = 'table-row';
-              document.getElementById('product14').value = json_data[key]['product4'];
-              document.getElementById('hsn14').value = json_data[key]['hsn4'];
-              document.getElementById('description14').value = json_data[key]['description4'];
-              document.getElementById('qty14').value = json_data[key]['qty4'];
-              document.getElementById('qty141').value = json_data[key]['qty4'];
-              document.getElementById('unit14').value = json_data[key]['price4'];
-              document.getElementById('total14').value = json_data[key]['total4'];
-              document.getElementById('tax14').value = json_data[key]['tax4'];
-            }
-          } else {
-            document.getElementById('unit1').value = json_data[key]['salesprice'];
-            var place = document.getElementById('plosu').value;
-            if (place == '{{ cmp1.state }}') {
-              document.getElementById('unit1').style.display = 'block';
-              document.getElementById('tax1').style.display = 'block';
-              document.getElementById('total1').style.display = 'block';
-              document.getElementById('ta1').value = json_data[key]['tax'];
-              document.getElementById('ta1').innerHTML = json_data[key]['tax'] + ' % GST';
-            } else if (place != '{{ cmp1.state }}') {
-              document.getElementById('unit1').style.display = 'block';
-              document.getElementById('tax1').style.display = 'block';
-              document.getElementById('total1').style.display = 'block';
-              document.getElementById('ta5').value = json_data[key]['tax'];
-              document.getElementById('ta5').innerHTML = json_data[key]['tax'] + ' % IGST';
-            }
+  //         document.getElementById('hsn1').value = json_data[key]['hsn'];
+  //         document.getElementById('description').value = json_data[key]['description'];
+  //         document.getElementById('qty1').value = 0;
+  //         if (json_data[key]['initialqty'] == '' || json_data[key]['initialqty'] == undefined) {
+  //           document.getElementById('qtyspan').innerHTML = '';
+  //         } else {
+  //           document.getElementById('qtyspan').innerHTML = 'Available Quantity : ' + json_data[key]['initialqty'];
+  //         }
+  //         if (json_data[key]['item'] == 'bundle') {
+  //           document.getElementById('unit1').value = 0;
+  //           document.getElementById('unit1').style.display = 'none';
+  //           document.getElementById('tax1').style.display = 'none';
+  //           document.getElementById('total1').style.display = 'none';
+  //           if (json_data[key]['qty1'] == undefined || json_data[key]['qty1'] == 0) {
+  //             document.getElementById('bun1').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun1').style.display = 'table-row';
+  //             document.getElementById('product11').value = json_data[key]['product1'];
+  //             document.getElementById('hsn11').value = json_data[key]['hsn1'];
+  //             document.getElementById('description11').value = json_data[key]['description1'];
+  //             document.getElementById('qty11').value = json_data[key]['qty1'];
+  //             document.getElementById('qty111').value = json_data[key]['qty1'];
+  //             document.getElementById('unit11').value = json_data[key]['price1'];
+  //             document.getElementById('total11').value = json_data[key]['total1'];
+  //             document.getElementById('tax11').value = json_data[key]['tax1'];
+  //           }
+  //           if (json_data[key]['qty2'] == undefined || json_data[key]['qty2'] == 0) {
+  //             document.getElementById('bun2').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun2').style.display = 'table-row';
+  //             document.getElementById('product12').value = json_data[key]['product2'];
+  //             document.getElementById('hsn12').value = json_data[key]['hsn2'];
+  //             document.getElementById('description12').value = json_data[key]['description2'];
+  //             document.getElementById('qty12').value = json_data[key]['qty2'];
+  //             document.getElementById('qty121').value = json_data[key]['qty2'];
+  //             document.getElementById('unit12').value = json_data[key]['price2'];
+  //             document.getElementById('total12').value = json_data[key]['total2'];
+  //             document.getElementById('tax12').value = json_data[key]['tax2'];
+  //           }
+  //           if (json_data[key]['qty3'] == undefined || json_data[key]['qty3'] == 0) {
+  //             document.getElementById('bun3').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun3').style.display = 'table-row';
+  //             document.getElementById('product13').value = json_data[key]['product3'];
+  //             document.getElementById('hsn13').value = json_data[key]['hsn3'];
+  //             document.getElementById('description13').value = json_data[key]['description3'];
+  //             document.getElementById('qty13').value = json_data[key]['qty3'];
+  //             document.getElementById('qty131').value = json_data[key]['qty3'];
+  //             document.getElementById('unit13').value = json_data[key]['price3'];
+  //             document.getElementById('total13').value = json_data[key]['total3'];
+  //             document.getElementById('tax13').value = json_data[key]['tax3'];
+  //           }
+  //           if (json_data[key]['qty4'] == undefined || json_data[key]['qty4'] == 0) {
+  //             document.getElementById('bun4').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun4').style.display = 'table-row';
+  //             document.getElementById('product14').value = json_data[key]['product4'];
+  //             document.getElementById('hsn14').value = json_data[key]['hsn4'];
+  //             document.getElementById('description14').value = json_data[key]['description4'];
+  //             document.getElementById('qty14').value = json_data[key]['qty4'];
+  //             document.getElementById('qty141').value = json_data[key]['qty4'];
+  //             document.getElementById('unit14').value = json_data[key]['price4'];
+  //             document.getElementById('total14').value = json_data[key]['total4'];
+  //             document.getElementById('tax14').value = json_data[key]['tax4'];
+  //           }
+  //         } else {
+  //           document.getElementById('unit1').value = json_data[key]['salesprice'];
+  //           var place = document.getElementById('plosu').value;
+  //           if (place == '{{ cmp1.state }}') {
+  //             document.getElementById('unit1').style.display = 'block';
+  //             document.getElementById('tax1').style.display = 'block';
+  //             document.getElementById('total1').style.display = 'block';
+  //             document.getElementById('ta1').value = json_data[key]['tax'];
+  //             document.getElementById('ta1').innerHTML = json_data[key]['tax'] + ' % GST';
+  //           } else if (place != '{{ cmp1.state }}') {
+  //             document.getElementById('unit1').style.display = 'block';
+  //             document.getElementById('tax1').style.display = 'block';
+  //             document.getElementById('total1').style.display = 'block';
+  //             document.getElementById('ta5').value = json_data[key]['tax'];
+  //             document.getElementById('ta5').innerHTML = json_data[key]['tax'] + ' % IGST';
+  //           }
 
-            document.getElementById('bun1').style.display = 'none';
-            document.getElementById('product11').value = '';
-            document.getElementById('hsn11').value = '';
-            document.getElementById('description11').value = '';
-            document.getElementById('qty11').value = 0;
-            document.getElementById('qty111').value = 0;
-            document.getElementById('unit11').value = 0;
-            document.getElementById('total11').value = 0;
-            document.getElementById('tax11').value = 0;
+  //           document.getElementById('bun1').style.display = 'none';
+  //           document.getElementById('product11').value = '';
+  //           document.getElementById('hsn11').value = '';
+  //           document.getElementById('description11').value = '';
+  //           document.getElementById('qty11').value = 0;
+  //           document.getElementById('qty111').value = 0;
+  //           document.getElementById('unit11').value = 0;
+  //           document.getElementById('total11').value = 0;
+  //           document.getElementById('tax11').value = 0;
 
-            document.getElementById('bun2').style.display = 'none';
-            document.getElementById('product12').value = '';
-            document.getElementById('hsn12').value = '';
-            document.getElementById('description12').value = '';
-            document.getElementById('qty12').value = 0;
-            document.getElementById('qty121').value = 0;
-            document.getElementById('unit12').value = 0;
-            document.getElementById('total12').value = 0;
-            document.getElementById('tax12').value = 0;
+  //           document.getElementById('bun2').style.display = 'none';
+  //           document.getElementById('product12').value = '';
+  //           document.getElementById('hsn12').value = '';
+  //           document.getElementById('description12').value = '';
+  //           document.getElementById('qty12').value = 0;
+  //           document.getElementById('qty121').value = 0;
+  //           document.getElementById('unit12').value = 0;
+  //           document.getElementById('total12').value = 0;
+  //           document.getElementById('tax12').value = 0;
 
-            document.getElementById('bun3').style.display = 'none';
-            document.getElementById('product13').value = '';
-            document.getElementById('hsn13').value = '';
-            document.getElementById('description13').value = '';
-            document.getElementById('qty13').value = 0;
-            document.getElementById('qty131').value = 0;
-            document.getElementById('unit13').value = 0;
-            document.getElementById('total13').value = 0;
-            document.getElementById('tax13').value = 0;
+  //           document.getElementById('bun3').style.display = 'none';
+  //           document.getElementById('product13').value = '';
+  //           document.getElementById('hsn13').value = '';
+  //           document.getElementById('description13').value = '';
+  //           document.getElementById('qty13').value = 0;
+  //           document.getElementById('qty131').value = 0;
+  //           document.getElementById('unit13').value = 0;
+  //           document.getElementById('total13').value = 0;
+  //           document.getElementById('tax13').value = 0;
 
-            document.getElementById('bun4').style.display = 'none';
-            document.getElementById('product14').value = '';
-            document.getElementById('hsn14').value = '';
-            document.getElementById('description14').value = '';
-            document.getElementById('qty14').value = 0;
-            document.getElementById('qty141').value = 0;
-            document.getElementById('unit14').value = 0;
-            document.getElementById('total14').value = 0;
-            document.getElementById('tax14').value = 0;
-          }
-        }
-      });
-    });
-    $('#product2').on('change', function() {
-      select = $('#product2').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems' %}",
-        data: {
-          id: select
-        }
-      }).done(function(response) {
-        var json_data = JSON.parse(response);
-        for (key in json_data) {
-          document.getElementById('hsn2').value = json_data[key]['hsn'];
-          document.getElementById('description2').value = json_data[key]['description'];
-          document.getElementById('qty2').value = 0;
-          if (json_data[key]['initialqty'] == '' || json_data[key]['initialqty'] == undefined) {
-            document.getElementById('qtyspan1').innerHTML = '';
-          } else {
-            document.getElementById('qtyspan1').innerHTML = 'Available Quantity : ' + json_data[key]['initialqty'];
-          }
-          if (json_data[key]['item'] == 'bundle') {
-            document.getElementById('unit2').value = 0;
-            document.getElementById('unit2').style.display = 'none';
-            document.getElementById('tax2').style.display = 'none';
-            document.getElementById('total2').style.display = 'none';
-            if (json_data[key]['qty1'] == undefined || json_data[key]['qty1'] == 0) {
-              document.getElementById('bun5').style.display = 'none';
-            } else {
-              document.getElementById('bun5').style.display = 'table-row';
-              document.getElementById('product21').value = json_data[key]['product1'];
-              document.getElementById('hsn21').value = json_data[key]['hsn1'];
-              document.getElementById('description21').value = json_data[key]['description1'];
-              document.getElementById('qty21').value = json_data[key]['qty1'];
-              document.getElementById('qty211').value = json_data[key]['qty1'];
-              document.getElementById('unit21').value = json_data[key]['price1'];
-              document.getElementById('total21').value = json_data[key]['total1'];
-              document.getElementById('tax21').value = json_data[key]['tax1'];
-            }
-            if (json_data[key]['qty2'] == undefined || json_data[key]['qty2'] == 0) {
-              document.getElementById('bun6').style.display = 'none';
-            } else {
-              document.getElementById('bun6').style.display = 'table-row';
-              document.getElementById('product22').value = json_data[key]['product2'];
-              document.getElementById('hsn22').value = json_data[key]['hsn2'];
-              document.getElementById('description22').value = json_data[key]['description2'];
-              document.getElementById('qty22').value = json_data[key]['qty2'];
-              document.getElementById('qty221').value = json_data[key]['qty2'];
-              document.getElementById('unit22').value = json_data[key]['price2'];
-              document.getElementById('total22').value = json_data[key]['total2'];
-              document.getElementById('tax22').value = json_data[key]['tax2'];
-            }
-            if (json_data[key]['qty3'] == undefined || json_data[key]['qty3'] == 0) {
-              document.getElementById('bun7').style.display = 'none';
-            } else {
-              document.getElementById('bun7').style.display = 'table-row';
-              document.getElementById('product23').value = json_data[key]['product3'];
-              document.getElementById('hsn23').value = json_data[key]['hsn3'];
-              document.getElementById('description23').value = json_data[key]['description3'];
-              document.getElementById('qty23').value = json_data[key]['qty3'];
-              document.getElementById('qty231').value = json_data[key]['qty3'];
-              document.getElementById('unit23').value = json_data[key]['price3'];
-              document.getElementById('total23').value = json_data[key]['total3'];
-              document.getElementById('tax23').value = json_data[key]['tax3'];
-            }
-            if (json_data[key]['qty4'] == undefined || json_data[key]['qty4'] == 0) {
-              document.getElementById('bun8').style.display = 'none';
-            } else {
-              document.getElementById('bun8').style.display = 'table-row';
-              document.getElementById('product24').value = json_data[key]['product4'];
-              document.getElementById('hsn24').value = json_data[key]['hsn4'];
-              document.getElementById('description24').value = json_data[key]['description4'];
-              document.getElementById('qty24').value = json_data[key]['qty4'];
-              document.getElementById('qty241').value = json_data[key]['qty4'];
-              document.getElementById('unit24').value = json_data[key]['price4'];
-              document.getElementById('total24').value = json_data[key]['total4'];
-              document.getElementById('tax24').value = json_data[key]['tax4'];
-            }
-          } else {
-            document.getElementById('unit2').value = json_data[key]['salesprice'];
-            var place = document.getElementById('plosu').value;
-            if (place == '{{ cmp1.state }}') {
-              document.getElementById('unit2').style.display = 'block';
-              document.getElementById('tax2').style.display = 'block';
-              document.getElementById('total2').style.display = 'block';
-              document.getElementById('ta2').value = json_data[key]['tax'];
-              document.getElementById('ta2').innerHTML = json_data[key]['tax'] + ' % GST';
-            } else if (place != '{{ cmp1.state }}') {
-              document.getElementById('unit2').style.display = 'block';
-              document.getElementById('tax2').style.display = 'block';
-              document.getElementById('total2').style.display = 'block';
-              document.getElementById('ta6').value = json_data[key]['tax'];
-              document.getElementById('ta6').innerHTML = json_data[key]['tax'] + ' % IGST';
-            }
-            document.getElementById('bun5').style.display = 'none';
-            document.getElementById('product21').value = '';
-            document.getElementById('hsn21').value = '';
-            document.getElementById('description21').value = '';
-            document.getElementById('qty21').value = 0;
-            document.getElementById('qty211').value = 0;
-            document.getElementById('unit21').value = 0;
-            document.getElementById('total21').value = 0;
-            document.getElementById('tax21').value = 0;
+  //           document.getElementById('bun4').style.display = 'none';
+  //           document.getElementById('product14').value = '';
+  //           document.getElementById('hsn14').value = '';
+  //           document.getElementById('description14').value = '';
+  //           document.getElementById('qty14').value = 0;
+  //           document.getElementById('qty141').value = 0;
+  //           document.getElementById('unit14').value = 0;
+  //           document.getElementById('total14').value = 0;
+  //           document.getElementById('tax14').value = 0;
+  //         }
+  //       }
+  //     });
+  //   });
+  //   $('#product2').on('change', function() {
+  //     select = $('#product2').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems' %}",
+  //       data: {
+  //         id: select
+  //       }
+  //     }).done(function(response) {
+  //       var json_data = JSON.parse(response);
+  //       for (key in json_data) {
+  //         document.getElementById('hsn2').value = json_data[key]['hsn'];
+  //         document.getElementById('description2').value = json_data[key]['description'];
+  //         document.getElementById('qty2').value = 0;
+  //         if (json_data[key]['initialqty'] == '' || json_data[key]['initialqty'] == undefined) {
+  //           document.getElementById('qtyspan1').innerHTML = '';
+  //         } else {
+  //           document.getElementById('qtyspan1').innerHTML = 'Available Quantity : ' + json_data[key]['initialqty'];
+  //         }
+  //         if (json_data[key]['item'] == 'bundle') {
+  //           document.getElementById('unit2').value = 0;
+  //           document.getElementById('unit2').style.display = 'none';
+  //           document.getElementById('tax2').style.display = 'none';
+  //           document.getElementById('total2').style.display = 'none';
+  //           if (json_data[key]['qty1'] == undefined || json_data[key]['qty1'] == 0) {
+  //             document.getElementById('bun5').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun5').style.display = 'table-row';
+  //             document.getElementById('product21').value = json_data[key]['product1'];
+  //             document.getElementById('hsn21').value = json_data[key]['hsn1'];
+  //             document.getElementById('description21').value = json_data[key]['description1'];
+  //             document.getElementById('qty21').value = json_data[key]['qty1'];
+  //             document.getElementById('qty211').value = json_data[key]['qty1'];
+  //             document.getElementById('unit21').value = json_data[key]['price1'];
+  //             document.getElementById('total21').value = json_data[key]['total1'];
+  //             document.getElementById('tax21').value = json_data[key]['tax1'];
+  //           }
+  //           if (json_data[key]['qty2'] == undefined || json_data[key]['qty2'] == 0) {
+  //             document.getElementById('bun6').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun6').style.display = 'table-row';
+  //             document.getElementById('product22').value = json_data[key]['product2'];
+  //             document.getElementById('hsn22').value = json_data[key]['hsn2'];
+  //             document.getElementById('description22').value = json_data[key]['description2'];
+  //             document.getElementById('qty22').value = json_data[key]['qty2'];
+  //             document.getElementById('qty221').value = json_data[key]['qty2'];
+  //             document.getElementById('unit22').value = json_data[key]['price2'];
+  //             document.getElementById('total22').value = json_data[key]['total2'];
+  //             document.getElementById('tax22').value = json_data[key]['tax2'];
+  //           }
+  //           if (json_data[key]['qty3'] == undefined || json_data[key]['qty3'] == 0) {
+  //             document.getElementById('bun7').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun7').style.display = 'table-row';
+  //             document.getElementById('product23').value = json_data[key]['product3'];
+  //             document.getElementById('hsn23').value = json_data[key]['hsn3'];
+  //             document.getElementById('description23').value = json_data[key]['description3'];
+  //             document.getElementById('qty23').value = json_data[key]['qty3'];
+  //             document.getElementById('qty231').value = json_data[key]['qty3'];
+  //             document.getElementById('unit23').value = json_data[key]['price3'];
+  //             document.getElementById('total23').value = json_data[key]['total3'];
+  //             document.getElementById('tax23').value = json_data[key]['tax3'];
+  //           }
+  //           if (json_data[key]['qty4'] == undefined || json_data[key]['qty4'] == 0) {
+  //             document.getElementById('bun8').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun8').style.display = 'table-row';
+  //             document.getElementById('product24').value = json_data[key]['product4'];
+  //             document.getElementById('hsn24').value = json_data[key]['hsn4'];
+  //             document.getElementById('description24').value = json_data[key]['description4'];
+  //             document.getElementById('qty24').value = json_data[key]['qty4'];
+  //             document.getElementById('qty241').value = json_data[key]['qty4'];
+  //             document.getElementById('unit24').value = json_data[key]['price4'];
+  //             document.getElementById('total24').value = json_data[key]['total4'];
+  //             document.getElementById('tax24').value = json_data[key]['tax4'];
+  //           }
+  //         } else {
+  //           document.getElementById('unit2').value = json_data[key]['salesprice'];
+  //           var place = document.getElementById('plosu').value;
+  //           if (place == '{{ cmp1.state }}') {
+  //             document.getElementById('unit2').style.display = 'block';
+  //             document.getElementById('tax2').style.display = 'block';
+  //             document.getElementById('total2').style.display = 'block';
+  //             document.getElementById('ta2').value = json_data[key]['tax'];
+  //             document.getElementById('ta2').innerHTML = json_data[key]['tax'] + ' % GST';
+  //           } else if (place != '{{ cmp1.state }}') {
+  //             document.getElementById('unit2').style.display = 'block';
+  //             document.getElementById('tax2').style.display = 'block';
+  //             document.getElementById('total2').style.display = 'block';
+  //             document.getElementById('ta6').value = json_data[key]['tax'];
+  //             document.getElementById('ta6').innerHTML = json_data[key]['tax'] + ' % IGST';
+  //           }
+  //           document.getElementById('bun5').style.display = 'none';
+  //           document.getElementById('product21').value = '';
+  //           document.getElementById('hsn21').value = '';
+  //           document.getElementById('description21').value = '';
+  //           document.getElementById('qty21').value = 0;
+  //           document.getElementById('qty211').value = 0;
+  //           document.getElementById('unit21').value = 0;
+  //           document.getElementById('total21').value = 0;
+  //           document.getElementById('tax21').value = 0;
 
-            document.getElementById('bun6').style.display = 'none';
-            document.getElementById('product22').value = '';
-            document.getElementById('hsn22').value = '';
-            document.getElementById('description22').value = '';
-            document.getElementById('qty22').value = 0;
-            document.getElementById('qty221').value = 0;
-            document.getElementById('unit22').value = 0;
-            document.getElementById('total22').value = 0;
-            document.getElementById('tax22').value = 0;
+  //           document.getElementById('bun6').style.display = 'none';
+  //           document.getElementById('product22').value = '';
+  //           document.getElementById('hsn22').value = '';
+  //           document.getElementById('description22').value = '';
+  //           document.getElementById('qty22').value = 0;
+  //           document.getElementById('qty221').value = 0;
+  //           document.getElementById('unit22').value = 0;
+  //           document.getElementById('total22').value = 0;
+  //           document.getElementById('tax22').value = 0;
 
-            document.getElementById('bun7').style.display = 'none';
-            document.getElementById('product23').value = '';
-            document.getElementById('hsn23').value = '';
-            document.getElementById('description23').value = '';
-            document.getElementById('qty23').value = 0;
-            document.getElementById('qty231').value = 0;
-            document.getElementById('unit23').value = 0;
-            document.getElementById('total23').value = 0;
-            document.getElementById('tax23').value = 0;
+  //           document.getElementById('bun7').style.display = 'none';
+  //           document.getElementById('product23').value = '';
+  //           document.getElementById('hsn23').value = '';
+  //           document.getElementById('description23').value = '';
+  //           document.getElementById('qty23').value = 0;
+  //           document.getElementById('qty231').value = 0;
+  //           document.getElementById('unit23').value = 0;
+  //           document.getElementById('total23').value = 0;
+  //           document.getElementById('tax23').value = 0;
 
-            document.getElementById('bun8').style.display = 'none';
-            document.getElementById('product24').value = '';
-            document.getElementById('hsn24').value = '';
-            document.getElementById('description24').value = '';
-            document.getElementById('qty24').value = 0;
-            document.getElementById('qty241').value = 0;
-            document.getElementById('unit24').value = 0;
-            document.getElementById('total24').value = 0;
-            document.getElementById('tax24').value = 0;
-          }
-        }
-      });
-    });
+  //           document.getElementById('bun8').style.display = 'none';
+  //           document.getElementById('product24').value = '';
+  //           document.getElementById('hsn24').value = '';
+  //           document.getElementById('description24').value = '';
+  //           document.getElementById('qty24').value = 0;
+  //           document.getElementById('qty241').value = 0;
+  //           document.getElementById('unit24').value = 0;
+  //           document.getElementById('total24').value = 0;
+  //           document.getElementById('tax24').value = 0;
+  //         }
+  //       }
+  //     });
+  //   });
 
-    $('#product3').on('change', function() {
-      select = $('#product3').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems' %}",
-        data: {
-          id: select
-        }
-      }).done(function(response) {
-        var json_data = JSON.parse(response);
-        for (key in json_data) {
-          document.getElementById('hsn3').value = json_data[key]['hsn'];
-          document.getElementById('description3').value = json_data[key]['description'];
-          document.getElementById('qty3').value = 0;
-          if (json_data[key]['initialqty'] == '' || json_data[key]['initialqty'] == undefined) {
-            document.getElementById('qtyspan2').innerHTML = '';
-          } else {
-            document.getElementById('qtyspan2').innerHTML = 'Available Quantity : ' + json_data[key]['initialqty'];
-          }
-          if (json_data[key]['item'] == 'bundle') {
-            document.getElementById('unit3').value = 0;
-            document.getElementById('unit3').style.display = 'none';
-            document.getElementById('tax3').style.display = 'none';
-            document.getElementById('total3').style.display = 'none';
-            if (json_data[key]['qty1'] == undefined || json_data[key]['qty1'] == 0) {
-              document.getElementById('bun9').style.display = 'none';
-            } else {
-              document.getElementById('bun9').style.display = 'table-row';
-              document.getElementById('product31').value = json_data[key]['product1'];
-              document.getElementById('hsn31').value = json_data[key]['hsn1'];
-              document.getElementById('description31').value = json_data[key]['description1'];
-              document.getElementById('qty31').value = json_data[key]['qty1'];
-              document.getElementById('qty311').value = json_data[key]['qty1'];
-              document.getElementById('unit31').value = json_data[key]['price1'];
-              document.getElementById('total31').value = json_data[key]['total1'];
-              document.getElementById('tax31').value = json_data[key]['tax1'];
-            }
-            if (json_data[key]['qty2'] == undefined || json_data[key]['qty2'] == 0) {
-              document.getElementById('bun10').style.display = 'none';
-            } else {
-              document.getElementById('bun10').style.display = 'table-row';
-              document.getElementById('product32').value = json_data[key]['product2'];
-              document.getElementById('hsn32').value = json_data[key]['hsn2'];
-              document.getElementById('description32').value = json_data[key]['description2'];
-              document.getElementById('qty32').value = json_data[key]['qty2'];
-              document.getElementById('qty321').value = json_data[key]['qty2'];
-              document.getElementById('unit32').value = json_data[key]['price2'];
-              document.getElementById('total32').value = json_data[key]['total2'];
-              document.getElementById('tax32').value = json_data[key]['tax2'];
-            }
-            if (json_data[key]['qty3'] == undefined || json_data[key]['qty3'] == 0) {
-              document.getElementById('bun11').style.display = 'none';
-            } else {
-              document.getElementById('bun11').style.display = 'table-row';
-              document.getElementById('product33').value = json_data[key]['product3'];
-              document.getElementById('hsn33').value = json_data[key]['hsn3'];
-              document.getElementById('description33').value = json_data[key]['description3'];
-              document.getElementById('qty33').value = json_data[key]['qty3'];
-              document.getElementById('qty331').value = json_data[key]['qty3'];
-              document.getElementById('unit33').value = json_data[key]['price3'];
-              document.getElementById('total33').value = json_data[key]['total3'];
-              document.getElementById('tax33').value = json_data[key]['tax3'];
-            }
-            if (json_data[key]['qty4'] == undefined || json_data[key]['qty4'] == 0) {
-              document.getElementById('bun12').style.display = 'none';
-            } else {
-              document.getElementById('bun12').style.display = 'table-row';
-              document.getElementById('product34').value = json_data[key]['product4'];
-              document.getElementById('hsn34').value = json_data[key]['hsn4'];
-              document.getElementById('description34').value = json_data[key]['description4'];
-              document.getElementById('qty34').value = json_data[key]['qty4'];
-              document.getElementById('qty341').value = json_data[key]['qty4'];
-              document.getElementById('unit34').value = json_data[key]['price4'];
-              document.getElementById('total34').value = json_data[key]['total4'];
-              document.getElementById('tax34').value = json_data[key]['tax4'];
-            }
-          } else {
-            document.getElementById('unit3').value = json_data[key]['salesprice'];
-            var place = document.getElementById('plosu').value;
-            if (place == '{{ cmp1.state }}') {
-              document.getElementById('unit3').style.display = 'block';
-              document.getElementById('tax3').style.display = 'block';
-              document.getElementById('total3').style.display = 'block';
-              document.getElementById('ta3').value = json_data[key]['tax'];
-              document.getElementById('ta3').innerHTML = json_data[key]['tax'] + ' % GST';
-            } else if (place != '{{ cmp1.state }}') {
-              document.getElementById('unit3').style.display = 'block';
-              document.getElementById('tax3').style.display = 'block';
-              document.getElementById('total3').style.display = 'block';
-              document.getElementById('ta7').value = json_data[key]['tax'];
-              document.getElementById('ta7').innerHTML = json_data[key]['tax'] + ' % IGST';
-            }
+  //   $('#product3').on('change', function() {
+  //     select = $('#product3').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems' %}",
+  //       data: {
+  //         id: select
+  //       }
+  //     }).done(function(response) {
+  //       var json_data = JSON.parse(response);
+  //       for (key in json_data) {
+  //         document.getElementById('hsn3').value = json_data[key]['hsn'];
+  //         document.getElementById('description3').value = json_data[key]['description'];
+  //         document.getElementById('qty3').value = 0;
+  //         if (json_data[key]['initialqty'] == '' || json_data[key]['initialqty'] == undefined) {
+  //           document.getElementById('qtyspan2').innerHTML = '';
+  //         } else {
+  //           document.getElementById('qtyspan2').innerHTML = 'Available Quantity : ' + json_data[key]['initialqty'];
+  //         }
+  //         if (json_data[key]['item'] == 'bundle') {
+  //           document.getElementById('unit3').value = 0;
+  //           document.getElementById('unit3').style.display = 'none';
+  //           document.getElementById('tax3').style.display = 'none';
+  //           document.getElementById('total3').style.display = 'none';
+  //           if (json_data[key]['qty1'] == undefined || json_data[key]['qty1'] == 0) {
+  //             document.getElementById('bun9').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun9').style.display = 'table-row';
+  //             document.getElementById('product31').value = json_data[key]['product1'];
+  //             document.getElementById('hsn31').value = json_data[key]['hsn1'];
+  //             document.getElementById('description31').value = json_data[key]['description1'];
+  //             document.getElementById('qty31').value = json_data[key]['qty1'];
+  //             document.getElementById('qty311').value = json_data[key]['qty1'];
+  //             document.getElementById('unit31').value = json_data[key]['price1'];
+  //             document.getElementById('total31').value = json_data[key]['total1'];
+  //             document.getElementById('tax31').value = json_data[key]['tax1'];
+  //           }
+  //           if (json_data[key]['qty2'] == undefined || json_data[key]['qty2'] == 0) {
+  //             document.getElementById('bun10').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun10').style.display = 'table-row';
+  //             document.getElementById('product32').value = json_data[key]['product2'];
+  //             document.getElementById('hsn32').value = json_data[key]['hsn2'];
+  //             document.getElementById('description32').value = json_data[key]['description2'];
+  //             document.getElementById('qty32').value = json_data[key]['qty2'];
+  //             document.getElementById('qty321').value = json_data[key]['qty2'];
+  //             document.getElementById('unit32').value = json_data[key]['price2'];
+  //             document.getElementById('total32').value = json_data[key]['total2'];
+  //             document.getElementById('tax32').value = json_data[key]['tax2'];
+  //           }
+  //           if (json_data[key]['qty3'] == undefined || json_data[key]['qty3'] == 0) {
+  //             document.getElementById('bun11').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun11').style.display = 'table-row';
+  //             document.getElementById('product33').value = json_data[key]['product3'];
+  //             document.getElementById('hsn33').value = json_data[key]['hsn3'];
+  //             document.getElementById('description33').value = json_data[key]['description3'];
+  //             document.getElementById('qty33').value = json_data[key]['qty3'];
+  //             document.getElementById('qty331').value = json_data[key]['qty3'];
+  //             document.getElementById('unit33').value = json_data[key]['price3'];
+  //             document.getElementById('total33').value = json_data[key]['total3'];
+  //             document.getElementById('tax33').value = json_data[key]['tax3'];
+  //           }
+  //           if (json_data[key]['qty4'] == undefined || json_data[key]['qty4'] == 0) {
+  //             document.getElementById('bun12').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun12').style.display = 'table-row';
+  //             document.getElementById('product34').value = json_data[key]['product4'];
+  //             document.getElementById('hsn34').value = json_data[key]['hsn4'];
+  //             document.getElementById('description34').value = json_data[key]['description4'];
+  //             document.getElementById('qty34').value = json_data[key]['qty4'];
+  //             document.getElementById('qty341').value = json_data[key]['qty4'];
+  //             document.getElementById('unit34').value = json_data[key]['price4'];
+  //             document.getElementById('total34').value = json_data[key]['total4'];
+  //             document.getElementById('tax34').value = json_data[key]['tax4'];
+  //           }
+  //         } else {
+  //           document.getElementById('unit3').value = json_data[key]['salesprice'];
+  //           var place = document.getElementById('plosu').value;
+  //           if (place == '{{ cmp1.state }}') {
+  //             document.getElementById('unit3').style.display = 'block';
+  //             document.getElementById('tax3').style.display = 'block';
+  //             document.getElementById('total3').style.display = 'block';
+  //             document.getElementById('ta3').value = json_data[key]['tax'];
+  //             document.getElementById('ta3').innerHTML = json_data[key]['tax'] + ' % GST';
+  //           } else if (place != '{{ cmp1.state }}') {
+  //             document.getElementById('unit3').style.display = 'block';
+  //             document.getElementById('tax3').style.display = 'block';
+  //             document.getElementById('total3').style.display = 'block';
+  //             document.getElementById('ta7').value = json_data[key]['tax'];
+  //             document.getElementById('ta7').innerHTML = json_data[key]['tax'] + ' % IGST';
+  //           }
 
-            document.getElementById('bun9').style.display = 'none';
-            document.getElementById('product31').value = '';
-            document.getElementById('hsn31').value = '';
-            document.getElementById('description31').value = '';
-            document.getElementById('qty31').value = 0;
-            document.getElementById('qty311').value = 0;
-            document.getElementById('unit31').value = 0;
-            document.getElementById('total31').value = 0;
-            document.getElementById('tax31').value = 0;
+  //           document.getElementById('bun9').style.display = 'none';
+  //           document.getElementById('product31').value = '';
+  //           document.getElementById('hsn31').value = '';
+  //           document.getElementById('description31').value = '';
+  //           document.getElementById('qty31').value = 0;
+  //           document.getElementById('qty311').value = 0;
+  //           document.getElementById('unit31').value = 0;
+  //           document.getElementById('total31').value = 0;
+  //           document.getElementById('tax31').value = 0;
 
-            document.getElementById('bun10').style.display = 'none';
-            document.getElementById('product32').value = '';
-            document.getElementById('hsn32').value = '';
-            document.getElementById('description32').value = '';
-            document.getElementById('qty32').value = 0;
-            document.getElementById('qty321').value = 0;
-            document.getElementById('unit32').value = 0;
-            document.getElementById('total32').value = 0;
-            document.getElementById('tax32').value = 0;
+  //           document.getElementById('bun10').style.display = 'none';
+  //           document.getElementById('product32').value = '';
+  //           document.getElementById('hsn32').value = '';
+  //           document.getElementById('description32').value = '';
+  //           document.getElementById('qty32').value = 0;
+  //           document.getElementById('qty321').value = 0;
+  //           document.getElementById('unit32').value = 0;
+  //           document.getElementById('total32').value = 0;
+  //           document.getElementById('tax32').value = 0;
 
-            document.getElementById('bun11').style.display = 'none';
-            document.getElementById('product33').value = '';
-            document.getElementById('hsn33').value = '';
-            document.getElementById('description33').value = '';
-            document.getElementById('qty33').value = 0;
-            document.getElementById('qty331').value = 0;
-            document.getElementById('unit33').value = 0;
-            document.getElementById('total33').value = 0;
-            document.getElementById('tax33').value = 0;
+  //           document.getElementById('bun11').style.display = 'none';
+  //           document.getElementById('product33').value = '';
+  //           document.getElementById('hsn33').value = '';
+  //           document.getElementById('description33').value = '';
+  //           document.getElementById('qty33').value = 0;
+  //           document.getElementById('qty331').value = 0;
+  //           document.getElementById('unit33').value = 0;
+  //           document.getElementById('total33').value = 0;
+  //           document.getElementById('tax33').value = 0;
 
-            document.getElementById('bun12').style.display = 'none';
-            document.getElementById('product34').value = '';
-            document.getElementById('hsn34').value = '';
-            document.getElementById('description34').value = '';
-            document.getElementById('qty34').value = 0;
-            document.getElementById('qty341').value = 0;
-            document.getElementById('unit34').value = 0;
-            document.getElementById('total34').value = 0;
-            document.getElementById('tax34').value = 0;
-          }
-        }
-      });
-    });
-    $('#product4').on('change', function() {
-      select = $('#product4').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getitems' %}",
-        data: {
-          id: select
-        }
-      }).done(function(response) {
-        var json_data = JSON.parse(response);
-        for (key in json_data) {
-          document.getElementById('hsn4').value = json_data[key]['hsn'];
-          document.getElementById('description4').value = json_data[key]['description'];
-          document.getElementById('qty4').value = 0;
-          if (json_data[key]['initialqty'] == '' || json_data[key]['initialqty'] == undefined) {
-            document.getElementById('qtyspan3').innerHTML = '';
-          } else {
-            document.getElementById('qtyspan3').innerHTML = 'Available Quantity : ' + json_data[key]['initialqty'];
-          }
-          if (json_data[key]['item'] == 'bundle') {
-            document.getElementById('unit4').value = 0;
-            document.getElementById('unit4').style.display = 'none';
-            document.getElementById('tax4').style.display = 'none';
-            document.getElementById('total4').style.display = 'none';
-            if (json_data[key]['qty1'] == undefined || json_data[key]['qty1'] == 0) {
-              document.getElementById('bun13').style.display = 'none';
-            } else {
-              document.getElementById('bun13').style.display = 'table-row';
-              document.getElementById('product41').value = json_data[key]['product1'];
-              document.getElementById('hsn41').value = json_data[key]['hsn1'];
-              document.getElementById('description41').value = json_data[key]['description1'];
-              document.getElementById('qty41').value = json_data[key]['qty1'];
-              document.getElementById('qty411').value = json_data[key]['qty1'];
-              document.getElementById('unit41').value = json_data[key]['price1'];
-              document.getElementById('total41').value = json_data[key]['total1'];
-              document.getElementById('tax41').value = json_data[key]['tax1'];
-            }
-            if (json_data[key]['qty2'] == undefined || json_data[key]['qty2'] == 0) {
-              document.getElementById('bun14').style.display = 'none';
-            } else {
-              document.getElementById('bun14').style.display = 'table-row';
-              document.getElementById('product42').value = json_data[key]['product2'];
-              document.getElementById('hsn42').value = json_data[key]['hsn2'];
-              document.getElementById('description42').value = json_data[key]['description2'];
-              document.getElementById('qty42').value = json_data[key]['qty2'];
-              document.getElementById('qty421').value = json_data[key]['qty2'];
-              document.getElementById('unit42').value = json_data[key]['price2'];
-              document.getElementById('total42').value = json_data[key]['total2'];
-              document.getElementById('tax42').value = json_data[key]['tax2'];
-            }
-            if (json_data[key]['qty3'] == undefined || json_data[key]['qty3'] == 0) {
-              document.getElementById('bun15').style.display = 'none';
-            } else {
-              document.getElementById('bun15').style.display = 'table-row';
-              document.getElementById('product43').value = json_data[key]['product3'];
-              document.getElementById('hsn43').value = json_data[key]['hsn3'];
-              document.getElementById('description43').value = json_data[key]['description3'];
-              document.getElementById('qty43').value = json_data[key]['qty3'];
-              document.getElementById('qty431').value = json_data[key]['qty3'];
-              document.getElementById('unit43').value = json_data[key]['price3'];
-              document.getElementById('total43').value = json_data[key]['total3'];
-              document.getElementById('tax43').value = json_data[key]['tax3'];
-            }
-            if (json_data[key]['qty4'] == undefined || json_data[key]['qty4'] == 0) {
-              document.getElementById('bun16').style.display = 'none';
-            } else {
-              document.getElementById('bun16').style.display = 'table-row';
-              document.getElementById('product44').value = json_data[key]['product4'];
-              document.getElementById('hsn44').value = json_data[key]['hsn4'];
-              document.getElementById('description44').value = json_data[key]['description4'];
-              document.getElementById('qty44').value = json_data[key]['qty4'];
-              document.getElementById('qty441').value = json_data[key]['qty4'];
-              document.getElementById('unit44').value = json_data[key]['price4'];
-              document.getElementById('total44').value = json_data[key]['total4'];
-              document.getElementById('tax44').value = json_data[key]['tax4'];
-            }
-          } else {
-            document.getElementById('unit4').value = json_data[key]['salesprice'];
-            var place = document.getElementById('plosu').value;
-            if (place == '{{ cmp1.state }}') {
-              document.getElementById('unit4').style.display = 'block';
-              document.getElementById('tax4').style.display = 'block';
-              document.getElementById('total4').style.display = 'block';
-              document.getElementById('ta4').value = json_data[key]['tax'];
-              document.getElementById('ta4').innerHTML = json_data[key]['tax'] + ' % GST';
-            } else if (place != '{{ cmp1.state }}') {
-              document.getElementById('unit4').style.display = 'block';
-              document.getElementById('tax4').style.display = 'block';
-              document.getElementById('total4').style.display = 'block';
-              document.getElementById('ta8').value = json_data[key]['tax'];
-              document.getElementById('ta8').innerHTML = json_data[key]['tax'] + ' % IGST';
-            }
-            document.getElementById('bun13').style.display = 'none';
-            document.getElementById('product41').value = '';
-            document.getElementById('hsn41').value = '';
-            document.getElementById('description41').value = '';
-            document.getElementById('qty41').value = 0;
-            document.getElementById('qty411').value = 0;
-            document.getElementById('unit41').value = 0;
-            document.getElementById('total41').value = 0;
-            document.getElementById('tax41').value = 0;
+  //           document.getElementById('bun12').style.display = 'none';
+  //           document.getElementById('product34').value = '';
+  //           document.getElementById('hsn34').value = '';
+  //           document.getElementById('description34').value = '';
+  //           document.getElementById('qty34').value = 0;
+  //           document.getElementById('qty341').value = 0;
+  //           document.getElementById('unit34').value = 0;
+  //           document.getElementById('total34').value = 0;
+  //           document.getElementById('tax34').value = 0;
+  //         }
+  //       }
+  //     });
+  //   });
+  //   $('#product4').on('change', function() {
+  //     select = $('#product4').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getitems' %}",
+  //       data: {
+  //         id: select
+  //       }
+  //     }).done(function(response) {
+  //       var json_data = JSON.parse(response);
+  //       for (key in json_data) {
+  //         document.getElementById('hsn4').value = json_data[key]['hsn'];
+  //         document.getElementById('description4').value = json_data[key]['description'];
+  //         document.getElementById('qty4').value = 0;
+  //         if (json_data[key]['initialqty'] == '' || json_data[key]['initialqty'] == undefined) {
+  //           document.getElementById('qtyspan3').innerHTML = '';
+  //         } else {
+  //           document.getElementById('qtyspan3').innerHTML = 'Available Quantity : ' + json_data[key]['initialqty'];
+  //         }
+  //         if (json_data[key]['item'] == 'bundle') {
+  //           document.getElementById('unit4').value = 0;
+  //           document.getElementById('unit4').style.display = 'none';
+  //           document.getElementById('tax4').style.display = 'none';
+  //           document.getElementById('total4').style.display = 'none';
+  //           if (json_data[key]['qty1'] == undefined || json_data[key]['qty1'] == 0) {
+  //             document.getElementById('bun13').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun13').style.display = 'table-row';
+  //             document.getElementById('product41').value = json_data[key]['product1'];
+  //             document.getElementById('hsn41').value = json_data[key]['hsn1'];
+  //             document.getElementById('description41').value = json_data[key]['description1'];
+  //             document.getElementById('qty41').value = json_data[key]['qty1'];
+  //             document.getElementById('qty411').value = json_data[key]['qty1'];
+  //             document.getElementById('unit41').value = json_data[key]['price1'];
+  //             document.getElementById('total41').value = json_data[key]['total1'];
+  //             document.getElementById('tax41').value = json_data[key]['tax1'];
+  //           }
+  //           if (json_data[key]['qty2'] == undefined || json_data[key]['qty2'] == 0) {
+  //             document.getElementById('bun14').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun14').style.display = 'table-row';
+  //             document.getElementById('product42').value = json_data[key]['product2'];
+  //             document.getElementById('hsn42').value = json_data[key]['hsn2'];
+  //             document.getElementById('description42').value = json_data[key]['description2'];
+  //             document.getElementById('qty42').value = json_data[key]['qty2'];
+  //             document.getElementById('qty421').value = json_data[key]['qty2'];
+  //             document.getElementById('unit42').value = json_data[key]['price2'];
+  //             document.getElementById('total42').value = json_data[key]['total2'];
+  //             document.getElementById('tax42').value = json_data[key]['tax2'];
+  //           }
+  //           if (json_data[key]['qty3'] == undefined || json_data[key]['qty3'] == 0) {
+  //             document.getElementById('bun15').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun15').style.display = 'table-row';
+  //             document.getElementById('product43').value = json_data[key]['product3'];
+  //             document.getElementById('hsn43').value = json_data[key]['hsn3'];
+  //             document.getElementById('description43').value = json_data[key]['description3'];
+  //             document.getElementById('qty43').value = json_data[key]['qty3'];
+  //             document.getElementById('qty431').value = json_data[key]['qty3'];
+  //             document.getElementById('unit43').value = json_data[key]['price3'];
+  //             document.getElementById('total43').value = json_data[key]['total3'];
+  //             document.getElementById('tax43').value = json_data[key]['tax3'];
+  //           }
+  //           if (json_data[key]['qty4'] == undefined || json_data[key]['qty4'] == 0) {
+  //             document.getElementById('bun16').style.display = 'none';
+  //           } else {
+  //             document.getElementById('bun16').style.display = 'table-row';
+  //             document.getElementById('product44').value = json_data[key]['product4'];
+  //             document.getElementById('hsn44').value = json_data[key]['hsn4'];
+  //             document.getElementById('description44').value = json_data[key]['description4'];
+  //             document.getElementById('qty44').value = json_data[key]['qty4'];
+  //             document.getElementById('qty441').value = json_data[key]['qty4'];
+  //             document.getElementById('unit44').value = json_data[key]['price4'];
+  //             document.getElementById('total44').value = json_data[key]['total4'];
+  //             document.getElementById('tax44').value = json_data[key]['tax4'];
+  //           }
+  //         } else {
+  //           document.getElementById('unit4').value = json_data[key]['salesprice'];
+  //           var place = document.getElementById('plosu').value;
+  //           if (place == '{{ cmp1.state }}') {
+  //             document.getElementById('unit4').style.display = 'block';
+  //             document.getElementById('tax4').style.display = 'block';
+  //             document.getElementById('total4').style.display = 'block';
+  //             document.getElementById('ta4').value = json_data[key]['tax'];
+  //             document.getElementById('ta4').innerHTML = json_data[key]['tax'] + ' % GST';
+  //           } else if (place != '{{ cmp1.state }}') {
+  //             document.getElementById('unit4').style.display = 'block';
+  //             document.getElementById('tax4').style.display = 'block';
+  //             document.getElementById('total4').style.display = 'block';
+  //             document.getElementById('ta8').value = json_data[key]['tax'];
+  //             document.getElementById('ta8').innerHTML = json_data[key]['tax'] + ' % IGST';
+  //           }
+  //           document.getElementById('bun13').style.display = 'none';
+  //           document.getElementById('product41').value = '';
+  //           document.getElementById('hsn41').value = '';
+  //           document.getElementById('description41').value = '';
+  //           document.getElementById('qty41').value = 0;
+  //           document.getElementById('qty411').value = 0;
+  //           document.getElementById('unit41').value = 0;
+  //           document.getElementById('total41').value = 0;
+  //           document.getElementById('tax41').value = 0;
 
-            document.getElementById('bun14').style.display = 'none';
-            document.getElementById('product42').value = '';
-            document.getElementById('hsn42').value = '';
-            document.getElementById('description42').value = '';
-            document.getElementById('qty42').value = 0;
-            document.getElementById('qty421').value = 0;
-            document.getElementById('unit42').value = 0;
-            document.getElementById('total42').value = 0;
-            document.getElementById('tax42').value = 0;
+  //           document.getElementById('bun14').style.display = 'none';
+  //           document.getElementById('product42').value = '';
+  //           document.getElementById('hsn42').value = '';
+  //           document.getElementById('description42').value = '';
+  //           document.getElementById('qty42').value = 0;
+  //           document.getElementById('qty421').value = 0;
+  //           document.getElementById('unit42').value = 0;
+  //           document.getElementById('total42').value = 0;
+  //           document.getElementById('tax42').value = 0;
 
-            document.getElementById('bun15').style.display = 'none';
-            document.getElementById('product43').value = '';
-            document.getElementById('hsn43').value = '';
-            document.getElementById('description43').value = '';
-            document.getElementById('qty43').value = 0;
-            document.getElementById('qty431').value = 0;
-            document.getElementById('unit43').value = 0;
-            document.getElementById('total43').value = 0;
-            document.getElementById('tax43').value = 0;
+  //           document.getElementById('bun15').style.display = 'none';
+  //           document.getElementById('product43').value = '';
+  //           document.getElementById('hsn43').value = '';
+  //           document.getElementById('description43').value = '';
+  //           document.getElementById('qty43').value = 0;
+  //           document.getElementById('qty431').value = 0;
+  //           document.getElementById('unit43').value = 0;
+  //           document.getElementById('total43').value = 0;
+  //           document.getElementById('tax43').value = 0;
 
-            document.getElementById('bun16').style.display = 'none';
-            document.getElementById('product44').value = '';
-            document.getElementById('hsn44').value = '';
-            document.getElementById('description44').value = '';
-            document.getElementById('qty44').value = 0;
-            document.getElementById('qty441').value = 0;
-            document.getElementById('unit44').value = 0;
-            document.getElementById('total44').value = 0;
-            document.getElementById('tax44').value = 0;
-          }
-        }
-      });
-    });
+  //           document.getElementById('bun16').style.display = 'none';
+  //           document.getElementById('product44').value = '';
+  //           document.getElementById('hsn44').value = '';
+  //           document.getElementById('description44').value = '';
+  //           document.getElementById('qty44').value = 0;
+  //           document.getElementById('qty441').value = 0;
+  //           document.getElementById('unit44').value = 0;
+  //           document.getElementById('total44').value = 0;
+  //           document.getElementById('tax44').value = 0;
+  //         }
+  //       }
+  //     });
+  //   });
 
-    $('#termadd').on('change', function() {
-      select = $('#termadd').val();
-      $.ajax({
-        type: "GET",
-        url: "{% url 'getterm' %}",
-        data: {
-          id: select
-        }
-      }).done(function(response) {
-        var json_data = JSON.parse(response);
-        for (key in json_data) {
-          document.getElementById('duedat').value = json_data[key]['newdate'];
-        }
-      }).fail(function() {
+  //   $('#termadd').on('change', function() {
+  //     select = $('#termadd').val();
+  //     $.ajax({
+  //       type: "GET",
+  //       url: "{% url 'getterm' %}",
+  //       data: {
+  //         id: select
+  //       }
+  //     }).done(function(response) {
+  //       var json_data = JSON.parse(response);
+  //       for (key in json_data) {
+  //         document.getElementById('duedat').value = json_data[key]['newdate'];
+  //       }
+  //     }).fail(function() {
 
-      });
-    });
-    var $select1 = $('#plosu'),
-      $select2 = $('#tax1'),
-      $select3 = $('#tax2'),
-      $select4 = $('#tax3'),
-      $select5 = $('#tax4'),
-      $options = $select2.find('option'),
-      $options1 = $select3.find('option'),
-      $options2 = $select4.find('option'),
-      $options3 = $select5.find('option');
-    if ($options1.value == '{{ cmp1.state }}') {
-      $options1.text = "{{ cmp1.state }}"
-    }
-    $select1.on('change', function() {
-      if (this.value == "{{ cmp1.state }}") {
-        $select2.html($options.filter('[text="' + this.value + '"]'));
-        $select3.html($options1.filter('[text="' + this.value + '"]'));
-        $select4.html($options2.filter('[text="' + this.value + '"]'));
-        $select5.html($options3.filter('[text="' + this.value + '"]'));
-      } else {
-        $select2.html($options.filter('[text="' + " " + '"]'));
-        $select3.html($options1.filter('[text="' + " " + '"]'));
-        $select4.html($options2.filter('[text="' + " " + '"]'));
-        $select5.html($options3.filter('[text="' + " " + '"]'));
+  //     });
+  //   });
+  //   var $select1 = $('#plosu'),
+  //     $select2 = $('#tax1'),
+  //     $select3 = $('#tax2'),
+  //     $select4 = $('#tax3'),
+  //     $select5 = $('#tax4'),
+  //     $options = $select2.find('option'),
+  //     $options1 = $select3.find('option'),
+  //     $options2 = $select4.find('option'),
+  //     $options3 = $select5.find('option');
+  //   if ($options1.value == '{{ cmp1.state }}') {
+  //     $options1.text = "{{ cmp1.state }}"
+  //   }
+  //   $select1.on('change', function() {
+  //     if (this.value == "{{ cmp1.state }}") {
+  //       $select2.html($options.filter('[text="' + this.value + '"]'));
+  //       $select3.html($options1.filter('[text="' + this.value + '"]'));
+  //       $select4.html($options2.filter('[text="' + this.value + '"]'));
+  //       $select5.html($options3.filter('[text="' + this.value + '"]'));
+  //     } else {
+  //       $select2.html($options.filter('[text="' + " " + '"]'));
+  //       $select3.html($options1.filter('[text="' + " " + '"]'));
+  //       $select4.html($options2.filter('[text="' + " " + '"]'));
+  //       $select5.html($options3.filter('[text="' + " " + '"]'));
 
-      }
+  //     }
 
-    }).trigger('change');
-  });
+  //   }).trigger('change');
+  // });
 
 
  
@@ -3145,7 +3189,16 @@ $('#baldue').val(parseFloat(x .toFixed(2)));
         }
 
         
-       
+        function showMessage(input) {
+            const gstin = input.value;
+
+            if (gstin.length === 15) {
+                // document.getElementById("message").textContent = "Please wait, validating GSTIN format...";
+                setTimeout(() => checkgst(input), 500);  // Wait for a second and then validate GSTIN
+            } else {
+                document.getElementById("message").textContent = "";
+            }
+        }
 
 
         function checkgst(element) {
@@ -3345,7 +3398,7 @@ $('#baldue').val(parseFloat(x .toFixed(2)));
                     panno :$("#panno").val(),
 
                   
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
                     
                 },
                 
@@ -3451,7 +3504,8 @@ $('#baldue').val(parseFloat(x .toFixed(2)));
             csrfmiddlewaretoken: '{{ csrf_token }}',
 
             success: function(data) {
-                var dropdown = $('#product');
+                var dropdown = $('.product');
+                console.log(data)
                 dropdown.empty();
                 dropdown.append(`<option selected>Select Item</option>`);
                 $.each(data, function(key, value) {
@@ -3487,6 +3541,57 @@ $('#baldue').val(parseFloat(x .toFixed(2)));
                         }
                     });
                 });
+            });
+
+            $(document).on("click",".seltax",function(){
+                
+                $(".seltax").removeClass('d-flex');
+                $(".seltax").addClass('d-none');
+
+                console.log($("#plosu").val());
+                console.log($("#cmpstate").val());
+
+                if($("#plosu").val() == $("#cmpstate").val()){
+                    console.log("yes");
+                    $(".inter_tax").removeClass('d-flex');
+                    $(".inter_tax").addClass('d-none');
+
+                    $(".intra_tax").removeClass('d-none');
+                    $(".intra_tax").addClass('d-flex');
+                    
+                }
+                else{
+                    console.log("no");
+                    $(".intra_tax").removeClass('d-flex');
+                    $(".intra_tax").addClass('d-none');
+
+                    $(".inter_tax").removeClass('d-none');
+                    $(".inter_tax").addClass('d-flex');
+                }
+
+            });
+
+            $(document).on('change','#plosu',function()   {
+                $(".seltax").removeClass('d-none');
+                $(".seltax").addClass('d-flex');
+                $(".intra_tax").removeClass('d-flex');
+                $(".intra_tax").addClass('d-none');
+                $(".inter_tax").removeClass('d-flex');
+                $(".inter_tax").addClass('d-none');
+                var bc = document.getElementById("plosu").value;
+                var compstate = document.getElementById("cmpstate").value;
+                if (bc == compstate ) {
+                    document.getElementById('cgst1').style.display = 'flex';
+                    document.getElementById('sgst1').style.display = 'flex';
+                    document.getElementById('igst1').style.display = 'none'; 
+
+                } else {
+                    document.getElementById('cgst1').style.display = 'none';
+                    document.getElementById('sgst1').style.display = 'none';
+                    document.getElementById('igst1').style.display = 'flex';
+
+                }
+                    
             });
             </script>
 

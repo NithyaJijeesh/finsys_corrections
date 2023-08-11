@@ -164,7 +164,7 @@
                                         <td>
                                                
                                             <input type="number" name='quantity[]'  style="margin-top: 21px;" placeholder='Enter Qty' id="qty1" class="form-control qty" step=0 min=0>
-                                                <div><span>Available Qty :</span> <span id="qtyspan1"class=''></span></div>
+                                                <div class="d-flex"><span>Available Qty :</span> <span id="qtyspan1"class=''></span></div>
                                             
 
                                         </td>
@@ -1050,7 +1050,7 @@
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script>
 
-$(document).ready(function() {
+        $(document).ready(function() {
             $("#gsttype").change(function() {
             var x=$('#gsttype').val();
             if(x=="unregistered Business") 
@@ -1098,7 +1098,7 @@ $(document).ready(function() {
                 $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
                 i++;
             });
-           
+        });   
 
         $('#date').val(new Date().toJSON().slice(0,10));
 
@@ -1567,6 +1567,7 @@ $(document).ready(function() {
             }
             });
             }
+        
 
 
 
@@ -1688,7 +1689,7 @@ $(document).ready(function() {
                     
             });
             
-        });
+     
     
  
 
@@ -1723,7 +1724,7 @@ $(document).ready(function() {
 
             if (gstin.length === 15) {
                 // document.getElementById("message").textContent = "Please wait, validating GSTIN format...";
-                setTimeout(() => checkgst(input), 1000);  // Wait for a second and then validate GSTIN
+                setTimeout(() => checkgst(input), 500);  // Wait for a second and then validate GSTIN
             } else {
                 document.getElementById("message").textContent = "";
             }

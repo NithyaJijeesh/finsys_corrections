@@ -446,7 +446,7 @@ function uplodfile(){
                                     </div>
                                     <div class="col-5">
                                         <p>TO,</p>
-                                        <h5>{{estimate.customer}}</h5>
+                                        <h5>{{cust.title}} {{cust.firstname}} {{cust.lastname}}</h5>
                                         <p class="address col-6" style="margin-left: -14px;" > {{ estimate.billingaddress}} </p>
                                         
                                     </div>
@@ -513,30 +513,31 @@ function uplodfile(){
                                             <td style="color:black; font-weight:bold">Sub Total :</td>
                                             <td style="color:black; font-weight:bold">{{estimate.subtotal}}</td>
                                         </tr>
-                                        {% if estimate.IGST != "" %}
+                                        <tr class="d-none" >
+                                            <td id="cmp">
+                                                {{cmp1.state}}
+                                            </td>
+                                            <td id="sply">
+                                                {{estimate.placeofsupply}}
+                                            </td>
+                                        </tr>
+                                        <tr class="igstrow d-none" >
+                                            <td style="color:black;font-weight:bold">IGST</td>
+                                            <td style="color:black; font-weight:bold" id="igst">{{estimate.taxamount}}</td>
+                                        </tr>
+                                        <tr class="gstrow d-none">
+                                            <td style="color:black; font-weight:bold">CGST</td>
+                                            <td style="color:black; font-weight:bold" id="cgst"></td>
+                                        </tr>
+                                        <tr class="gstrow d-none">
+                                            <td style="color:black; font-weight:bold">SGST</td>
+                                            <td style="color:black; font-weight:bold" id="sgst"></td>
+                                        </tr>
+                                   
                                         <tr>
-                                            <td style="color:black; font-weight:bold">IGST :</td>
-                                            <td style="color:black; font-weight:bold">{{estimate.IGST}}</td>
+                                            <td style="color:black; font-weight:bold">Tax Amount</td>
+                                            <td style="color:black; font-weight:bold">{{estimate.taxamount}}</td>
                                         </tr>
-                                        {% endif %}
-                                        {% if estimate.CGST != "" %}
-                                        <tr>
-                                            <td style="color:black; font-weight:bold">CGST :</td>
-                                            <td style="color:black; font-weight:bold">{{estimate.CGST}}</td>
-                                        </tr>
-                                        {% endif %}
-                                        {% if estimate.SGST != "" %}
-                                        <tr>
-                                            <td style="color:black; font-weight:bold">SGST:</td>
-                                            <td style="color:black; font-weight:bold">{{estimate.SGST}}</td>
-                                        </tr>
-                                        {% endif %}
-                                        {% if estimate.TCS != "" %}
-                                        <tr style="display: none;">
-                                            <td style="color:black; font-weight:bold">TCS:</td>
-                                            <td style="color:black; font-weight:bold">{{estimate.TCS}}</td>
-                                        </tr>
-                                        {% endif %}
                                         <tfoot>
                                             <tr>
                                                 <td style="color:black; font-weight:bold">Estimate Total:</td>
@@ -597,6 +598,32 @@ function uplodfile(){
             <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
             <script>
+
+        $(document).ready(function(){
+            pstate = $("#sply").html().trim();
+            cmpstate = $("#cmp").html().trim();
+            // console.log(pstate == cmpstate);
+            if(pstate == cmpstate){
+                // console.log("yes");
+                $(".igstrow").removeClass("d-print-table-row");
+                $(".igstrow").addClass("d-none");
+                $(".gstrow").removeClass("d-none");
+                $(".gstrow").addClass("d-print-table-row");
+
+                $("#sgst").html($("#igst").html()/2);
+                $("#cgst").html($("#igst").html()/2);
+
+                // $("#sgst1").html($("#igst").html()/2);
+                // $("#cgst1").html($("#igst").html()/2);
+            }
+            else{
+                $(".igstrow").removeClass("d-none");
+                $(".igstrow").addClass("d-print-table-row");
+                $(".gstrow").removeClass("d-print-table-row");
+                $(".gstrow").addClass("d-none");
+
+            }
+        });
         
         $('.delete').click(function(event) {
             var form =  $(this).closest("form");

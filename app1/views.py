@@ -26556,8 +26556,10 @@ def search_resept(request,id):
 
 def goestimate(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-    est1 = estimate.objects.filter(cid=cmp1).all()
-
+    est1 = estimate.objects.filter(cid=cmp1).values()
+    for e in est1:
+        cust = " " . join(e['customer'].split(" ")[1:])
+        e['cust'] = cust
     context = {
         'est1' :est1,
         'cmp1': cmp1
@@ -26567,7 +26569,10 @@ def goestimate(request):
 
 def est_num_asc(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-    est1 = estimate.objects.filter(cid=cmp1).order_by("estimateno")
+    est1 = estimate.objects.filter(cid=cmp1).order_by("estimateno").values()
+    for e in est1:
+        cust = " " . join(e['customer'].split(" ")[1:])
+        e['cust'] = cust
     context = {
         'est1' :est1,
         'cmp1': cmp1
@@ -26577,8 +26582,10 @@ def est_num_asc(request):
 
 def est_num_desc(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-    est1 = estimate.objects.filter(cid=cmp1).order_by("-estimateno")
-
+    est1 = estimate.objects.filter(cid=cmp1).order_by("-estimateno").values()
+    for e in est1:
+        cust = " " . join(e['customer'].split(" ")[1:])
+        e['cust'] = cust
     context = {
         'est1' :est1,
         'cmp1': cmp1
@@ -26589,7 +26596,10 @@ def est_num_desc(request):
 def est_cust_asc(request):
 
     cmp1 = company.objects.get(id=request.session["uid"])
-    est1 = estimate.objects.filter(cid=cmp1).order_by("customer")
+    est1 = estimate.objects.filter(cid=cmp1).order_by("customer").values()
+    for e in est1:
+        cust = " " . join(e['customer'].split(" ")[1:])
+        e['cust'] = cust
     context = {
         'est1' :est1,
         'cmp1': cmp1
@@ -26598,8 +26608,10 @@ def est_cust_asc(request):
     return render(request,'app1/goestimate.html',context)
 def est_cust_desc(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-    est1 = estimate.objects.filter(cid=cmp1).order_by("-customer")
-
+    est1 = estimate.objects.filter(cid=cmp1).order_by("-customer").values()
+    for e in est1:
+        cust = " " . join(e['customer'].split(" ")[1:])
+        e['cust'] = cust
     context = {
         'est1' :est1,
         'cmp1': cmp1
@@ -26609,8 +26621,10 @@ def est_cust_desc(request):
 
 def est_date_asc(request):
     cmp = company.objects.get(id=request.session["uid"])
-    est1 = estimate.objects.filter(cid=cmp).order_by("estimatedate")
-
+    est1 = estimate.objects.filter(cid=cmp).order_by("estimatedate").values()
+    for e in est1:
+        cust = " " . join(e['customer'].split(" ")[1:])
+        e['cust'] = cust
     context = {
         'est1' :est1,
         'cmp1': cmp
@@ -26619,7 +26633,10 @@ def est_date_asc(request):
     return render(request,'app1/goestimate.html',context)
 def est_date_desc(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-    est1 = estimate.objects.filter(cid=cmp1).order_by("-estimatedate")
+    est1 = estimate.objects.filter(cid=cmp1).order_by("-estimatedate").values()
+    for e in est1:
+        cust = " " . join(e['customer'].split(" ")[1:])
+        e['cust'] = cust
 
     context = {
         'est1' :est1,
@@ -26661,62 +26678,52 @@ def estindex2(request):
 def estcreate2(request):
     if request.method == 'POST':
         cmp1 = company.objects.get(id=request.session["uid"])
-        est2 = estimate(customer=request.POST['customer'], email=request.POST['email'], billingaddress=request.POST['billingaddress'], 
-                        estimatedate=request.POST['estimatedate'], expirationdate=request.POST['expirationdate'],
-                        placeofsupply=request.POST['placosupply'],
+        est2 = estimate(customer=request.POST.get('customer'), 
+                        email=request.POST.get('email'), 
+                        billingaddress=request.POST.get('billingaddress'), 
+                        estimatedate=request.POST.get('estimatedate'), 
+                        expirationdate=request.POST.get('expirationdate'),
+                        placeofsupply=request.POST.get('placosupply'),
                         estimateno='1000',
-                        
-                        
-                        #  product=request.POST['product'], description=request.POST['description'],
-                        # hsn=request.POST['hsn'],
-                        # qty=request.POST['qty'], rate=request.POST['rate'], tax=request.POST['tax'],
-                        # total=request.POST['total'], taxamount=request.POST['taxamount'],
-                        #  , product1=request.POST[
-                        #     'product1'], hsn1=request.POST['hsn1'], qty1=request.POST['qty1'],
-                        # description1=request.POST['description1'], rate1=request.POST[
-                        #     'rate1'], total1=request.POST['total1'], tax1=request.POST['tax1'],
-                        # product2=request.POST['product2'], hsn2=request.POST['hsn2'], qty2=request.POST['qty2'],
-                        # description2=request.POST['description2'], rate2=request.POST[
-                        #     'rate2'], total2=request.POST['total2'], tax2=request.POST['tax2'],
-                        # product3=request.POST['product3'], hsn3=request.POST['hsn3'], qty3=request.POST['qty3'],
-                        # description3=request.POST['description3'], rate3=request.POST[
-                        #     'rate3'], total3=request.POST['total3'], tax3=request.POST['tax3'],
                         cid=cmp1,
-                        reference_number = request.POST['Ref_No'],
-                        note = request.POST['Note'],
-                        subtotal=request.POST['subtotal'],
-                        IGST =request.POST['IGST'],
-                        CGST  = request.POST['CGST'],
-                        SGST = request.POST['SGST'],
-                        TCS = request.POST['TCS'],
-                        estimatetotal=request.POST['grandtotal']
-                        
-                        
-                        )
+                        reference_number = request.POST.get('Ref_No'),
+                        note = request.POST.get('Note'),
+                        subtotal=request.POST.get('subtotal'),
+                        IGST =request.POST.get('igst'),
+                        CGST  = request.POST.get('cgst'),
+                        SGST = request.POST.get('sgst'),
+                        taxamount = request.POST.get('taxamount'),
+                        shipping_charge = request.POST.get('ship'),
+                        estimatetotal=request.POST.get('grandtotal'),
+                    )
                         
                             
         if len(request.FILES) != 0:
-            est2.file=request.FILES['file']                    
+            est2.file=request.FILES.get('file')
         est2.save()
         est2.estimateno = int(est2.estimateno) + est2.estimateid
         est2.save()
 
         items = request.POST.getlist("product[]")
         hsn = request.POST.getlist("hsn[]")
-        description = request.POST.getlist("description[]")
+        # description = request.POST.getlist("description[]")
         quantity = request.POST.getlist("qty[]")
         rate = request.POST.getlist("price[]")
-        tax = request.POST.getlist("tax[]")
+        if request.POST.get('placosupply') == cmp1.state:
+                tax = request.POST.getlist("tax1[]")
+        else:
+                tax = request.POST.getlist("tax2[]")
+        disc = request.POST.getlist("discount[]")
         amount = request.POST.getlist("total[]")
-
+         
         estimateid= estimate.objects.get(estimateid=est2.estimateid)
 
-        if len(items)==len(hsn)==len(description)==len(quantity)==len(rate)==len(tax )==len(disc)==len(amount) and items and hsn and description and quantity and rate and tax and amount:
-                mapped=zip(items,hsn,description ,quantity,rate,tax,amount)
+        if len(items)==len(hsn)==len(quantity)==len(rate)==len(tax)==len(disc)==len(amount) and items and hsn  and quantity and rate and tax and disc and amount:
+                mapped=zip(items,hsn ,quantity,rate,tax,disc,amount)
                 mapped=list(mapped)
                 for ele in mapped:
-                    itemAdd,created = estimate_item.objects.get_or_create(item = ele[0],hsn=ele[1],description=ele[2],
-                    quantity=ele[3],rate=ele[4],tax=ele[5],total=ele[6] ,estimate = estimateid,cid=cmp1)
+                    itemAdd,created = estimate_item.objects.get_or_create(item = ele[0],hsn=ele[1],
+                    quantity=ele[2],rate=ele[3],tax=ele[4],discount = ele[5],total=ele[6] ,estimate = estimateid,cid=cmp1)
 
 
 
@@ -26870,10 +26877,13 @@ def editestimate(request, id):
         item = itemtable.objects.filter(cid=cmp1).all()
         estimateitem = estimate_item.objects.filter(estimate=id).all()
         
-
-
+        cust1 = customer.objects.get(customerid = edt.customer.split(" ")[0])
+        # print(cust1)
+        # print(edt.customer.split(" ")[0])
         context = {'estimate': edt, 'cmp1': cmp1, 'inv': inv,
-                   'noninv': noninv, 'bun': bun, 'ser': ser,'item':item,'estimateitem':estimateitem ,'customers':customers}
+                   'noninv': noninv, 'bun': bun, 'ser': ser,'item':item,
+                   'estimateitem':estimateitem ,'customers':customers,'cust1' : cust1}
+        
         return render(request, 'app1/edit_estimate.html', context)
     except:
         return redirect('goestimate')
@@ -26883,45 +26893,50 @@ def updateestimate2(request, id):
     if request.method =="POST":
         cmp1 = company.objects.get(id=request.session['uid'])
         upd = estimate.objects.get(estimateid=id, cid=cmp1)
-        upd.customer = request.POST['customer']
-        upd.email = request.POST['email']
-        upd.billingaddress = request.POST['billingaddress']
-        upd.estimatedate = request.POST['estimatedate']
-        upd.expirationdate = request.POST['expirationdate']
-        upd.placeofsupply = request.POST['placosupply']
+        upd.customer = request.POST.get('customer')
+        upd.email = request.POST.get('email')
+        upd.billingaddress = request.POST.get('billingaddress')
+        upd.estimatedate = request.POST.get('estimatedate')
+        upd.expirationdate = request.POST.get('expirationdate')
+        upd.placeofsupply = request.POST.get('placosupply')
         
-        upd.reference_number = request.POST['Ref_No']
-        upd.note = request.POST['Note']
-        upd.subtotal=request.POST['subtotal']
+        upd.reference_number = request.POST.get('Ref_No')
+        upd.note = request.POST.get('Note')
+        upd.subtotal=request.POST.get('subtotal')
 
-        upd.IGST =request.POST['IGST']
-        upd.CGST  = request.POST['CGST']
-        upd.SGST = request.POST['SGST']
-        upd.TCS = request.POST['TCS']
-        upd.estimatetotal = request.POST['grandtotal']
+        upd.IGST =request.POST.get('IGST')
+        upd.CGST  = request.POST.get('CGST')
+        upd.SGST = request.POST.get('SGST')
+        # upd.TCS = request.POST.get('TCS')
+        upd.shipping_charge = request.POST.get('ship')
+        upd.estimatetotal = request.POST.get('grandtotal')
         if len(request.FILES) != 0:
             if len(upd.file) > 0  :
                 os.remove(upd.estimate.path)
                 
-            upd.file = request.FILES['file']
+            upd.file = request.FILES.get('file')
 
         upd.save()
         items = request.POST.getlist("product[]")
         hsn = request.POST.getlist("hsn[]")
-        description = request.POST.getlist("description[]")
+        # description = request.POST.getlist("description[]")
         quantity = request.POST.getlist("qty[]")
         rate = request.POST.getlist("price[]")
-        tax = request.POST.getlist("tax[]")
+        if request.POST.get('placosupply') == cmp1.state:
+                tax = request.POST.getlist("tax1[]")
+        else:
+                tax = request.POST.getlist("tax2[]")
+        disc = request.POST.getlist("discount[]")
         amount = request.POST.getlist("total[]")
-        estitemid = request.POST.getlist("id[]")
+        # estitemid = request.POST.getlist("id[]")
         
-
+        print(upd.estimateid)
         estimateid= estimate.objects.get(estimateid=upd.estimateid)
         
         count = estimate_item.objects.filter(estimate=estimateid,cid=cmp1).count()
-        if len(items)==len(hsn)==len(description)==len(quantity)==len(rate)==len(tax )==len(amount):
+        if len(items)==len(hsn)==len(quantity)==len(rate)==len(tax)==len(disc)==len(amount):
             try:
-                mapped=zip(items,hsn,description ,quantity,rate,tax,amount)
+                mapped=zip(items,hsn,quantity,rate,tax,disc,amount)
                 mapped=list(mapped)
                 
                 for ele in mapped:
@@ -26929,23 +26944,23 @@ def updateestimate2(request, id):
                     if int(len(items))>int(count):
                         
 
-                        itemAdd,created = estimate_item.objects.get_or_create(item = ele[0],hsn=ele[1],description=ele[2],
-                        quantity=ele[3],rate=ele[4],tax=ele[5],total=ele[6] ,estimate_id=id,cid=cmp1)
+                        itemAdd,created = estimate_item.objects.get_or_create(item = ele[0],hsn=ele[1],
+                        quantity=ele[2],rate=ele[3],tax=ele[4],discount = ele[5],total=ele[6] ,estimate_id=id,cid=cmp1)
 
                     else:
                         
                         
                       
-                        created = estimate_item.objects.filter(id=ele[7],cid=cmp1).update(item = ele[0],hsn=ele[1],description=ele[2],quantity=ele[3],rate=ele[4],tax=ele[5],total=ele[6])
+                        created = estimate_item.objects.filter(id=estimateid,cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount= ele[5],total=ele[6])
                    
             except:
-                    mapped=zip(items,hsn,description ,quantity,rate,tax,amount,estitemid)
+                    mapped=zip(items,hsn,quantity,rate,tax,disc,amount)
                     mapped=list(mapped)
                     
                     for ele in mapped:
-                        dbs=estimate_item.objects.get(id=ele[7],cid=cmp1.cid)
+                        dbs=estimate_item.objects.get(id=estimateid,cid=cmp1.cid)
                         
-                        created = estimate_item.objects.filter(id=ele[7],cid=cmp1).update(item = ele[0],hsn=ele[1],description=ele[2],quantity=ele[3],rate=ele[4],tax=ele[5],total=ele[6])
+                        created = estimate_item.objects.filter(id=estimateid,cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount = ele[5],total=ele[6])
 
 
         return redirect('estimate_view',id)
@@ -27040,13 +27055,14 @@ def estimate_view(request,id):
     
     cmp1 = company.objects.get(id=request.session['uid'])
     upd = estimate.objects.get(estimateid=id, cid=cmp1)
-
+    cust = customer.objects.get(customerid = upd.customer.split(" ")[0])
     estitem = estimate_item.objects.filter(estimate=id)
 
     context ={
         'estimate':upd,
         'cmp1':cmp1,
         'estitem':estitem,
+        'cust' : cust,
 
     }
 
@@ -37216,7 +37232,7 @@ def editcreditnote(request, id):
     item = itemtable.objects.all() 
 
     
-    cust= customer.objects.get(customerid = pcrd.customer.split(" ")[0])
+    editcreditnote
  
     cgst=float(pcrd.taxamount)/2
     sgst=float(pcrd.taxamount)/2
@@ -37449,12 +37465,13 @@ def customers21(request):
         toda = date.today()
         tod = toda.strftime("%Y-%m-%d")
         firstname = request.POST.get('first_name')
+        
         lastname = request.POST.get('last_name')
             
         if customer.objects.filter(firstname=firstname, lastname=lastname, cid=cmp1).exists():
             return redirect('gocustomers')
         else:
-            print(request.POST.get('email'))
+             
             cust = customer(title=request.POST.get('title'), firstname=firstname,
                             lastname=lastname, company=request.POST.get('company_name'),
                             location=request.POST.get('location'), gsttype=request.POST.get('gsttype'),
@@ -37502,9 +37519,9 @@ def cust_dropdown(request):
     print(option_objects)
     for option in option_objects:
         # print(option.customerid)
-        print(option.title)
+         
         options[option.customerid] = [option.customerid, option.title , option.firstname, option.lastname]
-        print(options)
+         
     return JsonResponse(options)
 
 @login_required(login_url='regcomp')

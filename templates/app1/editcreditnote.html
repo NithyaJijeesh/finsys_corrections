@@ -147,7 +147,7 @@
                                     </tr>
                                     </thead>
                                     <tbody id="items-table-body">
-                                    {%for pro in pcrd1%}
+                                    {% for pro in pcrd1%}
                                     <tr id='addr0{{forloop.counter}}'>
                                         <td class="nnum">{{forloop.counter}}</td>
                                         <td style="width: 20%;">
@@ -170,7 +170,7 @@
                                         <td>
                                                
                                             <input type="number" name='quantity[]' value="{{pro.quantity}}"  onchange="qtychange1(this)" style="margin-top: 21px;" placeholder='Enter Qty' id="qty{{forloop.counter}}" class="form-control qty" step=0 min=0>
-                                                <div><span>Available Qty :</span> <label id="qtyspan{{forloop.counter}}" class=''></label></div>
+                                                <div class="d-flex"><span>Available Qty :</span> <label id="qtyspan{{forloop.counter}}" class=''></label></div>
                                             
 
                                         </td>
@@ -1629,63 +1629,63 @@ $(document).ready(function() {
             }
 
             $.ajax({
-            
-            type : 'POST',
-            url:"{% url 'credit_item' %}",
-            
-            data:{
-                type : $("#type").val(),
-                name : $("#item_name").val(),
-                unit : $("#unit").val(),
-                hsn : $("#hsn").val(),
-                taxref : tax,
-                sell_price : $("#saleprice").val(),
-                cost_price : $("#purprice").val(),
-                sell_acc : $("#sale_account").val(),
-                cost_acc : $("#pur_account").val(),
-                sell_desc : $("#sale_desc").val(),
-                cost_desc : $("#pur_desc").val(),
-                intra_st : $("#intra_st").val(),
-                inter_st : $("#inter_st").val(),
-                invacc : $("#invacc").val(),
-                stock : $("#stock").val(),
-                status : status1,
-                csrfmiddlewaretoken: '{{ csrf_token }}',
                 
+                type : 'POST',
+                url:"{% url 'credit_item' %}",
+                
+                data:{
+                    type : $("#type").val(),
+                    name : $("#item_name").val(),
+                    unit : $("#unit").val(),
+                    hsn : $("#hsn").val(),
+                    taxref : tax,
+                    sell_price : $("#saleprice").val(),
+                    cost_price : $("#purprice").val(),
+                    sell_acc : $("#sale_account").val(),
+                    cost_acc : $("#pur_account").val(),
+                    sell_desc : $("#sale_desc").val(),
+                    cost_desc : $("#pur_desc").val(),
+                    intra_st : $("#intra_st").val(),
+                    inter_st : $("#inter_st").val(),
+                    invacc : $("#invacc").val(),
+                    stock : $("#stock").val(),
+                    status : status1,
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    
                 },
-            
+                
                 success: function(response) {
                     console.log(response)
                     document.getElementById("modalItem").reset();
                     reloadItem();
                 },
             });        
-            });
+        });
 
 
         function reloadItem() {
             $.ajax({
-            url: "{% url 'item_dropdown' %}",
-            type: "GET",
-            dataType: "json",
-            data: $(this).serialize(),
-            csrfmiddlewaretoken: '{{ csrf_token }}',
+                url: "{% url 'item_dropdown' %}",
+                type: "GET",
+                dataType: "json",
+                data: $(this).serialize(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
 
-            success: function(data) {
-                var dropdown = $('#product');
-                dropdown.empty();
-                dropdown.append(`<option selected>Select Item</option>`);
-                $.each(data, function(key, value) {
-                
-                    dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
-                });
+                success: function(data) {
+                    var dropdown = $('.product');
+                    dropdown.empty();
+                    dropdown.append(`<option selected>Select Item</option>`);
+                    $.each(data, function(key, value) {
+                    
+                        dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
+                    });
 
-            },
-            error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            }
+                },
+                error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                }
             });
-            }
+        }
 
 
 

@@ -83,7 +83,7 @@
                             style="margin-top: 8px; background-color: #2f516f;color: white;">
     
                         </div> 
-                        <div class="col-md-1" style="width: 40%; margin-top: 9px;">
+                        <div class="col-md-2" style="width: 40%; margin-top: 9px;">
                             <div class="dropdown">
                                 <button type="button" class="btn btn-outline-info   text-grey fa fa-sort"
                                         data-toggle="dropdown"> Sort by
@@ -109,9 +109,9 @@
                                 </div> 
                             </div>
                         </div>
-                        <div class="col-md-5"></div>
+                        <div class="col-md-3"></div>
 
-                        <div class="col-md-1" style="width: 40%; margin-top: 8px;">
+                        <div class="col-md-1 mx-5" style="width: 40%; margin-top: 8px;">
 
                             <div class="dropdown">
                                 <button type="button" class="btn btn-outline-info dropdown-toggle fa fa-filter text-grey"
@@ -158,7 +158,7 @@
                                             <th style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} "> {{ estimate.estimatedate | date:'d-m-Y' }}</a></th>
                                             <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} "> {{ estimate.estimateno }}</a></td>
                                             <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} "> {{ estimate.reference_number }}</a></td>
-                                            <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} ">{{ estimate.customer }}</a></td>
+                                            <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} ">{{ estimate.cust }}</a></td>
                                             <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} ">{{ estimate.email }}</a></td>
                                             <td style="text-align: center;"> <a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} "> {{ estimate.status }}</a></td>
                                             <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'estimate_view' estimate.estimateid %} "> {{ estimate.estimatetotal }}</a></td>

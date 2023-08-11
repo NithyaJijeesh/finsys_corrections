@@ -213,6 +213,62 @@
             background-color:#000000;
             height: 1px;
         }
+        .print-only {
+        /* display: none; */
+        height: auto;
+        width: auto;
+        overflow-y: auto;
+        border: none;
+        /* box-shadow: 5px 2px 5px 2px  grey; */
+    }
+
+
+        @media print {
+        body * {
+            visibility: hidden;
+        }
+
+        header {
+            display: none;
+        }
+
+        .print-only * {
+            visibility: visible;
+        }
+
+        .print-only {
+            /* position: absolute; */
+            
+            /* position: fixed; */
+            left: 0;
+            top: 0;
+            right: 0;
+            height: auto;
+            /* page-break-before: always;
+            page-break-inside: avoid; */
+        }
+
+        @page {
+            size:100%;
+            margin: 0;
+            height: auto;
+        }
+
+        .print-only table {
+        border-collapse: collapse;
+        border: none; /* You can adjust the border color and width */
+        width: 100%; /* Set the width to 100% of the printed page */
+        margin: 0; /* Remove margins to maximize the width */
+    }
+
+    .print-only th,
+    .print-only td {
+        border:none; /* Apply border to table cells */
+        padding: 8px; /* Add padding for better readability */
+        text-align: center; /* Center-align text in cells */
+    }
+
+    }
     </style>
 
     
@@ -221,7 +277,7 @@
         <div class="card radius-15">
             <div class="card-body">
                 <div class="card-title">
-                    <center><h2 class="mb-0">CREDIT NOTE VIEW</h2></center>
+                    <center><h2 class="mb-0">CREDIT NOTE</h2></center>
                     <hr>
                     <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);">
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
@@ -230,7 +286,7 @@
                         <div class="collapse navbar-collapse" id="navbarScroll">
                             <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                                 <li class="nav-item active" >
-                                <a class="nav-link text-light btn" role="button" onclick="printDiv()"><i class="fa fa-print">&nbsp;Print</i><span class="sr-only">(current)</span></a>
+                                <a class="nav-link text-light btn" role="button" onclick="window.print()"><i class="fa fa-print">&nbsp;Print</i><span class="sr-only">(current)</span></a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-light btn" role="button" href="{% url 'render_pdf_credit' pcrd.screditid %}">
@@ -252,9 +308,9 @@
 
         <!-- #-------------------------------------------------------------------------------------- -->
 
-        <div id="whatToPrint">
+        <div id="whatToPrint" class="print-only">
             <div class="my-5 page" size="A4" >
-                <div class="p-5">
+                <div class="p-5" id="panel1">
                     <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
                         
                     <section class="top-content bb d-flex justify-content-between">
@@ -403,7 +459,7 @@
 
         
 
-        <div class="py-5">
+        <!-- <div class="py-5">
             <div class="container" id="panel">
                 <div class="row hidden-md-up">
                     <div class="col-md-3"></div>
@@ -571,8 +627,8 @@
                                     <table cellspacing="0" border="0" width="100%">
                                         <tbody>
                                             <tr>
-                                                <!-- <td class="total-in-words-label text-align-right">Total In Words:</td>
-                                                <td class="total-in-words-value text-align-left"><i><b>Indian Rupee Six Hundred Sixty-Two and Seventy-Five Paise Only</b></i></td> -->
+                                                <td class="total-in-words-label text-align-right">Total In Words:</td>
+                                                <td class="total-in-words-value text-align-left"><i><b>Indian Rupee Six Hundred Sixty-Two and Seventy-Five Paise Only</b></i></td> 
                                             </tr>
                                         </tbody>
                                     </table>
@@ -596,13 +652,17 @@
                 </div>
             </div>
         </div>    
-    </div>
+    </div> -->
             
         <!-- </div>
         <div class="col-md-2"></div>
         </div>
     </div>
     </div> -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+    <script src="https://pingendo.com/assets/bootstrap/bootstrap-4.0.0-alpha.6.min.js"></script>
+
 
     <script>
         $(document).ready(function(){
@@ -641,21 +701,24 @@
               });
           });
       });
-  </script>
-
-    <script> 
+   
       function printDiv() { 
-          var divContents = document.getElementById("panel").innerHTML; 
-          var a = window.open('', '', 'height=800, width=800'); 
-          a.document.write('<html>'); 
-          a.document.write('<body > <h1> <br>'); 
-          a.document.write(divContents); 
-          a.document.write('</body></html>'); 
-          a.document.close(); 
-          a.print(); 
+        //   var divContents = document.getElementById("panel").innerHTML; 
+        //   var a = window.open('', '', 'height=1000, width=1000'); 
+        //   a.document.write('<html>'); 
+        //   a.document.write('<body > <h1> <br>'); 
+        //   a.document.write(divContents); 
+        //   a.document.write('</body></html>'); 
+        //   a.document.close(); 
+        //   a.print(); 
+
+        var printContents = document.getElementById("whatToPrint").innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
       } 
-    </script>
-    <script type="text/javascript">
+    
       $('.delete').click(function(e){
           var result = confirm("Are you sure you want to delete this record? If you delete this, not retrive");
 
@@ -667,9 +730,6 @@
       
     </script>
 
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
-    <script src="https://pingendo.com/assets/bootstrap/bootstrap-4.0.0-alpha.6.min.js"></script>
 
 
 
