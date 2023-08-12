@@ -33,7 +33,7 @@
                 <label class="col-form-label">Customer</label>
                 <input name="customer" value="{{ estimate.customer }}" class="form-control">
             </div> -->
-            <div class="col-md-3">
+            <div class="col-md-4">
               <label class="col-form-label">Customer</label>
               <div class="d-flex">
                   <select name="customer" id="customer" class="form-control" style="width: 95%;">
@@ -52,49 +52,45 @@
               </div>
 
           </div>
-            
-            <div class="col-md-3"></div>
-            <div class="col-md-3"></div>
+          <div class="col-md-4">
+            <label class="col-form-label">Email</label>
+            <input type="text" class="form-control" id="cust_email" value="{{ estimate.email }}" name="email"
+                   placeholder="Email">
         </div>
-        <div class="row mt-3">
-            <div class="col-md-3">
-                <label class="col-form-label">Billing Address</label>
-                <label for="billingaddress"></label>
-                <textarea class="form-control" rows="7" id="bname" value="{{estimate.billingaddress}}"
-                          name="billingaddress">{{ estimate.billingaddress }}</textarea>
-            </div>
+            <div class="col-md-4">
+              <label class="col-form-label">Billing Address</label>
+              <label for="billingaddress"></label>
+              <textarea class="form-control" rows="7" id="bname" value="{{estimate.billingaddress}}"
+                        name="billingaddress">{{ estimate.billingaddress }}</textarea>
+          </div>
         </div>
-        <div class="row mt-3">
-            <div class="col-md-3">
-                <label class="col-form-label">Email</label>
-                <input type="text" class="form-control" id="cust_email" value="{{ estimate.email }}" name="email"
-                       placeholder="Email">
-            </div>
+        <!-- <div class="row mt-3">
             
-            <div class="col-md-3">
+        </div> -->
+        <div class="row mt-3">
+            
+            
+            <div class="col-md-2">
                 <label class="col-form-label">Estimate Date</label>
                 <input type="date" class="form-control" value="{{ estimate.estimatedate | date:'Y-m-d'  }}"
                        name="estimatedate"><br>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="col-form-label">Expiration Date</label>
                 <input type="date" class="form-control" value="{{ estimate.expirationdate | date:'Y-m-d'  }}"
                        name="expirationdate"><br>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="col-form-label">Estimate no:</label>
                 <input type="text" class="form-control" value="{{ estimate.estimateno }}"
                        onchange="showinnum('estno', this)"
                        name="estimateno">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="col-form-label">Reference Number</label>
                 <input type="text" class="form-control" name="Ref_No" value="{{ estimate.reference_number }}"><br>
             </div>
-            
-        </div>
-          <div class="row">
-            <div class="col-md-3 mt-3">
+            <div class="col-md-4 ">
               <label class="col-form-label">Place of supply</label>
               <select type="text" class="form-control" id="plosu" name="placosupply" style="background-color: #2f516f; color: white;" onchange="state(this)">
                 <option value="{{ estimate.placeofsupply }}" selected> {{ estimate.placeofsupply }}</option>
@@ -138,10 +134,14 @@
                 <option value="Other Territory">Other Territory</option>
               </select>
             </div>
+            
+        </div>
+          <!-- <div class="row">
+            
             <div class="col-md-3 mt-3"></div>
             <div class="col-md-3 mt-3"></div>
             <div class="col-md-3 mt-3"></div>
-          </div>
+          </div> -->
           <div class="row clearfix">
             <div class="col-md-12 table-responsive-md mt-3">
               <table class="table table-bordered table-hover mt-3" id="tab_logic">
@@ -204,7 +204,7 @@
                             <option value=0  >0.0% GST(0%)</option>
                       </select>
                       <select name='tax2[]' id="tax2{{ forloop.counter }}" class="form-control tax inter_tax d-none">
-                        <option selected value="{{j.tax}}">{{j.tax}}% GST ({{j.tax}}%)</option>
+                        <option selected value="{{j.tax}}">{{j.tax}}% IGST ({{j.tax}}%)</option>
                           <option value=28 >28.0% IGST(28%)</option>
                           <option value=18 >18.0% IGST(18%)</option>
                           <option value=12  >12.0% IGST(12%)</option>

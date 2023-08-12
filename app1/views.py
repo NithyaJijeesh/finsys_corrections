@@ -26903,11 +26903,11 @@ def updateestimate2(request, id):
         upd.reference_number = request.POST.get('Ref_No')
         upd.note = request.POST.get('Note')
         upd.subtotal=request.POST.get('subtotal')
-
-        upd.IGST =request.POST.get('IGST')
-        upd.CGST  = request.POST.get('CGST')
-        upd.SGST = request.POST.get('SGST')
-        # upd.TCS = request.POST.get('TCS')
+                       
+        upd.IGST =request.POST.get('igst')
+        upd.CGST  = request.POST.get('cgst')
+        upd.SGST = request.POST.get('sgst')
+        upd.taxamount = request.POST.get('taxamount')
         upd.shipping_charge = request.POST.get('ship')
         upd.estimatetotal = request.POST.get('grandtotal')
         if len(request.FILES) != 0:
@@ -26931,9 +26931,9 @@ def updateestimate2(request, id):
         # estitemid = request.POST.getlist("id[]")
         
         print(upd.estimateid)
-        estimateid= estimate.objects.get(estimateid=upd.estimateid)
+        est= estimate.objects.get(estimateid=upd.estimateid)
         
-        count = estimate_item.objects.filter(estimate=estimateid,cid=cmp1).count()
+        count = estimate_item.objects.filter(estimate=est.estimateid,cid=cmp1).count()
         if len(items)==len(hsn)==len(quantity)==len(rate)==len(tax)==len(disc)==len(amount):
             try:
                 mapped=zip(items,hsn,quantity,rate,tax,disc,amount)
@@ -26951,16 +26951,16 @@ def updateestimate2(request, id):
                         
                         
                       
-                        created = estimate_item.objects.filter(id=estimateid,cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount= ele[5],total=ele[6])
+                        created = estimate_item.objects.filter(estimate=est.estimateid,cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount= ele[5],total=ele[6])
                    
             except:
                     mapped=zip(items,hsn,quantity,rate,tax,disc,amount)
                     mapped=list(mapped)
                     
                     for ele in mapped:
-                        dbs=estimate_item.objects.get(id=estimateid,cid=cmp1.cid)
-                        
-                        created = estimate_item.objects.filter(id=estimateid,cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount = ele[5],total=ele[6])
+                        dbs=estimate_item.objects.get(id=est.estimateid ,cid=cmp1.cid)
+                         
+                        created = estimate_item.objects.filter(id=est.estimateid ,cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount = ele[5],total=ele[6])
 
 
         return redirect('estimate_view',id)
@@ -27358,8 +27358,10 @@ def estmate_filter3(request):
 
 def gosalesorder(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-    sel1 = salesorder.objects.filter(cid=cmp1).all()
-
+    sel1 = salesorder.objects.filter(cid=cmp1).values()
+    for s in sel1:
+        cust = " " . join(s['salename'].split(" ")[1:])
+        s['cust'] = cust
     context = {
         'sel1' :sel1,
         'cmp1': cmp1
@@ -27367,6 +27369,92 @@ def gosalesorder(request):
         }
 
     return render(request,'app1/gosalesorder.html',context )
+
+def sales_num_asc(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    sel1 = salesorder.objects.filter(cid=cmp1).order_by('saleno').values()
+    for s in sel1:
+        cust = " " . join(s['salename'].split(" ")[1:])
+        s['cust'] = cust
+    context = {
+        'sel1' :sel1,
+        'cmp1': cmp1
+
+        }
+
+    return render(request,'app1/gosalesorder.html',context )
+
+def sales_num_desc(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    sel1 = salesorder.objects.filter(cid=cmp1).order_by('-saleno').values()
+    for s in sel1:
+        cust = " " . join(s['salename'].split(" ")[1:])
+        s['cust'] = cust
+    context = {
+        'sel1' :sel1,
+        'cmp1': cmp1
+
+        }
+
+    return render(request,'app1/gosalesorder.html',context )
+
+def sales_cust_asc(request):
+
+    cmp1 = company.objects.get(id=request.session["uid"])
+    sel1 = salesorder.objects.filter(cid=cmp1).order_by('salename').values()
+    for s in sel1:
+        cust = " " . join(s['salename'].split(" ")[1:])
+        s['cust'] = cust
+    context = {
+        'sel1' :sel1,
+        'cmp1': cmp1
+
+        }
+
+    return render(request,'app1/gosalesorder.html',context )
+
+def sales_cust_desc(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    sel1 = salesorder.objects.filter(cid=cmp1).order_by('-salename').values()
+    for s in sel1:
+        cust = " " . join(s['salename'].split(" ")[1:])
+        s['cust'] = cust
+    context = {
+        'sel1' :sel1,
+        'cmp1': cmp1
+
+        }
+
+    return render(request,'app1/gosalesorder.html',context )
+
+def sales_date_asc(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    sel1 = salesorder.objects.filter(cid=cmp1).order_by('saledate').values()
+    for s in sel1:
+        cust = " " . join(s['salename'].split(" ")[1:])
+        s['cust'] = cust
+    context = {
+        'sel1' :sel1,
+        'cmp1': cmp1
+
+        }
+
+    return render(request,'app1/gosalesorder.html',context )
+
+def sales_date_desc(request):
+    cmp1 = company.objects.get(id=request.session["uid"])
+    sel1 = salesorder.objects.filter(cid=cmp1).order_by('-saledate').values()
+    for s in sel1:
+        cust = " " . join(s['salename'].split(" ")[1:])
+        s['cust'] = cust
+    context = {
+        'sel1' :sel1,
+        'cmp1': cmp1
+
+        }
+
+    return render(request,'app1/gosalesorder.html',context )
+
 
 def newsalesorder(request):
     cmp1 = company.objects.get(id=request.session["uid"])
@@ -27471,65 +27559,46 @@ def createsales_record(request):
     if request.method == 'POST':
         cmp1 = company.objects.get(id=request.session["uid"])
 
-        sel2 = salesorder(salename=request.POST['customer'], saleemail=request.POST['email'],
-                        saleaddress=request.POST['billingaddress'], saledate=request.POST['Salesdate'],
-                        shipmentdate=request.POST['Shipmentdate'], placeofsupply=request.POST['placosupply'],
+        sel2 = salesorder(salename=request.POST.get('customer'), saleemail=request.POST.get('cemail'),
+                        saleaddress=request.POST.get('billingaddress'), saledate=request.POST.get('Salesdate'),
+                        shipmentdate=request.POST.get('Shipmentdate'), placeofsupply=request.POST.get('placosupply'),
                         saleno='1000', 
-                        # product=request.POST['product'], 
-                        # description=request.POST['description'],
-                        # hsn=request.POST['hsn'],
-                        # qty=request.POST['qty'],
-                        # rate=request.POST['rate'],
-                        # tax=request.POST['tax'],
-
-
-
-                        # total=request.POST['total'],
-                        # taxamount=request.POST['taxamount'],
-
-                        #  product1=request.POST['product1'],
-                        #  hsn1=request.POST['hsn1'], qty1=request.POST['qty1'],
-                        # description1=request.POST['description1'], rate1=request.POST[
-                        #     'rate1'], total1=request.POST['total1'], tax1=request.POST['tax1'],
-                        # product2=request.POST['product2'], hsn2=request.POST['hsn2'], qty2=request.POST['qty2'],
-                        # description2=request.POST['description2'], rate2=request.POST[
-                        #     'rate2'], total2=request.POST['total2'], tax2=request.POST['tax2'],
-                        # product3=request.POST['product3'], hsn3=request.POST['hsn3'], qty3=request.POST['qty3'],
-                        # description3=request.POST['description3'], rate3=request.POST[
-                        #     'rate3'], total3=request.POST['total3'], tax3=request.POST['tax3'],
+                       
                         cid=cmp1,
-                        reference_number = request.POST['Ref_No'],
-                        note = request.POST['Note'],
+                        reference_number = request.POST.get('Ref_No'),
+                        note = request.POST.get('Note'),
 
-                        subtotal=request.POST['subtotal'],
-                        IGST =request.POST['IGST'],
-                        CGST  = request.POST['CGST'],
-                        SGST = request.POST['SGST'],
-                        TCS = request.POST['TCS'],
-                        salestotal=request.POST['grandtotal'],)            
+                        subtotal=request.POST.get('subtotal'),
+                        IGST =request.POST.get('igst'),
+                        CGST  = request.POST.get('cgst'),
+                        SGST = request.POST.get('sgst'),
+                        # TCS = request.POST['TCS'],
+                        shipping_charge = request.POST.get("ship"),
+                        taxamount = request.POST.get("taxamount"),
+                        salestotal=request.POST.get('grandtotal'),)            
         if len(request.FILES) != 0:
-            sel2.file=request.FILES['file']                    
+            sel2.file=request.FILES.get('file')                    
         sel2.save()
         sel2.saleno= int(sel2.saleno) + sel2.id
         sel2.save()
 
         product = request.POST.getlist("product[]")
         hsn  = request.POST.getlist("hsn[]")
-        description = request.POST.getlist("description[]")
+        # description = request.POST.getlist("description[]")
         qty = request.POST.getlist("qty[]")
         price = request.POST.getlist("price[]")
-        
-        tax = request.POST.getlist("tax[]")
+        discount = request.POST.getlist("discount[]")
+        tax = request.POST.getlist("discount[]")
         total = request.POST.getlist("total[]")
 
         salesorderid=salesorder.objects.get(id =sel2.id)
 
-        if len(product)==len(hsn)==len(description)==len(qty)==len(price)==len(tax)==len(total) and product and hsn and description and qty and price and tax and total:
-            mapped=zip(product,hsn,description,qty,price,tax,total)
+        if len(product)==len(hsn)==len(qty)==len(price)==len(tax)==len(discount)==len(total) and product and hsn and qty and price and tax and discount and total:
+            mapped=zip(product,hsn, qty,price,tax,discount, total)
             mapped=list(mapped)
             for ele in mapped:
-                salesorderAdd,created = sales_item.objects.get_or_create(product = ele[0],hsn=ele[1],description=ele[2],
-                qty=ele[3],price=ele[4],tax=ele[5],total=ele[6],salesorder=salesorderid, cid=cmp1 )
+                salesorderAdd,created = sales_item.objects.get_or_create(product = ele[0],hsn=ele[1],
+                qty=ele[2],price=ele[3],tax=ele[4],discount = ele[5],total=ele[6],salesorder=salesorderid, cid=cmp1 )
 
 
 
@@ -27591,13 +27660,15 @@ def sale_create_item(request):
 def sales_order_view(request,id):
     cmp1 = company.objects.get(id=request.session['uid'])
     upd = salesorder.objects.get(id=id, cid=cmp1)
+    cust = customer.objects.get(customerid = upd.salename.split(" ")[0])
 
     saleitem = sales_item.objects.filter(salesorder=id)
 
     context ={
         'sale':upd,
         'cmp1':cmp1,
-        'saleitem':saleitem
+        'saleitem':saleitem,
+        'cust' : cust
 
     }
 
@@ -27669,7 +27740,9 @@ def edit_sales_order(request, id):
         ser = service.objects.filter(cid=cmp1).all()
         item = itemtable.objects.filter(cid=cmp1).all()
         itemsale = sales_item.objects.filter(salesorder=id)
-        context = {'sale': edt, 'cmp1': cmp1, 'inv': inv,
+        customers = customer.objects.filter(cid=cmp1).all()
+        cust1 = customer.objects.get(customerid = edt.salename.split(" ")[0])
+        context = {'sale': edt, 'cmp1': cmp1, 'inv': inv,'cust' : cust1,'customers': customers,
                    'noninv': noninv, 'bun': bun, 'ser': ser,'item':item,'itemsale':itemsale}
         return render(request, 'app1/edit_sales_order.html', context)
     
@@ -28054,11 +28127,95 @@ def goinvoices(request):
     try:
         cmp1 = company.objects.get(id=request.session["uid"])
         customers = customer.objects.filter(cid=cmp1).all()
-        invs = invoice.objects.filter(cid=cmp1).all()
+        invs = invoice.objects.filter(cid=cmp1).values()
+        for i in invs:
+            cust = " " . join(i['customername'].split(" ")[1:])
+            i['cust'] = cust
         context = {'invoice': invs, 'customers': customers, 'cmp1': cmp1}
         return render(request, 'app1/invoices.html', context)
     except:
         return redirect('godash')
+
+
+def inv_num_asc(request):
+    try:
+        cmp1 = company.objects.get(id=request.session["uid"])
+        customers = customer.objects.filter(cid=cmp1).all()
+        invs = invoice.objects.filter(cid=cmp1).order_by('invoiceno').values()
+        for i in invs:
+            cust = " " . join(i['customername'].split(" ")[1:])
+            i['cust'] = cust
+        context = {'invoice': invs, 'customers': customers, 'cmp1': cmp1}
+        return render(request, 'app1/invoices.html', context)
+    except:
+        return redirect('godash')
+   
+def inv_num_desc(request):
+    try:
+        cmp1 = company.objects.get(id=request.session["uid"])
+        customers = customer.objects.filter(cid=cmp1).all()
+        invs = invoice.objects.filter(cid=cmp1).order_by('-invoiceno').values()
+        for i in invs:
+            cust = " " . join(i['customername'].split(" ")[1:])
+            i['cust'] = cust
+        context = {'invoice': invs, 'customers': customers, 'cmp1': cmp1}
+        return render(request, 'app1/invoices.html', context)
+    except:
+        return redirect('godash')
+    
+def inv_cust_asc(request):
+
+    try:
+        cmp1 = company.objects.get(id=request.session["uid"])
+        customers = customer.objects.filter(cid=cmp1).all()
+        invs = invoice.objects.filter(cid=cmp1).order_by('customername').values()
+        for i in invs:
+            cust = " " . join(i['customername'].split(" ")[1:])
+            i['cust'] = cust
+        context = {'invoice': invs, 'customers': customers, 'cmp1': cmp1}
+        return render(request, 'app1/invoices.html', context)
+    except:
+        return redirect('godash')
+
+def inv_cust_desc(request):
+    try:
+        cmp1 = company.objects.get(id=request.session["uid"])
+        customers = customer.objects.filter(cid=cmp1).all()
+        invs = invoice.objects.filter(cid=cmp1).order_by('-customername').values()
+        for i in invs:
+            cust = " " . join(i['customername'].split(" ")[1:])
+            i['cust'] = cust
+        context = {'invoice': invs, 'customers': customers, 'cmp1': cmp1}
+        return render(request, 'app1/invoices.html', context)
+    except:
+        return redirect('godash')
+
+def inv_date_asc(request):
+    try:
+        cmp1 = company.objects.get(id=request.session["uid"])
+        customers = customer.objects.filter(cid=cmp1).all()
+        invs = invoice.objects.filter(cid=cmp1).order_by('invoicedate').values()
+        for i in invs:
+            cust = " " . join(i['customername'].split(" ")[1:])
+            i['cust'] = cust
+        context = {'invoice': invs, 'customers': customers, 'cmp1': cmp1}
+        return render(request, 'app1/invoices.html', context)
+    except:
+        return redirect('godash')
+
+def inv_date_desc(request):
+    try:
+        cmp1 = company.objects.get(id=request.session["uid"])
+        customers = customer.objects.filter(cid=cmp1).all()
+        invs = invoice.objects.filter(cid=cmp1).order_by('-invoicedate').values()
+        for i in invs:
+            cust = " " . join(i['customername'].split(" ")[1:])
+            i['cust'] = cust
+        context = {'invoice': invs, 'customers': customers, 'cmp1': cmp1}
+        return render(request, 'app1/invoices.html', context)
+    except:
+        return redirect('godash')
+
 
 @login_required(login_url='regcomp')
 def goaddinvoices(request):
@@ -37232,7 +37389,7 @@ def editcreditnote(request, id):
     item = itemtable.objects.all() 
 
     
-    editcreditnote
+    cust1 = customer.objects.get(customerid = pcrd.customer.split(" ")[0])
  
     cgst=float(pcrd.taxamount)/2
     sgst=float(pcrd.taxamount)/2
@@ -37245,7 +37402,7 @@ def editcreditnote(request, id):
         'cgst':cgst,
         'sgst':sgst,
         'cmp1':cmp1,
-        'cust':cust,
+        'cust':cust1,
 
 
     }
@@ -37573,6 +37730,7 @@ def cust_details(request):
         else:
             return redirect('/')
         comp = company.objects.get(id=request.session['uid'])
+        print("customer changed")
         id = request.POST.get('id').split(" ")[0]
         print(id)
         cust = customer.objects.get(customerid = id, cid = request.session['uid'])

@@ -59,9 +59,35 @@
                         <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off" 
                         style="margin-top: 8px; background-color: #2f516f;color: white;">
                     </div>
-                    <div class="col-md-6"></div>
+                    <div class="col-md-2" style="width: 40%; margin-top: 9px;">
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-outline-info   text-grey fa fa-sort"
+                                    data-toggle="dropdown"> Sort by
+                            </button>
+                            <div class="dropdown-menu " style="background-color: black;">
+                            <a class="dropdown-item" href="{% url 'inv_num_asc' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Sales Order Number </a>
+                            <a class="dropdown-item  " href="{% url 'inv_num_desc' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Sales Order Number</a>
 
-                    <div class="col-md-1" style="width: 40%; margin-top: 8px;">
+                            <a class="dropdown-item " href="{% url 'inv_date_asc' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center; " >Date  </a>
+                            <a class="dropdown-item " href="{% url 'inv_date_desc' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date  </a>
+
+                            <a class="dropdown-item  " href="{% url 'inv_cust_asc' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >
+                                    Customer </a>
+                            <a class="dropdown-item  " href="{% url 'inv_cust_desc' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer </a>
+                                
+                                    
+                            </div> 
+                        </div>
+                    </div>
+                    <div class="col-md-3"></div>
+
+                    <div class="col-md-1 mx-5" style="width: 40%; margin-top: 8px;">
 
                         <div class="dropdown">
                             <button type="button" class="btn btn-outline-info dropdown-toggle fa fa-filter text-grey"
@@ -92,7 +118,7 @@
                     <thead>
                         <tr>
                             
-                            <th style="text-align: center;">INVOICE DATE</th>
+                            <th style="text-align: center;  ">INVOICE DATE</th>
                             <th style="text-align: center;">INVOICE NO</th>
                             
                             <th style="text-align: center;">CUSTOMER</th>
@@ -107,15 +133,15 @@
                         {% for invoices in invoice %}
                             {% if invoices.cid_id == cmp1.cid %}
 
-                                <tr  class="table-row " data-href="{% url 'invoice_view' invoices.invoiceid %}">
-                                    <td style="text-align: center;">{{ invoices.invoicedate }}</td>
-                                    <th style="text-align: center;">{{ invoices.invoiceno }}</th>
+                                <tr  class="table-row " data-href="">
+                                    <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'invoice_view' invoices.invoiceid %}">{{ invoices.invoicedate }}</a></td>
+                                    <th style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'invoice_view' invoices.invoiceid %}">{{ invoices.invoiceno }}</a></th>
                             
-                                    <td style="text-align: center;">{{ invoices.customername }}</td>
-                                    <td style="text-align: center;">{{ invoices.status }}</td>
-                                    <td style="text-align: center;">{{ invoices.duedate }}</td>
-                                    <td style="text-align: center;">{{ invoices.grandtotal }}</td>
-                                    <td style="text-align: center;">{{ invoices.baldue }}</td>
+                                    <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'invoice_view' invoices.invoiceid %}">{{ invoices.customername }}</a></td>
+                                    <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'invoice_view' invoices.invoiceid %}">{{ invoices.status }}</a></td>
+                                    <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'invoice_view' invoices.invoiceid %}">{{ invoices.duedate }}</a></td>
+                                    <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'invoice_view' invoices.invoiceid %}">{{ invoices.grandtotal }}</a></td>
+                                    <td style="text-align: center;"><a class="idsr" style="list-style: none;"  href="{% url 'invoice_view' invoices.invoiceid %}">{{ invoices.baldue }}</a></td>
                                     
 
                                 </tr>

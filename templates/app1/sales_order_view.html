@@ -407,7 +407,7 @@ footer p {
                                     </div>
                                     <div class="col-5">
                                         <p>TO,</p>
-                                        <h5>{{sale.salename}}</h5>
+                                        <h5>{{cust.title}} {{cust.firstname}} {{cust.lastname}}</h5>
                                         <p class="address col-6" style="margin-left: -14px;" > {{ sale.saleaddress}} </p>
                                         
                                     </div>
@@ -427,10 +427,11 @@ footer p {
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <td>Item Description</td>
+                                        <td>Items</td>
                                         <td>Price</td>
                                         <td>Quantity</td>
                                         <td>Tax</td>
+                                        <td>Discount</td>
                                         <td>Total</td>
                                     </tr>
                                 </thead>
@@ -439,13 +440,13 @@ footer p {
                                     {% for j in saleitem %}
                                     <tr>
                                         <td style="color:black">
-                                            {{j.product}}<br>
-                                            {{j.description}}
+                                            {{j.product}}
                                             
                                         </td>
                                         <td style="color:black">{{j.price}}</td>
                                         <td style="color:black">{{j.qty}}</td>
                                         <td style="color:black">{{j.tax}} %</td>
+                                        <td style="color:black">{{j.discount}} </td>
                                         <td style="color:black">{{j.total}}</td>
                                     </tr>
                                     {% endfor %}
@@ -467,46 +468,48 @@ footer p {
                                 <div class="col-4">
                                     <table class="table border-0 table-hover">
                                         <tr >
-                                            <td style="color:black">Sub Total :</td>
-                                            <td style="color:black">{{sale.subtotal}}</td>
+                                            <td style="color:black; font-weight:bold">Sub Total :</td>
+                                            <td style="color:black; font-weight:bold">{{sale.subtotal}}</td>
                                         </tr>
-                                        {% if sale.IGST != "" %}
+                                        <tr class="d-none" >
+                                            <td id="cmp">
+                                                {{cmp1.state}}
+                                            </td>
+                                            <td id="sply">
+                                                {{sale.placeofsupply}}
+                                            </td>
+                                        </tr>
+                                        <tr id="igstrow" style="display:none;">
+                                            <td style="color:black;font-weight:bold">IGST</td>
+                                            <td style="color:black; font-weight:bold" id="igst">{{sale.taxamount}}</td>
+                                        </tr>
+                                        <tr id="cgstrow" style="display: none;">
+                                            <td style="color:black; font-weight:bold">CGST</td>
+                                            <td style="color:black; font-weight:bold" id="cgst"></td>
+                                        </tr>
+                                        <tr id="sgstrow" style="display: none;">
+                                            <td style="color:black; font-weight:bold">SGST</td>
+                                            <td style="color:black; font-weight:bold" id="sgst"></td>
+                                        </tr>
+                                   
                                         <tr>
-                                            <td style="color:black">IGST :</td>
-                                            <td style="color:black">{{sale.IGST}}</td>
+                                            <td style="color:black; font-weight:bold">Tax Amount</td>
+                                            <td style="color:black; font-weight:bold">{{sale.taxamount}}</td>
                                         </tr>
-                                        {% endif %}
-                                        {% if sale.CGST != "" %}
+
                                         <tr>
-                                            <td style="color:black">CGST :</td>
-                                            <td style="color:black">{{sale.CGST}}</td>
+                                            <td style="color:black; font-weight:bold">Shipping Charge</td>
+                                            <td style="color:black; font-weight:bold">{{sale.shipping_charge}}</td>
                                         </tr>
-                                        {% endif %}
-                                        {% if sale.SGST != "" %}
-                                        <tr>
-                                            <td style="color:black">SGST:</td>
-                                            <td style="color:black">{{sale.SGST}}</td>
-                                        </tr>
-                                        {% endif %}
-                                        {% if sale.TCS != "" %}
-                                        <tr style="display:none">
-                                            <td style="color:black">TCS:</td>
-                                            <td style="color:black">{{sale.TCS}}</td>
-                                        </tr>
-                                        {% endif %}
                                         <tfoot>
                                             <tr>
-                                                <td style="color:black">Grand Total:</td>
-                                                <td style="color:black ;">{{sale.salestotal}}</td>
+                                                <td style="color:black; font-weight:bold">Sale Total:</td>
+                                                <td style="color:black; font-weight:bold ;">{{sale.salestotal}}</td>
                                             </tr>
                                         </tfoot>
                                     </table>
             
-                                    <!-- Signature -->
-                                    <!-- <div class="col-12">
-                                        <img src="signature.png" class="img-fluid" alt="">
-                                        <p class="text-center m-0" style="color:black"> Director Signature </p>
-                                    </div> -->
+                                    
                                 </div>
                             </div>
                         </section>
@@ -554,6 +557,30 @@ footer p {
             <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
             <script>
+                $(document).ready(function(){
+            pstate = $("#sply").html().trim();
+            cmpstate = $("#cmp").html().trim();
+            // console.log(pstate == cmpstate);
+            if(pstate == cmpstate){
+
+                $('#igstrow').hide();
+                $('#sgstrow').show();
+                $('#cgstrow').show();
+                
+
+                $("#sgst").html($("#igst").html()/2);
+                $("#cgst").html($("#igst").html()/2);
+
+              
+            }
+            else{
+               
+
+                $('#igstrow').show();
+                $('#sgstrow').hide();
+                $('#cgstrow').hide();
+            }
+        });
         
         $('.delete').click(function(event) {
             var form =  $(this).closest("form");

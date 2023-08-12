@@ -470,6 +470,7 @@ function uplodfile(){
                                         <td>Price</td>
                                         <td>Quantity</td>
                                         <td>Tax</td>
+                                        <td>Discount</td>
                                         <td>Total</td>
                                     </tr>
                                 </thead>
@@ -489,6 +490,7 @@ function uplodfile(){
                                         <td style="color:black">{{j.rate}}</td>
                                         <td style="color:black">{{j.quantity}}</td>
                                         <td style="color:black">{{j.tax}} %</td>
+                                        <td style="color:black">{{j.discount}} </td>
                                         <td style="color:black">{{j.total}}</td>
                                     </tr>
                                     
@@ -521,15 +523,15 @@ function uplodfile(){
                                                 {{estimate.placeofsupply}}
                                             </td>
                                         </tr>
-                                        <tr class="igstrow d-none" >
+                                        <tr id="igstrow" style="display:none;">
                                             <td style="color:black;font-weight:bold">IGST</td>
                                             <td style="color:black; font-weight:bold" id="igst">{{estimate.taxamount}}</td>
                                         </tr>
-                                        <tr class="gstrow d-none">
+                                        <tr id="cgstrow" style="display: none;">
                                             <td style="color:black; font-weight:bold">CGST</td>
                                             <td style="color:black; font-weight:bold" id="cgst"></td>
                                         </tr>
-                                        <tr class="gstrow d-none">
+                                        <tr id="sgstrow" style="display: none;">
                                             <td style="color:black; font-weight:bold">SGST</td>
                                             <td style="color:black; font-weight:bold" id="sgst"></td>
                                         </tr>
@@ -537,6 +539,11 @@ function uplodfile(){
                                         <tr>
                                             <td style="color:black; font-weight:bold">Tax Amount</td>
                                             <td style="color:black; font-weight:bold">{{estimate.taxamount}}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td style="color:black; font-weight:bold">Shipping Charge</td>
+                                            <td style="color:black; font-weight:bold">{{estimate.shipping_charge}}</td>
                                         </tr>
                                         <tfoot>
                                             <tr>
@@ -546,11 +553,7 @@ function uplodfile(){
                                         </tfoot>
                                     </table>
             
-                                    <!-- Signature -->
-                                    <!-- <div class="col-12">
-                                        <img src="signature.png" class="img-fluid" alt="">
-                                        <p class="text-center m-0" style="color:black"> Director Signature </p>
-                                    </div> -->
+                                    
                                 </div>
                             </div>
                         </section>
@@ -604,24 +607,23 @@ function uplodfile(){
             cmpstate = $("#cmp").html().trim();
             // console.log(pstate == cmpstate);
             if(pstate == cmpstate){
-                // console.log("yes");
-                $(".igstrow").removeClass("d-print-table-row");
-                $(".igstrow").addClass("d-none");
-                $(".gstrow").removeClass("d-none");
-                $(".gstrow").addClass("d-print-table-row");
+
+                $('#igstrow').hide();
+                $('#sgstrow').show();
+                $('#cgstrow').show();
+                
 
                 $("#sgst").html($("#igst").html()/2);
                 $("#cgst").html($("#igst").html()/2);
 
-                // $("#sgst1").html($("#igst").html()/2);
-                // $("#cgst1").html($("#igst").html()/2);
+              
             }
             else{
-                $(".igstrow").removeClass("d-none");
-                $(".igstrow").addClass("d-print-table-row");
-                $(".gstrow").removeClass("d-print-table-row");
-                $(".gstrow").addClass("d-none");
+               
 
+                $('#igstrow').show();
+                $('#sgstrow').hide();
+                $('#cgstrow').hide();
             }
         });
         
