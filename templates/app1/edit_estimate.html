@@ -193,7 +193,7 @@
                    
                     <td>
                       <input hidden value="{{cmp1.state}}" id="cmpstate">
-                      <!-- <input type="text"  id="select_tax" placeholder="Tax Rate" class="form-control seltax d-flex"> -->
+                      <input type="text"  id="select_tax" placeholder="Tax Rate" class="form-control seltax d-none">
                       <select name='tax1[]' id="tax1{{ forloop.counter }}" class="form-control tax intra_tax d-none">
                         <option selected value="{{j.tax}}">{{j.tax}}% GST ({{j.tax}}%)</option>
                           <option value=28 >28.0% GST(28%)</option>
@@ -1434,6 +1434,31 @@
  
                 });
   });
+
+  $(document).on('change','#plosu',function()   {
+                $(".seltax").removeClass('d-none');
+                $(".seltax").addClass('d-flex');
+                $(".intra_tax").removeClass('d-flex');
+                $(".intra_tax").addClass('d-none');
+                $(".inter_tax").removeClass('d-flex');
+                $(".inter_tax").addClass('d-none');
+                var bc = document.getElementById("plosu").value;
+                var compstate = document.getElementById("cmpstate").value;
+                if (bc == compstate ) {
+                    document.getElementById('cgst1').style.display = 'flex';
+                    document.getElementById('sgst1').style.display = 'flex';
+                    document.getElementById('igst1').style.display = 'none'; 
+
+                } else {
+                    document.getElementById('cgst1').style.display = 'none';
+                    document.getElementById('sgst1').style.display = 'none';
+                    document.getElementById('igst1').style.display = 'flex';
+
+                }
+                    
+            });
+
+
 
                // calculation---------------------------
 
@@ -3108,15 +3133,7 @@
   //     });
   //   });
  
-    
-   
  
-
-
-
-
-
-
   // });
 
 </script>
