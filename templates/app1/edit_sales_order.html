@@ -259,7 +259,7 @@
 
                   {% for j in itemsale%}
                   <tr id='addr0{{ forloop.counter }}'>
-                    <td class="nnum">{{ forloop.counter }}</td>
+                    <td class="nnum">{{ forloop.counter }} <input type="text"  name='id[]' value="{{ j.id }}" hidden></td>
                     <td style="width: 20%;">
                         <div class="d-flex">
                       <select name='product[]' id="product{{ forloop.counter }}" class="form-control" style="background-color: #2f516f; color: white;">
@@ -2538,7 +2538,7 @@
         $('#items-table-body').append(
   
             `<tr id='addr0${roinc}'>
-                    <td class="nnum">${roinc}</td>
+                    <td class="nnum">${roinc} <input type="text"  name='id[]' value= 0 hidden></td></td>
                     <td style="width: 20%;">
                       <div class="d-flex">
                       <select name='product[]' id="product${roinc}" class="form-control product" style="background-color: #2f516f; color: white;">

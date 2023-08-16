@@ -116,9 +116,9 @@
                 <td>
                     <div< class="details" >
                         <h6>Bill To</h6>
-                        <p><span>Buyer / Client Name : {{invoice.customername}}</span><br>
+                        <p><span>Buyer / Client Name : {{cust.title}} {{cust.firstname}} {{cust.lastname}}</span><br>
                             <span>{{invoice.bname}}</span><br>
-                            <span> GSTIN / UIN : {{cmp1.gstno}}</span> <br>
+                            <span> GSTIN / UIN : {{cust.gstin}}</span> <br>
                             <span>State : {{invoice.placosupply}}</span><br>
                             <span>Place of Supply : {{invoice.placosupply}}</span>
                         </p>
@@ -140,7 +140,7 @@
                         </tr>
                         <tr>
                         <td>Buyers Order No. {{invoice.invoice_orderno}}</td>
-                        <td>Dated : </td>
+                        <td>Dated: {{invoice.invoicedate |date:"d-m-Y"}}</td>
                         </tr>
                         <tr>
                         <td>Dispatch Doc No.</td>
@@ -151,7 +151,7 @@
                         <td>Destination</td>
                         </tr>
                         <tr>
-                        <td colspan="2">Terms of Delivery</td>
+                        <td colspan="2">Terms of Delivery: NET {{invoice.terms}}</td>
                         </tr>
                         
                         
@@ -171,18 +171,19 @@
         <table class="table2">
             <thead class="table-head" >
                 <tr>
-                  <th >Sl No.</th>
-                  <th >Description of Goods</th>
-                  <th >Batch Name</th>
-                  <th >Expiry Date</th>
-                  <th >HSN / SAC</th>
-                  
-                  <th>Qty</th>
-                  <th>Rate</th>
-                  <!-- <th>per</th> -->
-                   <th>GST Rate</th>
-                  <th>Disc %</th>
-                  <th>Amount</th>
+                    <th >Sl No.</th>
+                    <th style="border-right: none;">Description of Goods</th>
+                    <!-- <th >Batch Name</th> -->
+                    <th style="border-left: none;"></th>
+                    <th >Expiry Date</th>
+                    <th >HSN/SAC</th>
+                    
+                    <th>Qty</th>
+                    <th>Rate</th>
+                    <!-- <th>per</th> -->
+                    <th>Tax Rate</th>
+                    <th>Discount</th>
+                    <th>Amount</th>
                 </tr>
             </thead>
          
@@ -190,18 +191,18 @@
 
                 {% for j in invitem %}
                 <tr>
-                  <td>{{ forloop.counter }}</td>
-                  <td>{{j.product}}</td>
-                  <td></td>
-                  <td></td>
-                  <td>{{j.hsn}}</td>
-                  <td>{{j.qty}}</td>
-                  <td>{{j.price}}</td>
-                  <!-- <td></td> -->
-                <td>{{j.tax}} %</td>
-                  
-                  <td></td>
-                  <td> {{j.total}}</td>
+                    <td>{{ forloop.counter }}</td>
+                    <td style="border-right: none;">{{j.product}}</td>
+                    <td style="border-left: none;" ></td>
+                    <td>{{invoice.duedate }}</td>
+                    <td>{{j.hsn}}</td>
+                    <td>{{j.qty}}</td>
+                    <td>{{j.price}}</td>
+                    <!-- <td></td> -->
+                    <td>{{j.tax}} %</td>
+                    
+                    <td>{{j.discount}}</td>
+                    <td> {{j.total}}</td>
                  
                 </tr>
                 {% endfor %}
@@ -210,40 +211,44 @@
                   
                   <td style="font-weight: bold;"> {{invoice.subtotal}}</td>
                 </tr>
-                {% if invoice.IGST %}
-                <tr>
-                  <th colspan="9"  ><span>IGST</span></th>
-                  
-                  <td style="font-weight: bold;"> {{invoice.IGST}}</td>
-                </tr>
-                {% endif %}
-                {% if invoice.CGST != '0.00' %}
-                <tr>
-                  <th colspan="9"  ><span >CGST</span></th>
-                  
-                  <td style="font-weight: bold;"> {{invoice.CGST}}</td>
-                </tr>
-                {% endif %}
-                {% if invoice.SGST %}
-                <tr>
-                  <th colspan="9"  ><span >SGST</span></th>
-                  
-                  <td style="font-weight: bold;"> {{invoice.SGST}}</td>
-                </tr>
-                {% endif %}
-                
-                {% if invoice.TCS != '0' %}
-                <tr style="display: none;">
-                  <th colspan="9"  ><span >TCS</span></th>
-                  
-                  <td style="font-weight: bold;"> {{invoice.TCS}}</td>
-                </tr>
-                {% endif %}
-                <tr>
-                  <th colspan="9"  ><span>Grand Total</span></th>
-                  
-                  <td style="font-weight: bold;"> {{invoice.grandtotal}}</td>
-                </tr>
+                {% if igst != 0 %}
+                                      <tr id="igstrow">
+                                        <th colspan="9"  ><span style="float: right;margin-right: 14px;">IGST</span></th>
+                                        
+                                        <td style="font-weight: bold;" id="igst"> {{invoice.IGST}}</td>
+                                      </tr>
+                                      {% endif %}
+                                      {% if cgst != 0 %}
+                                      <tr id="cgstrow">
+                                        <th colspan="9"  ><span style="float: right;margin-right: 14px;">CGST</span></th>
+                                        
+                                        <td style="font-weight: bold;" id="cgst"> {{invoice.CGST}}</td>
+                                      </tr>
+                                      {% endif %}
+                                      {% if sgst != 0 %}
+                                      <tr id="sgstrow">
+                                        <th colspan="9"  ><span style="float: right;margin-right: 14px;">SGST</span></th>
+                                        
+                                        <td style="font-weight: bold;" id="sgst"> {{invoice.SGST}}</td>
+                                      </tr>
+                                      {% endif %}
+
+                                      <tr >
+                                        <th colspan="9"  ><span style="float: right;margin-right: 14px;">Tax Amount</span></th>
+                                        
+                                        <td style="font-weight: bold;"> {{invoice.taxamount}}</td>
+                                      </tr>
+                                      
+                                      <tr >
+                                        <th colspan="9"  ><span style="float: right;margin-right: 14px;">Shipping Charge</span></th>
+                                        
+                                        <td style="font-weight: bold;"> {{invoice.shipping_charge}}</td>
+                                      </tr>
+                                      <tr>
+                                        <th colspan="9"  ><span style="float: right;margin-right: 14px;">Grand Total</span></th>
+                                        
+                                        <td style="font-weight: bold;"> {{invoice.grandtotal}}</td>
+                                      </tr>
                 
             </tbody>
         </table>
@@ -258,7 +263,7 @@
         </div>
     {% if invoice.note %}
     <div class="conditions">
-        <h4 style="font-size:13px ;">Note :{{invoice.note}}</h4>
+        <h4 style="font-size:13px ;">Note : {{invoice.note}}</h4>
     </div>
     {% endif %}
 
@@ -276,7 +281,7 @@
         </td>
         <td>
             <div class="col-md-6">
-                <p class="gray-ish terms" style="text-align: right; font-size: 14px;"><b>COMPANY NAME</b><br><br><br> Authorised Signatory</p>
+                <p class="gray-ish terms" style="text-align: right; font-size: 14px;"><b>{{cmp1.cname}}</b><br><br><br> Authorised Signatory</p>
                 </div>
 
         </td>
@@ -284,5 +289,27 @@
 
     
 </body>
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+
+  $(document).ready(function(){
+    console.log($("#igst").text())
+    if($("#igst").text()==0){
+      console.log($("#igst").text())
+      $("#igstrow").addClass('d-none');
+      
+    }
+    else {
+      console.log($("#sgst").text())
+      $("#sgstrow").addClass('d-none');
+      
+  
+      console.log($("#cgst").text())
+      $("#cgstrow").addClass('d-none');
+    }
+  });
+</script>
 
 </html>

@@ -492,7 +492,7 @@
                               <span style="text-transform: uppercase; ">{{cmp1.cname}}</span><br>
                              {{cmp1.caddress }}<br>
                           Email Id :  {{cmp1.cemail}} ,<br>
-                          GSTIN/UIN : </p>
+                          GSTIN/UIN :{{cust.gstin}} </p>
                             </div>
                             
                           </div>
@@ -502,7 +502,7 @@
                               <p  style="color:black; font-size:14px">Buyer / Client Name : <br>{{cust.title}} {{cust.firstname}} {{cust.lastname}}<br>
                               
                               {{invoice.bname}}<br>
-                             GSTIN/UIN : <br>
+                             GSTIN/UIN : {{cust.gstin}}<br>
                              State : {{invoice.placosupply}} <br>
                               Place of Supply : {{invoice.placosupply}}</p>
                             </div>
@@ -628,13 +628,13 @@
                                       </tr>
                                       {% endif %}
 
-                                      <tr style="display: none;">
+                                      <tr >
                                         <th colspan="9"  ><span style="float: right;margin-right: 14px;">Tax Amount</span></th>
                                         
-                                        <td style="font-weight: bold;"> {{invoice.tax}}</td>
+                                        <td style="font-weight: bold;"> {{invoice.taxamount}}</td>
                                       </tr>
                                       
-                                      <tr style="display: none;">
+                                      <tr >
                                         <th colspan="9"  ><span style="float: right;margin-right: 14px;">Shipping Charge</span></th>
                                         
                                         <td style="font-weight: bold;"> {{invoice.shipping_charge}}</td>
@@ -719,7 +719,7 @@
                            
         
                               <div class="col-md-12" >
-                                <p class="gray-ish terms" style="text-align: right; font-size: 14px;"><b>COMPANY NAME</b><br>
+                                <p class="gray-ish terms" style="text-align: right; font-size: 14px;"><b>{{cmp1.cname}}</b><br>
                                   <br>
                         
                                   Authorised Signatory</p>
