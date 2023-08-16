@@ -27779,9 +27779,9 @@ def updatesale(request, id):
         upd.note = request.POST.get('Note')
 
         upd.subtotal=request.POST.get('subtotal')
-        upd.IGST =request.POST.get('IGST')
-        upd.CGST  = request.POST.get('CGST')
-        upd.SGST = request.POST.get('SGST')
+        upd.IGST =request.POST.get('igst')
+        upd.CGST  = request.POST.get('cgst')
+        upd.SGST = request.POST.get('sgst')
         # upd.TCS = request.POST['TCS']
         upd.shipping_charge = request.POST.get("ship"),
         upd.taxamount = request.POST.get("taxamount"),
@@ -27818,7 +27818,7 @@ def updatesale(request, id):
         # import pdb; pdb.set_trace()
         if len(product)==len(hsn)==len(qty)==len(price)==len(discount)==len(tax)==len(total):
             try:
-                mapped=zip(product,hsn, qty,price,tax,discount,total)
+                mapped=zip(product,hsn, qty,price,tax,discount,total,itemid)
                 mapped=list(mapped)
             
                 # for ele in mapped:
@@ -27829,21 +27829,21 @@ def updatesale(request, id):
                     
                 for ele in mapped:
                     
-                    if int(len(product))>int(count):
+                    if int(len(product))>int(count) or ele[7] == 0:
                         
                         salesorderAdd,created = sales_item.objects.get_or_create(product = ele[0],hsn=ele[1],
                         qty=ele[2],price=ele[3],tax=ele[4],discount = ele[4],total=ele[6],salesorder=saleid, cid=cmp1 )
 
                     else:
-                        print("welcome")
+                         
                         dbs=sales_item.objects.filter(salesorder=saleid,product = ele[0],hsn=ele[1])
-                        created = sales_item.objects.filter(id=saleid.id,cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],
+                        created = sales_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],
                         price=ele[3],tax=ele[4],discount=ele[5],total=ele[6])
 
 
                 return redirect('sales_order_view',id)
             except:
-                mapped=zip(product,hsn,qty,price,tax,discount,total)
+                mapped=zip(product,hsn,qty,price,tax,discount,total,itemid)
                 mapped=list(mapped)
             
                 # for ele in mapped:
@@ -28372,23 +28372,45 @@ def new_customers3(request):
         return redirect('goaddinvoices')
 
 
+
+
+
 def render_pdfinvoice_view(request,id):
 
     cmp1 = company.objects.get(id=request.session['uid'])
     upd = invoice.objects.get(invoiceid=id, cid=cmp1)
-
+    cust = customer.objects.get(customerid = upd.customername.split(" ")[0])
     invitem = invoice_item.objects.filter(invoice=id)
+
+    igst = upd.IGST
+    sgst = upd.SGST
+    cgst = upd.CGST
 
     total = upd.grandtotal
     words_total = num2words(total)
-    template_path = 'app1/pdfinvoice.html'
+
     context ={
         'invoice':upd,
         'cmp1':cmp1,
         'words_total':words_total,
         'invitem':invitem,
+        'cust' : cust,
+        'igst' : igst,
+        'sgst' : sgst,
+        'cgst' : cgst,
 
     }
+
+    total = upd.grandtotal
+    words_total = num2words(total)
+    template_path = 'app1/pdfinvoice.html'
+    # context ={
+    #     'invoice':upd,
+    #     'cmp1':cmp1,
+    #     'words_total':words_total,
+    #     'invitem':invitem,
+
+    # }
     fname=upd.invoiceno
    
     # Create a Django response object, and specify content_type as pdftemp_creditnote
@@ -28410,12 +28432,7 @@ def render_pdfinvoice_view(request,id):
        return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
 
-
-
-
-
-
-
+ 
 @login_required(login_url='regcomp')
 def editinvoice(request, id):
     try:
@@ -28426,10 +28443,12 @@ def editinvoice(request, id):
         noninv = noninventory.objects.filter(cid=cmp1).all()
         ser = service.objects.filter(cid=cmp1).all()
         item = itemtable.objects.filter(cid=cmp1).all()
-
+        customers = customer.objects.filter(cid=cmp1).all()
+        cust = customer.objects.get(customerid = invo3.customername.split(" ")[0])
         invitem = invoice_item.objects.filter(invoice =id )
+
         context = {'invoice': invo3, 'cmp1': cmp1, 'inv': inv, 'item':item,'invitem':invitem,
-                   'noninv': noninv, 'bun': bun, 'ser': ser}
+                   'noninv': noninv, 'bun': bun, 'ser': ser,'customers':customers,'cust':cust}
         return render(request, 'app1/editinvoice.html', context)
     except:
         return redirect('goinvoices')
@@ -29006,7 +29025,7 @@ def updateinvoice(request, id):
             accont.save()
         else:
             pass
-        invoi.customername = request.POST['customername']
+        invoi.customername = request.POST.geT('customername')
         invoi.email = request.POST['email']
         invoi.terms = request.POST['terms']
         invoi.invoicedate = request.POST['invoicedate']
@@ -29075,31 +29094,33 @@ def updateinvoice2(request, id):
     if request.method =='POST':
         cmp1 = company.objects.get(id=request.session['uid'])
         invoi = invoice.objects.get(invoiceid=id, cid=cmp1)
-        invoi.customername = request.POST['customername']
-        invoi.email = request.POST['email']
-        invoi.terms = request.POST['terms']
-        invoi.invoicedate = request.POST['invoicedate']
-        invoi.duedate = request.POST['duedate']
-        invoi.bname = request.POST['bname']
-        invoi.placosupply = request.POST['placosupply']
+        invoi.customername = request.POST.get('customer')
+        invoi.email = request.POST.get('email')
+        invoi.terms = request.POST.get('terms')
+        invoi.invoicedate = request.POST.get('invoicedate')
+        invoi.duedate = request.POST.get('duedate')
+        invoi.bname = request.POST.get('bname')
+        invoi.placosupply = request.POST.get('placosupply')
 
    
-        invoi.subtotal = request.POST['subtotal']
-        invoi.grandtotal = request.POST['grandtotal']
-        invoi.amtrecvd = request.POST['amtrecvd']
-        invoi.baldue = request.POST['baldue']
-        
-        invoi.note = request.POST['Note']
-        invoi.IGST = request.POST['IGST']
-        invoi.CGST = request.POST['CGST']
-        invoi.SGST = request.POST['SGST']
-        invoi.TCS = request.POST['TCS']
-
+        invoi.subtotal =float(request.POST.get('subtotal'))
+        invoi.grandtotal = request.POST.get('grandtotal')
+        invoi.amtrecvd = request.POST.get('amtrecvd')
+        invoi.baldue =request.POST.get('grandtotal')
+         
+        invoi.note = request.POST.get('Note')
+        invoi.IGST = request.POST.get('igst')
+        invoi.CGST = request.POST.get('cgst')
+        invoi.SGST = request.POST.get('sgst')
+        # invoi.TCS = request.POST['TCS']
+        invoi.shipping_charge = request.POST.get("ship")
+        invoi.taxamount = request.POST.get("taxamount")
+ 
         if len(request.FILES) != 0:
             if len(invoi.file) != "default.jpg" :
                 os.remove(invoi.invoice.path)
                 
-            invoi.file = request.FILES['file'],
+            invoi.file = request.FILES.get('file')
 
         invoi.save()
 
@@ -29124,7 +29145,7 @@ def updateinvoice2(request, id):
         bs3.payments = invoi.grandtotal
         bs3.save()
 
-        placosupply=request.POST['placosupply']
+        placosupply=request.POST.get('placosupply')
         if placosupply == cmp1.state:
             bs4=balance_sheet.objects.get(cid=cmp1,invc=invoi,account='Output CGST')
             bs4.details = invoi.customername
@@ -29167,7 +29188,7 @@ def updateinvoice2(request, id):
         bs7.account = "TDS Receivable"
         bs7.invc = invoi
         bs7.date = invoi.invoicedate
-        bs7.payments = invoi.TCS
+        # bs7.payments = invoi.TCS
         bs7.save()
 
 
@@ -29177,15 +29198,18 @@ def updateinvoice2(request, id):
         qty = request.POST.getlist("qty[]")
         price = request.POST.getlist("price[]")
         
-        tax = request.POST.getlist("tax[]")
+        if request.POST.get('placosupply') == cmp1.state:
+                tax = request.POST.getlist("tax1[]")
+        else:
+                tax = request.POST.getlist("tax2[]")
         total = request.POST.getlist("total[]")
-
+        discount = request.POST.getlist("discount[]")
         itemid = request.POST.getlist("id[]")
-
+ 
         invoiceid=invoice.objects.get(invoiceid =invoi.invoiceid)
         # import pdb; pdb.set_trace()
         count = invoice_item.objects.filter(invoice=invoiceid).count()
-        if len(product)==len(hsn)==len(description)==len(qty)==len(price)==len(tax)==len(total):
+        if len(product)==len(hsn)==len(discount)==len(qty)==len(price)==len(tax)==len(total):
             # mapped=zip(product,hsn,description,qty,price,tax,total,itemid)
             # mapped=list(mapped)
             # for ele in mapped:
@@ -29193,21 +29217,19 @@ def updateinvoice2(request, id):
             #     qty=ele[3],price=ele[4],tax=ele[5],total=ele[6])
 
             try:
-                mapped=zip(product,hsn,description,qty,price,tax,total)
+                mapped=zip(product,hsn,qty,price,tax,discount,total,itemid)
                 mapped=list(mapped)
-                
-                for ele in mapped:
-                    
-                    if int(len(product))>int(count):
-                        
 
-                        invoiceAdd,created = invoice_item.objects.get_or_create(product = ele[0],hsn=ele[1],description=ele[2],
-                        qty=ele[3],price=ele[4],tax=ele[5],total=ele[6],invoice=invoiceid,cid=cmp1)
+                for ele in mapped:
+                    if int(len(product))>int(count) or ele[7] == 0:
+
+                        invoiceAdd,created = invoice_item.objects.get_or_create(product = ele[0],hsn=ele[1],qty=ele[2],
+                        price=ele[3],tax=ele[4],discount=ele[5],total=ele[6],invoice=invoiceid,cid=cmp1)
 
                     else:
-                       created = invoice_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],description=ele[2],
-                        qty=ele[3],price=ele[4],tax=ele[5],total=ele[6])
-                
+                        created = invoice_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],
+                        price=ele[3],tax=ele[4],discount=ele[5],total=ele[6])
+                    
             except:
                     mapped=zip(product,hsn,description,qty,price,tax,total,itemid)
                     mapped=list(mapped)
@@ -29215,8 +29237,8 @@ def updateinvoice2(request, id):
                     for ele in mapped:
                         dbs=invoice_item.objects.get(id=ele[7],cid=cmp1.cid)
                         
-                        created = invoice_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],description=ele[2],
-                        qty=ele[3],price=ele[4],tax=ele[5],total=ele[6])
+                        created = invoice_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],
+                        price=ele[3],tax=ele[4],discount=ele[5],total=ele[6])
                 
                    
         return redirect('invoice_view',id)
