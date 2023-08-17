@@ -1636,7 +1636,8 @@
                  url:"{% url 'customers21' %}",
  
                  data:{
-                   
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+
                      title : $('#title').val(),
                      first_name : $('#firstname').val(),
                      last_name : $('#lastname').val(),
@@ -1660,7 +1661,6 @@
                      gstin :$("#gstin").val(),
                      panno :$("#panno").val(),
  
-                     csrfmiddlewaretoken: '{{ csrf_token }}',
                  },
                  
                  success: function(response) {

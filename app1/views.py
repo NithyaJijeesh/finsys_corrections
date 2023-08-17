@@ -26935,21 +26935,22 @@ def updateestimate2(request, id):
                 tax = request.POST.getlist("tax2[]")
         disc = request.POST.getlist("discount[]")
         amount = request.POST.getlist("total[]")
-        # estitemid = request.POST.getlist("id[]")
+        estitemid = request.POST.getlist("id[]")
         
-        print(upd.estimateid)
+        # print(upd.estimateid)
         est= estimate.objects.get(estimateid=upd.estimateid)
         
         count = estimate_item.objects.filter(estimate=est.estimateid,cid=cmp1).count()
         if len(items)==len(hsn)==len(quantity)==len(rate)==len(tax)==len(disc)==len(amount):
             try:
-                mapped=zip(items,hsn,quantity,rate,tax,disc,amount)
+                mapped=zip(items,hsn,quantity,rate,tax,disc,amount,estitemid)
                 mapped=list(mapped)
+                print(mapped)
                 
                 for ele in mapped:
                     
-                    if int(len(items))>int(count):
-                        
+                    if int(len(items))>int(count) or ele[7] == 0:
+                        print('added')
 
                         itemAdd,created = estimate_item.objects.get_or_create(item = ele[0],hsn=ele[1],
                         quantity=ele[2],rate=ele[3],tax=ele[4],discount = ele[5],total=ele[6] ,estimate_id=id,cid=cmp1)
@@ -26958,16 +26959,16 @@ def updateestimate2(request, id):
                         
                         
                       
-                        created = estimate_item.objects.filter(estimate=est.estimateid,cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount= ele[5],total=ele[6])
+                        created = estimate_item.objects.filter(id=ele[7],cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount= ele[5],total=ele[6])
                    
             except:
-                    mapped=zip(items,hsn,quantity,rate,tax,disc,amount)
+                    mapped=zip(items,hsn,quantity,rate,tax,disc,amount,estitemid)
                     mapped=list(mapped)
                     
                     for ele in mapped:
-                        dbs=estimate_item.objects.get(id=est.estimateid ,cid=cmp1.cid)
+                        dbs=estimate_item.objects.get(id=ele[7] ,cid=cmp1.cid)
                          
-                        created = estimate_item.objects.filter(id=est.estimateid ,cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount = ele[5],total=ele[6])
+                        created = estimate_item.objects.filter(id=ele[7] ,cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount = ele[5],total=ele[6])
 
 
         return redirect('estimate_view',id)
@@ -27148,7 +27149,7 @@ def convert2(request,id):
                     IGST = est.IGST,
                     CGST = est.CGST,
                     SGST = est.SGST,
-                    TCS = est.TCS ,
+                    # TCS = est.TCS ,
                     grandtotal=est.estimatetotal,
                     baldue=est.estimatetotal,
 
@@ -27245,7 +27246,7 @@ def convert2(request,id):
     bs7.details2 = inv2.invoice_orderno
     bs7.date = inv2.invoicedate
     bs7.amount = inv2.grandtotal
-    bs7.payments = inv2.TCS
+    # bs7.payments = inv2.TCS
     bs7.save()
 
     grandtotal = float(est.estimatetotal)
@@ -27287,18 +27288,18 @@ def convert2(request,id):
             float(accoigst.balance + IGST), 2)
         accoigst.save()
 
-    TCS = float(est.TCS)
-    accont = accounts1.objects.get(
-        name='TDS Receivable',cid=cmp1)
-    accont.balance = accont.balance - TCS
-    accont.save()
+    # TCS = float(est.TCS)
+    # accont = accounts1.objects.get(
+    #     name='TDS Receivable',cid=cmp1)
+    # accont.balance = accont.balance - TCS
+    # accont.save()
 
 
     es =estimate_item.objects.filter(estimate=id)
 
     num=invoice.objects.get(invoiceid=inv2.invoiceid)
     for i in es:
-        invoiceAdd,created = invoice_item.objects.get_or_create(product = i.item,hsn=i.hsn,description=i.description,qty=i.quantity,price=i.rate,tax=i.tax,total=i.total,invoice=num,cid=i.cid)
+        invoiceAdd,created = invoice_item.objects.get_or_create(product = i.item,hsn=i.hsn,qty=i.quantity,price=i.rate,tax=i.tax,discount = i.discount,total=i.total,invoice=num,cid=i.cid)
 
         itemqty1 = itemtable.objects.get(name=i.item,cid=cmp1)
         if itemqty1.stock != 0:
@@ -27348,7 +27349,7 @@ def estmate_filter2(request):
 
 def estmate_filter3(request):
     cmp1 = company.objects.get(id=request.session["uid"])
-    est1 = estimate.objects.filter(cid=cmp1,status='Invoice').all()
+    est1 = estimate.objects.filter(cid=cmp1,status='Sales').all()
 
     context = {
             'est1' :est1,
@@ -27762,7 +27763,7 @@ def edit_sales_order(request, id):
     
 
 @login_required(login_url='regcomp')
-def updatesale(request, id):
+def updatesales(request, id):
     if request.method =="POST":
         cmp1 = company.objects.get(id=request.session['uid'])
         upd = salesorder.objects.get(id=id, cid=cmp1)
@@ -27783,8 +27784,8 @@ def updatesale(request, id):
         upd.CGST  = request.POST.get('cgst')
         upd.SGST = request.POST.get('sgst')
         # upd.TCS = request.POST['TCS']
-        upd.shipping_charge = request.POST.get("ship"),
-        upd.taxamount = request.POST.get("taxamount"),
+        upd.shipping_charge = request.POST.get("ship")
+        upd.taxamount = request.POST.get("taxamount")
 
         upd.salestotal = request.POST.get('grandtotal')
 
@@ -27820,7 +27821,7 @@ def updatesale(request, id):
             try:
                 mapped=zip(product,hsn, qty,price,tax,discount,total,itemid)
                 mapped=list(mapped)
-            
+                print(mapped)
                 # for ele in mapped:
                 #     created = sales_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],description=ele[2],
                 #     qty=ele[3],price=ele[4],tax=ele[5],total=ele[6])
@@ -27830,13 +27831,15 @@ def updatesale(request, id):
                 for ele in mapped:
                     
                     if int(len(product))>int(count) or ele[7] == 0:
+
+                        print('added')
                         
                         salesorderAdd,created = sales_item.objects.get_or_create(product = ele[0],hsn=ele[1],
-                        qty=ele[2],price=ele[3],tax=ele[4],discount = ele[4],total=ele[6],salesorder=saleid, cid=cmp1 )
+                        qty=ele[2],price=ele[3],tax=ele[4],discount = ele[5],total=ele[6],salesorder=saleid, cid=cmp1 )
 
                     else:
                          
-                        dbs=sales_item.objects.filter(salesorder=saleid,product = ele[0],hsn=ele[1])
+                        dbs=sales_item.objects.filter(id=ele[7],product = ele[0],hsn=ele[1])
                         created = sales_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],
                         price=ele[3],tax=ele[4],discount=ele[5],total=ele[6])
 
@@ -27853,7 +27856,7 @@ def updatesale(request, id):
                 count = sales_item.objects.filter(salesorder=saleid).count()
                     
                 for ele in mapped:
-                    created = sales_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],price=ele[3],tax=ele[4],discount = ele[4],total=ele[6])
+                    created = sales_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],price=ele[3],tax=ele[4],discount = ele[5],total=ele[6])
                 return redirect('sales_order_view',id)
     else:
         return redirect('sales_order_view',id)
@@ -27894,7 +27897,7 @@ def sale_convert2(request,id):
                     IGST = upd.IGST,
                     CGST = upd.CGST,
                     SGST = upd.SGST,
-                    TCS = upd.TCS ,
+                    # TCS = upd.TCS ,
                     grandtotal=upd.salestotal ,
                     baldue=upd.salestotal ,
 
@@ -27992,7 +27995,7 @@ def sale_convert2(request,id):
     bs7.details2 = inv2.invoice_orderno
     bs7.date = inv2.invoicedate
     bs7.amount = inv2.grandtotal
-    bs7.payments = inv2.TCS
+    # bs7.payments = inv2.TCS
     bs7.save()
 
     grandtotal = float(upd.salestotal)
@@ -28034,11 +28037,11 @@ def sale_convert2(request,id):
             float(accoigst.balance + IGST), 2)
         accoigst.save()
 
-    TCS = float(upd.TCS)
-    accont = accounts1.objects.get(
-        name='TDS Receivable',cid=cmp1)
-    accont.balance = accont.balance - TCS
-    accont.save()
+    # TCS = float(upd.TCS)
+    # accont = accounts1.objects.get(
+    #     name='TDS Receivable',cid=cmp1)
+    # accont.balance = accont.balance - TCS
+    # accont.save()
 
 
     es =sales_item.objects.filter(salesorder=id)
@@ -28046,7 +28049,7 @@ def sale_convert2(request,id):
     num=invoice.objects.get(invoiceid=inv2.invoiceid)
     for i in es:
 
-        invoiceAdd,created = invoice_item.objects.get_or_create(product = i.product,hsn=i.hsn,description=i.description,qty=i.qty,price=i.price,tax=i.tax,total=i.total,invoice=num,cid=i.cid)
+        invoiceAdd,created = invoice_item.objects.get_or_create(product = i.product,hsn=i.hsn,qty=i.qty,price=i.price,tax=i.tax,discount = i.discount,total=i.total,invoice=num,cid=i.cid)
 
         itemqty1 = itemtable.objects.get(name=i.product,cid=cmp1)
         if itemqty1.stock != 0:
@@ -37469,15 +37472,19 @@ def editcreditfun(request,id):
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
         if request.method == 'POST':
-            vendor=request.POST['customer']
-            address=request.POST['address']
-            email=request.POST['email']
+            vendor=request.POST.get('customer')
+            address=request.POST.get('address')
+            email=request.POST.get('email')
             supply=request.POST['supply']
             billno=request.POST['billno']
-            subtotal=request.POST['subtotal']
-            taxamount=request.POST['taxamount']
-            grandtotal=request.POST['grandtotal']
-            description=request.POST.get('note'),
+            subtotal=request.POST.get('subtotal')
+            taxamount=request.POST.get('taxamount')
+            grandtotal=request.POST.get('grandtotal')
+            description=request.POST.get('note')
+            IGST = request.POST.get('igst')
+            SGST = request.POST.get('sgst')
+            CGST = request.POST.get('cgst')
+            shipping_charge = request.POST.get('ship')
             pdebt=salescreditnote.objects.get(screditid=id)
             pdebt.customer = vendor
             pdebt.address = address
@@ -37503,10 +37510,8 @@ def editcreditfun(request,id):
                 tax = request.POST.getlist("tax2[]")
             discount = request.POST.getlist("discount[]")
             total = request.POST.getlist("total[]")
-         
-          
-
-            pdebid = request.POST.getlist("id[]")
+            credid =request.POST.getlist("id[]")
+ 
             
             pdebitid=salescreditnote.objects.get(screditid=id)
             # import pdb; pdb.set_trace()
@@ -37514,23 +37519,23 @@ def editcreditfun(request,id):
             
             if len(items)==len(hsn)==len(quantity)==len(price)==len(tax)==len(discount) == len(total):
                 
-                mapped=zip(items,hsn,quantity,price,tax,discount,total)
+                mapped=zip(items,hsn,quantity,price,tax,discount,total,credid)
                 
                 mappe=list(mapped)
             
                 count = salescreditnote1.objects.filter(scredit=pdebitid).count()
              
-                for ele in mappe:
+                for ele in mapped:
                     
-                    if int(len(items))>int(count):
+                    if int(len(items))>int(count) or ele[7] == 0:
                         
                         created = salescreditnote1.objects.get_or_create(items = ele[0],hsn=ele[1],quantity=ele[2],price=ele[3],
                         tax=ele[4],discount  = ele[5],total=ele[6],scredit=pdebitid)
 
                     else:
                      
-                        dbs=salescreditnote1.objects.get(scredit=pdebitid,items = ele[0],hsn=ele[1])
-                        created = salescreditnote1.objects.filter(id=dbs.id,items = ele[0],hsn=ele[1]).update(items = ele[0],hsn = ele[1],quantity=ele[2],price=ele[3],
+                        dbs=salescreditnote1.objects.get(id=ele[7],items = ele[0],hsn=ele[1])
+                        created = salescreditnote1.objects.filter(id=ele[7],items = ele[0],hsn=ele[1]).update(items = ele[0],hsn = ele[1],quantity=ele[2],price=ele[3],
                         tax=ele[4],discount = ele[5],total=ele[6])
                         
 

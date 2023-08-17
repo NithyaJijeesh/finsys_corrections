@@ -437,7 +437,7 @@ urlpatterns = [
 
     path('edit_sales_order/<int:id>',views.edit_sales_order,name='edit_sales_order'),
 
-    path('updatesale/<int:id>',views.updatesale,name='updatesale'),
+    path('updatesales/<int:id>',views.updatesales,name='updatesales'),
 
     path('sale_convert1/<int:id>',views.sale_convert1,name='sale_convert1'),
 

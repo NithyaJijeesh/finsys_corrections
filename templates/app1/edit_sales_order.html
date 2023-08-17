@@ -127,7 +127,7 @@
     color: white;
   }
 </style>
-<form action="{% url 'updatesale' sale.id %}" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+<form action="{% url 'updatesales' sale.id %}" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
   {% csrf_token %}
   <div class="page-content">
     <!--breadcrumb-->
@@ -2563,7 +2563,8 @@
                         </div>
                     </td>
                     <td><input type="text" name='hsn[]' id="hsn${roinc}" placeholder='Enter HSN Code' class="form-control" style="background-color: #2f516f; color: white;" /></td>
-                    <td><input type="number" name='qty[]'  placeholder='Enter Qty' id="qty${roinc}" class="form-control qty" step=0 min=0 style="background-color: #2f516f;margin-top: 25px; color: white;" />
+                    <td><input type="number" name='qty[]'  placeholder='Enter Qty' id="qty${roinc}" value=0 class="form-control qty" step=0 min=0 style="background-color: #2f516f;margin-top: 25px;  color: white;" />
+                      <div><span>Available Qty :</span><span id="qtyspan${roinc}" class=''></span></div>
                     </td>
                     <td><input type="number" name='price[]' id="unit${roinc}" placeholder='Enter Unit Price' class="form-control price" step="0.00" min="0" style="background-color: #2f516f; color: white;" /></td>
                     

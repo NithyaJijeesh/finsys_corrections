@@ -163,7 +163,8 @@
                   {% for j in estimateitem %}
                   <tr id='addr0{{ forloop.counter }}'>
                     <td class="nnum">{{ forloop.counter }}
-                     
+                        <input type="text"  name='id[]' value="{{ j.id }}" hidden>
+
                     </td>
                     <td style="width: 20%;">
                       <div class="d-flex">
@@ -1359,7 +1360,8 @@
                $('#items-table-body').append(
                 `
                 <tr id='addr0${roinc}'>
-                    <td class="nnum">${roinc}</td>
+                    <td class="nnum">${roinc} <input type="text"  name='id[]' value= 0 hidden></td>
+ 
                     <td style="width: 20%;">
                       <div class="d-flex">
                       <select name='product[]' id="product${roinc}" class="form-control product" style="background-color: #2f516f; color: white;">
@@ -1387,7 +1389,7 @@
                     <td><input type="number" name='qty[]' onchange="qtychange1(this)" placeholder='Enter Qty' id="qty1" class="form-control qty" step=0 min=0 style="background-color: #2f516f; color: white;margin-top: 21px;" />
                       
                       
-                      <div><span>Available Qty :</span> <span id="qtyspan${roinc}"class=''></span></div>
+                      <div class='d-flex'><span>Available Qty :</span> <span id="qtyspan${roinc}"class=''></span></div>
 
                       
                     </td>

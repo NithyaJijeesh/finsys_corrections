@@ -149,7 +149,9 @@
                                     <tbody id="items-table-body">
                                     {% for pro in pcrd1%}
                                     <tr id='addr0{{forloop.counter}}'>
-                                        <td class="nnum">{{forloop.counter}}</td>
+                                        <td class="nnum">{{forloop.counter}}
+                                            <input type="text"  name='id[]' value="{{ pro.id }}" hidden>
+                                        </td>
                                         <td style="width: 20%;">
                                             <div class="d-flex">
                                                 <select name='items[]' id="product{{forloop.counter}}" class="form-control">
@@ -1295,7 +1297,7 @@ $(document).ready(function() {
                 $('#items-table-body').append(
                     `
                         <tr id='addr0${roinc}'>
-                            <td class="nnum">${roinc}</td>
+                            <td class="nnum">${roinc} <input type="text"  name='id[]' value= 0 hidden></td>
                             <td style="width: 20%;">
                                 <div class="d-flex">
                                     <select name='items[]' id="product${roinc}" class="form-control product">
@@ -1343,7 +1345,7 @@ $(document).ready(function() {
                             </td>        
                             <td style="display: none;"><input type="number" step="any" name='taxamount1' id="taxamount${roinc}" class="form-control taxamount"></td>
                             <td>
-                                <input type="number" name='discount[]' placeholder='Enter Discount' id="disc${roinc}" class="form-control disc" step=0 min=0>
+                                <input type="number" name='discount[]' placeholder='Enter Discount' id="disc${roinc}" class="form-control disc" step=0 min=0 value = 0>
                             </td>
                             <td>
                                 <input type="number" name='total[]' id="total${roinc}" placeholder=0 class="form-control total" value=0 step="any">
@@ -1691,26 +1693,29 @@ $(document).ready(function() {
 
 
         function reloadItem() {
-            $.ajax({
-                url: "{% url 'item_dropdown' %}",
-                type: "GET",
-                dataType: "json",
-                data: $(this).serialize(),
-                csrfmiddlewaretoken: '{{ csrf_token }}',
+            $('.product').each(function(index, dropdown) {
+            var row = $(dropdown).closest('.items-table-body'); // Assuming each row has a class 'item-row'
+                $.ajax({
+                    url: "{% url 'item_dropdown' %}",
+                    type: "GET",
+                    dataType: "json",
+                    data: row.find('select').serialize(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
 
-                success: function(data) {
-                    var dropdown = $('.product');
-                    dropdown.empty();
-                    dropdown.append(`<option selected>Select Item</option>`);
-                    $.each(data, function(key, value) {
-                    
-                        dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
-                    });
+                    success: function(data) {
+                        var dropdown = $('.product');
+                        dropdown.empty();
+                        dropdown.append(`<option selected>Select Item</option>`);
+                        $.each(data, function(key, value) {
+                        
+                            dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
+                        });
 
-                },
-                error: function(xhr, status, error) {
-                console.error(xhr.responseText);
-                }
+                    },
+                    error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    }
+                });
             });
         }
 
