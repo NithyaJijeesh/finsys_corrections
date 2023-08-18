@@ -74,7 +74,7 @@
                     </tr>
                     <tr>
                         <td>{{cmp1.cname }}</td>
-                        <td>{{sale.salename}}</td>
+                        <td>{{cust.title}} {{cust.firstname}} {{cust.lastname}}</td>
                     </tr>
                     <tr>
                         <td>{{cmp1.caddress}}<br>{{cmp1.city}}<br>{{cmp1.state}}<br>{{cmp1.pincode}}</td>
@@ -138,51 +138,75 @@
             </section>
 
             <section class="balance-info">
-                <div class="row">
-                    
+                <div class="row my-5">
+                    <div class="col-6">
+                        <h3 class="m-0 font-weight-bold" style="color:black"> Note : &nbsp; &nbsp;{{sale.note}}</h3>
+
+                    </div>
                     <div class="col-4">
                         <table class="table3 border-0 table-hover">
                             <tr >
-                                <td style="color:black">Sub Total :</td>
-                                <td style="color:black">{{sale.subtotal}}</td>
+                                <th colspan="9"  ><span style="float: right;margin-right: 14px;">Sub Total :</span></th>
+                                <td style="color:black; font-weight: bold;">{{sale.subtotal}}</td>
                             </tr>
-                            {% if sale.IGST != "" %}
+                            <tr style="display: none;" >
+                                <td id="cmp">
+                                    {{cmp1.state}}
+                                </td>
+                                <td id="sply">
+                                    {{sale.placeofsupply}}
+                                </td>
+                            </tr>
+                            {% if igst != 0 %}
+                            <tr id="igstrow">
+                              <th colspan="9"  ><span style="float: right;margin-right: 14px;">IGST</span></th>
+                              
+                              <td style="font-weight: bold;" id="igst"> {{sale.IGST}}</td>
+                            </tr>
+                            {% endif %}
+                            {% if cgst != 0 %}
+                            <tr id="cgstrow">
+                              <th colspan="9"  ><span style="float: right;margin-right: 14px;">CGST</span></th>
+                              
+                              <td style="font-weight: bold;" id="cgst"> {{sale.CGST}}</td>
+                            </tr>
+                            {% endif %}
+                            {% if sgst != 0 %}
+                            <tr id="sgstrow">
+                              <th colspan="9"  ><span style="float: right;margin-right: 14px;">SGST</span></th>
+                              
+                              <td style="font-weight: bold;" id="sgst"> {{sale.SGST}}</td>
+                            </tr>
+                            {% endif %}
+
                             <tr>
-                                <td style="color:black">IGST :</td>
-                                <td style="color:black">{{sale.IGST}}</td>
+                                <th colspan="9" ><span style="color:black; float: right;margin-right: 14px;">Tax Amount :</span></th>
+                                <td style="color:black; font-weight:bold">{{sale.taxamount}}</td>
                             </tr>
-                            {% endif %}
-                            {% if sale.CGST != "" %}
+
                             <tr>
-                                <td style="color:black">CGST :</td>
-                                <td style="color:black">{{sale.CGST}}</td>
+                                <th colspan="9" ><span style="color:black; float: right;margin-right: 14px;"> Shipping Charge :</span></th>
+                                <td style="color:black; font-weight:bold">{{sale.shipping_charge}}</td>
                             </tr>
-                            {% endif %}
-                            {% if sale.SGST != "" %}
-                            <tr>
-                                <td style="color:black">SGST:</td>
-                                <td style="color:black">{{sale.SGST}}</td>
-                            </tr>
-                            {% endif %}
-                            {% if sale.TCS != "" %}
-                            <tr style="display:none">
-                                <td style="color:black">TCS:</td>
-                                <td style="color:black">{{sale.TCS}}</td>
-                            </tr>
-                            {% endif %}
                             <tfoot>
                                 <tr>
-                                    <td style="color:black">Grand Total:</td>
-                                    <td style="color:black ;">{{sale.salestotal}}</td>
+                                    <th colspan="9"  ><span style="float: right;margin-right: 14px;">Sales Total:</span></th> 
+                                    <td style="color:black ;font-weight: bold;">{{sale.salestotal}}</td>
                                 </tr>
                             </tfoot>
                         </table>
 
                       
                     </div>
-                    <div class="col-8">
-                        <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
-                        <p style="color:black">{{sale.note}}</p>
+                    
+                </div>
+                <hr>
+                <div class="row mt-5 p-5" style="padding: 50%;">
+                    <div class="col-md-12" >
+                        <p class="gray-ish terms" style="text-align: right; font-size: 14px;"><b>{{cmp1.cname}}</b><br>
+                        <br>
+                
+                        Authorised Signatory</p>
                     </div>
                 </div>
             </section>

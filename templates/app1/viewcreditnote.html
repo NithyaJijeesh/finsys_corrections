@@ -294,7 +294,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-light btn" role="button"                    href="{% url 'editcreditnote' pcrd.screditid %}"><i class=" fa fa-pencil">&nbsp;Edit</i></a>
+                                    <a class="nav-link text-light btn" role="button" href="{% url 'editcreditnote' pcrd.screditid %}"><i class=" fa fa-pencil">&nbsp;Edit</i></a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-light btn" role="button" href="{% url 'deletecredit' pcrd.screditid %}"><i class="fa fa-trash-o delete">&nbsp;Delete</i></a>
@@ -351,7 +351,7 @@
                             </div>
                             <div class="row extra-info pt-3">
                                 <div class="col-7">
-                                    <p>Credit Date : {{ pcrd.creditdate }} </p>
+                                    <p>Credit Date : {{ pcrd.creditdate|date:'d-m-Y' }} </p>
                                     
                                     <p class="address col-6" style="margin-left: -14px;">  </p>   
                                 </div>
@@ -395,8 +395,8 @@
                     <section class="balance-info">
                         <div class="row">
                             <div class="col-8">
-                                <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
-                                <p style="color:black" class="p-2">{{pcrd.description}}</p>
+                                <p class="m-0 font-weight-bold" style="color:black"> Note: &nbsp; &nbsp; {{pcrd.description}}</p>
+                                <!-- <p style="color:black" class="p-2">{{pcrd.description}}</p> -->
                             </div>
                             <div class="col-4">
                                 <table class="table border-0 table-hover">

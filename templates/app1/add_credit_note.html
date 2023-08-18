@@ -1286,10 +1286,13 @@
                 calc();
             });
         
+            
+    
 
             $(document).on('click','.clone_row',function(){
                 var roinc = $("#items-table-body tr").length;
-                var originalRow = $(this).closest('#items-table-body tr'); 
+
+                var originalRow = $(this).closest('tr'); 
                 var clonedRow = originalRow.clone();
 
                 clonedRow.attr('id', 'addr0' +(roinc+1));

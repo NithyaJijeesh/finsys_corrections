@@ -185,7 +185,7 @@
                   </div>
                     </td>
                     <td><input type="text" name='hsn[]'  value="{{ j.hsn }}" id="hsn{{ forloop.counter }}" placeholder='Enter HSN Code' class="form-control" style="background-color: #2f516f; color: white;" /></td>
-                    <td><input type="number" name='qty[]' value="{{ j.quantity }}" onchange="qtychange1(this)" placeholder='Enter Qty' style="margin-top: 21px;" id="qty{{ forloop.counter }}" value=0 class="form-control qty" step=0 min=0 style="background-color: #2f516f; color: white;" />
+                    <td><input type="number" name='qty[]' value="{{ j.quantity }}" placeholder='Enter Qty' style="margin-top: 21px;" id="qty{{ forloop.counter }}" value=0 class="form-control qty" step=0 min=0 style="background-color: #2f516f; color: white;" />
                       <div class="d-flex"><span>Available Qty :</span> <label id="qtyspan{{forloop.counter}}" class=''></label></div>
                     </td>
                     <td><input type="number" name='price[]' value="{{ j.rate}}" id="unit{{ forloop.counter }}" placeholder='Enter Unit Price' class="form-control price" step="0.00" min="0" style="background-color: #2f516f; color: white;" /></td>

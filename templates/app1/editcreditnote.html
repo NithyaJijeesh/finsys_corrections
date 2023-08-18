@@ -43,11 +43,13 @@
                             <div class="row">
                                 <div class="col-md-5 mt-3">
                                     <label for="validationCustom02">Billing address</label>
-                                    <textarea class="form-control" name="address" rows="5" id="mailaddr">{{pcrd.address}}</textarea>
+                                    <textarea class="form-control" name="address" rows="5" id="mailaddr">{{pcrd.address}} </textarea>
                                 </div>
+                                
                                 <div class="col-md-5 mt-3">
                                     <label for="validationCustom02">Credit Note Date</label>
-                                    <input type="date" class="form-control" value="{{pcrd.creditdate}}" name="debitdate" id="date">
+                                    <input type="date" class="form-control" value="{{pcrd.creditdate | date:'Y-m-d'}}" name="creditdate" id="date1">
+                                    
                                 </div>
                             </div>
                             <div class="row">
@@ -154,7 +156,7 @@
                                         </td>
                                         <td style="width: 20%;">
                                             <div class="d-flex">
-                                                <select name='items[]' id="product{{forloop.counter}}" class="form-control">
+                                                <select name='items[]' id="product{{forloop.counter}}" class="form-control product">
                                                     <option selected>{{pro.items}}</option>
                                                     {% for i in item %}
                                                         <option value="{{ i.name }}">
@@ -171,7 +173,7 @@
                                         </td>
                                         <td>
                                                
-                                            <input type="number" name='quantity[]' value="{{pro.quantity}}"  onchange="qtychange1(this)" style="margin-top: 21px;" placeholder='Enter Qty' id="qty{{forloop.counter}}" class="form-control qty" step=0 min=0>
+                                            <input type="number" name='quantity[]' value="{{pro.quantity}}"  style="margin-top: 21px;" placeholder='Enter Qty' id="qty{{forloop.counter}}" class="form-control qty" step=0 min=0>
                                                 <div class="d-flex"><span>Available Qty :</span> <label id="qtyspan{{forloop.counter}}" class=''></label></div>
                                             
 
@@ -270,10 +272,11 @@
                                 <div class="row container-fluid p-2 m-0">
                                     <div class="col-sm-4 mt-2"><label for="a" class="text-center">Tax Amount</label></div>
                                     <div class="col-sm-1 mt-2">:</div>
-                                    <div class="col-sm-7 mt-2"><input type="number" name='taxamount' value="{{pcrd.taxamount}}" id="tax_amount"  
+                                    <div class="col-sm-7 mt-2"><input type="number" step="any" name='taxamount' value="{{pcrd.taxamount}}" id="tax_amount" placeholder='0.00' 
                                         class="form-control"/>
                                     </div>
                                     <div class="col-sm-4 m-0 p-0"></div>
+          
                                 </div>
                                 <div class="row container-fluid p-2 m-0">
                                     <div class="col-sm-4 mt-2"><label for="a" class="text-center">Shipping Charge</label></div>
@@ -1154,7 +1157,7 @@ $(document).ready(function() {
 
 
     
-        $('#date').val(new Date().toJSON().slice(0,10));
+        // $('#date1').val(new Date().toJSON().slice(0,10));
 
         
     
@@ -1442,6 +1445,10 @@ $(document).ready(function() {
                 clonedRow.attr('id', 'addr0' +(roinc+1));
 
                 clonedRow.find('.nnum').text(roinc+1);
+
+                var hiddenInput = originalRow.find('input[name="id[]"]').clone();
+                hiddenInput.val(0);
+                clonedRow.find('.nnum').append(hiddenInput);
 
                 clonedRow.find('[id]').each(function() {
                     var oldId = $(this).attr('id');
@@ -1941,7 +1948,7 @@ $(document).ready(function() {
             $('#date-time').bootstrapMaterialDatePicker({
                 format: 'YYYY-MM-DD HH:mm'
             });
-            $('#date').bootstrapMaterialDatePicker({
+            $('#date1').bootstrapMaterialDatePicker({
                 time: false
             });
             $('#time').bootstrapMaterialDatePicker({

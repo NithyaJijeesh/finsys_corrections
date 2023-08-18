@@ -212,43 +212,43 @@
                   <td style="font-weight: bold;"> {{invoice.subtotal}}</td>
                 </tr>
                 {% if igst != 0 %}
-                                      <tr id="igstrow">
-                                        <th colspan="9"  ><span style="float: right;margin-right: 14px;">IGST</span></th>
-                                        
-                                        <td style="font-weight: bold;" id="igst"> {{invoice.IGST}}</td>
-                                      </tr>
-                                      {% endif %}
-                                      {% if cgst != 0 %}
-                                      <tr id="cgstrow">
-                                        <th colspan="9"  ><span style="float: right;margin-right: 14px;">CGST</span></th>
-                                        
-                                        <td style="font-weight: bold;" id="cgst"> {{invoice.CGST}}</td>
-                                      </tr>
-                                      {% endif %}
-                                      {% if sgst != 0 %}
-                                      <tr id="sgstrow">
-                                        <th colspan="9"  ><span style="float: right;margin-right: 14px;">SGST</span></th>
-                                        
-                                        <td style="font-weight: bold;" id="sgst"> {{invoice.SGST}}</td>
-                                      </tr>
-                                      {% endif %}
+                <tr id="igstrow">
+                <th colspan="9"  ><span style="float: right;margin-right: 14px;">IGST</span></th>
+                
+                <td style="font-weight: bold;" id="igst"> {{invoice.IGST}}</td>
+                </tr>
+                {% endif %}
+                {% if cgst != 0 %}
+                <tr id="cgstrow">
+                <th colspan="9"  ><span style="float: right;margin-right: 14px;">CGST</span></th>
+                
+                <td style="font-weight: bold;" id="cgst"> {{invoice.CGST}}</td>
+                </tr>
+                {% endif %}
+                {% if sgst != 0 %}
+                <tr id="sgstrow">
+                <th colspan="9"  ><span style="float: right;margin-right: 14px;">SGST</span></th>
+                
+                <td style="font-weight: bold;" id="sgst"> {{invoice.SGST}}</td>
+                </tr>
+                {% endif %}
 
-                                      <tr >
-                                        <th colspan="9"  ><span style="float: right;margin-right: 14px;">Tax Amount</span></th>
-                                        
-                                        <td style="font-weight: bold;"> {{invoice.taxamount}}</td>
-                                      </tr>
-                                      
-                                      <tr >
-                                        <th colspan="9"  ><span style="float: right;margin-right: 14px;">Shipping Charge</span></th>
-                                        
-                                        <td style="font-weight: bold;"> {{invoice.shipping_charge}}</td>
-                                      </tr>
-                                      <tr>
-                                        <th colspan="9"  ><span style="float: right;margin-right: 14px;">Grand Total</span></th>
-                                        
-                                        <td style="font-weight: bold;"> {{invoice.grandtotal}}</td>
-                                      </tr>
+                <tr >
+                <th colspan="9"  ><span style="float: right;margin-right: 14px;">Tax Amount</span></th>
+                
+                <td style="font-weight: bold;"> {{invoice.taxamount}}</td>
+                </tr>
+                
+                <tr >
+                <th colspan="9"  ><span style="float: right;margin-right: 14px;">Shipping Charge</span></th>
+                
+                <td style="font-weight: bold;"> {{invoice.shipping_charge}}</td>
+                </tr>
+                <tr>
+                <th colspan="9"  ><span style="float: right;margin-right: 14px;">Grand Total</span></th>
+                
+                <td style="font-weight: bold;"> {{invoice.grandtotal}}</td>
+                </tr>
                 
             </tbody>
         </table>
@@ -257,8 +257,8 @@
      <hr> 
      
 
-        <div class="amount">
-          <p>Amount in words:<br>
+        <div class="amount d-flex">
+          <p>Amount:<br>
           {{words_total}}</p>
         </div>
     {% if invoice.note %}

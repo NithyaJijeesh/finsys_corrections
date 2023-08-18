@@ -3508,14 +3508,14 @@ def invcreate2(request):
             mapped=zip(product,qty)
             mapped=list(mapped)
             for ele in mapped:
-                iAdd,created = itemstock.objects.get_or_create(items = ele[0],qty = ele[1],transactions="Invoice",details=dl,
+                iAdd = itemstock.objects.create(items = ele[0],qty = ele[1],transactions="Invoice",details=dl,
                 date=dt,inv=invoiceid,cid=cmp1)
 
         if len(product)==len(hsn)==len(qty)==len(price)==len(tax)==len(discount)==len(total) and product and hsn and discount and qty and price and tax and total:
             mapped=zip(product,hsn, qty,price,tax,discount,total)
             mapped=list(mapped)
             for ele in mapped:
-                invoiceAdd,created = invoice_item.objects.get_or_create(product = ele[0],hsn=ele[1],qty=ele[2],
+                invoiceAdd  = invoice_item.objects.create(product = ele[0],hsn=ele[1],qty=ele[2],
                 price=ele[3],tax=ele[4],discount=ele[5],total=ele[6],invoice=invoiceid,cid=cmp1)
 
                 itemqty1 = itemtable.objects.get(name=ele[0],cid=cmp1)
@@ -27080,8 +27080,17 @@ def render_pdfestimate_view(request,id):
 
     cmp1 = company.objects.get(id=request.session['uid'])
     upd = estimate.objects.get(estimateid=id, cid=cmp1)
-
+    cust = customer.objects.get(customerid = upd.customer.split(" ")[0])
     estitem = estimate_item.objects.filter(estimate=id)
+    if cmp1.state == upd.placeofsupply:
+        cgst = upd.CGST
+        sgst = upd.SGST
+        igst = 0
+    else:
+        igst = upd.IGST
+        sgst = 0
+        cgst = 0
+    
 
     total = upd.estimatetotal
     words_total = num2words(total)
@@ -27090,7 +27099,10 @@ def render_pdfestimate_view(request,id):
         'estimate':upd,
         'cmp1':cmp1,
         'estitem':estitem,
-
+        'cust' : cust,
+        'igst' : igst,
+        'sgst' : sgst,
+        'cgst' : cgst,
     }
     fname=upd.estimateno
    
@@ -27612,7 +27624,7 @@ def createsales_record(request):
             mapped=zip(product,hsn, qty,price,tax,discount, total)
             mapped=list(mapped)
             for ele in mapped:
-                salesorderAdd,created = sales_item.objects.get_or_create(product = ele[0],hsn=ele[1],
+                salesorderAdd = sales_item.objects. create(product = ele[0],hsn=ele[1],
                 qty=ele[2],price=ele[3],tax=ele[4],discount = ele[5],total=ele[6],salesorder=salesorderid, cid=cmp1 )
 
 
@@ -27695,7 +27707,15 @@ def render_pdfsalesorder_view(request,id):
 
     cmp1 = company.objects.get(id=request.session['uid'])
     upd = salesorder.objects.get(id=id, cid=cmp1)
-
+    cust = customer.objects.get(customerid = upd.salename.split(" ")[0])
+    if cmp1.state == upd.placeofsupply:
+        cgst = upd.CGST
+        sgst = upd.SGST
+        igst = 0
+    else:
+        igst = upd.IGST
+        sgst = 0
+        cgst = 0
     saleitem = sales_item.objects.filter(salesorder=id)
 
     total = upd.salestotal
@@ -27704,7 +27724,11 @@ def render_pdfsalesorder_view(request,id):
     context ={
         'sale':upd,
         'cmp1':cmp1,
-        'saleitem':saleitem
+        'saleitem':saleitem,
+        'cust' : cust,
+        'sgst' : sgst,
+        'cgst' :cgst,
+        'igst' : igst,
 
     }
     fname=upd.saleno
@@ -27810,16 +27834,19 @@ def updatesales(request, id):
                 tax = request.POST.getlist("tax1[]")
         else:
                 tax = request.POST.getlist("tax2[]")
-        print(tax)
+       
         total = request.POST.getlist("total[]")
 
-        itemid = request.POST.getlist("id[]")
+        itemid = request.POST.getlist("id[]") 
+        print(product)
+        print(itemid)
 
         saleid=salesorder.objects.get(id =upd.id)
         # import pdb; pdb.set_trace()
         if len(product)==len(hsn)==len(qty)==len(price)==len(discount)==len(tax)==len(total):
             try:
                 mapped=zip(product,hsn, qty,price,tax,discount,total,itemid)
+                print(mapped)
                 mapped=list(mapped)
                 print(mapped)
                 # for ele in mapped:
@@ -27829,19 +27856,21 @@ def updatesales(request, id):
                 count = sales_item.objects.filter(salesorder=saleid).count()
                     
                 for ele in mapped:
+                    print(ele)
                     
-                    if int(len(product))>int(count) or ele[7] == 0:
+                    if int(len(product))>int(count):
+                        if int(ele[7]) == 0:
 
-                        print('added')
-                        
-                        salesorderAdd,created = sales_item.objects.get_or_create(product = ele[0],hsn=ele[1],
-                        qty=ele[2],price=ele[3],tax=ele[4],discount = ele[5],total=ele[6],salesorder=saleid, cid=cmp1 )
+                            print('added')
+                            
+                            salesorderAdd = sales_item.objects.create(product = ele[0],hsn=ele[1],
+                            qty=ele[2],price=ele[3],tax=ele[4],discount = ele[5],total=ele[6],salesorder=saleid, cid=cmp1 )
 
-                    else:
-                         
-                        dbs=sales_item.objects.filter(id=ele[7],product = ele[0],hsn=ele[1])
-                        created = sales_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],
-                        price=ele[3],tax=ele[4],discount=ele[5],total=ele[6])
+                        else:
+                            
+                            # dbs=sales_item.objects.filter(id=ele[7],product = ele[0],hsn=ele[1])
+                            created = sales_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],
+                            price=ele[3],tax=ele[4],discount=ele[5],total=ele[6])
 
 
                 return redirect('sales_order_view',id)
@@ -28385,9 +28414,14 @@ def render_pdfinvoice_view(request,id):
     cust = customer.objects.get(customerid = upd.customername.split(" ")[0])
     invitem = invoice_item.objects.filter(invoice=id)
 
-    igst = upd.IGST
-    sgst = upd.SGST
-    cgst = upd.CGST
+    if cmp1.state == upd.placosupply:
+        cgst = upd.CGST
+        sgst = upd.SGST
+        igst = 0
+    else:
+        igst = upd.IGST
+        sgst = 0
+        cgst = 0
 
     total = upd.grandtotal
     words_total = num2words(total)
@@ -29224,17 +29258,21 @@ def updateinvoice2(request, id):
                 mapped=list(mapped)
 
                 for ele in mapped:
-                    if int(len(product))>int(count) or ele[7] == 0:
+                    if int(len(product))>int(count):
+                        print(ele)
+                        if int(ele[7]) == 0:
+                            print('no change')
 
-                        invoiceAdd,created = invoice_item.objects.get_or_create(product = ele[0],hsn=ele[1],qty=ele[2],
-                        price=ele[3],tax=ele[4],discount=ele[5],total=ele[6],invoice=invoiceid,cid=cmp1)
+                            invoiceAdd = invoice_item.objects.create(product = ele[0],hsn=ele[1],qty=ele[2],
+                            price=ele[3],tax=ele[4],discount=ele[5],total=ele[6],invoice=invoiceid,cid=cmp1)
 
-                    else:
-                        created = invoice_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],
-                        price=ele[3],tax=ele[4],discount=ele[5],total=ele[6])
-                    
+                        else:
+                            print('updation')
+                            created = invoice_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],
+                            price=ele[3],tax=ele[4],discount=ele[5],total=ele[6])
+                        
             except:
-                    mapped=zip(product,hsn,description,qty,price,tax,total,itemid)
+                    mapped=zip(product,hsn,qty,price,tax,total,itemid)
                     mapped=list(mapped)
                     
                     for ele in mapped:
@@ -37362,10 +37400,13 @@ def create_credit(request):
             if len(items)==len(hsn)==len(quantity)==len(price)==len(tax)== len(discount)==len(total):
                 mapped=zip(items,hsn,quantity,price,tax,discount,total)
                 mapped=list(mapped)
+                print(mapped)
                 for ele in mapped:
+                    print(ele)
 
-                    porderAdd,created = salescreditnote1.objects.get_or_create(items = ele[0],hsn=ele[1],quantity=ele[2],price=ele[3],
+                    porderAdd = salescreditnote1.objects.create(items = ele[0],hsn=ele[1],quantity=ele[2],price=ele[3],
                     tax=ele[4],discount = ele[5],total=ele[6],scredit=pdeb)
+                    print('saved')
 
                     itemqty = itemtable.objects.get(name=ele[0],cid=cmp1)
                     if itemqty.stock != 0:
@@ -37400,18 +37441,32 @@ def viewcredit(request,id):
 def render_pdf_credit(request,id):
 
     cmp1 = company.objects.get(id=request.session['uid'])
-    
-
     pcrd=salescreditnote.objects.get(screditid=id)
     pcrd1 = salescreditnote1.objects.all().filter(scredit=id)
 
+    cust = customer.objects.get(customerid = pcrd.customer.split(" ")[0])
+    if pcrd.supply == cmp1.state:
+        sgst = float(pcrd.taxamount)/2
+        cgst = float(pcrd.taxamount)/2
+        igst = 0
+    else:
+        igst = float(pcrd.taxamount)
+        sgst = 0
+        cgst = 0
+    
+
     total = pcrd.grandtotal
     words_total = num2words(total)
+    print(words_total)
     template_path = 'app1/pdfcredit.html'
     context ={
         'pcrd':pcrd,
         'cmp1':cmp1,
         'pcrd1':pcrd1,
+        'cust' : cust,
+        'igst' : igst,
+        'cgst' : cgst,
+        'sgst' : sgst,
 
     }
     fname=pcrd.screditid
@@ -37442,7 +37497,7 @@ def editcreditnote(request, id):
     vndr = customer.objects.all()  
     pbill = purchasebill.objects.all()  
     item = itemtable.objects.all() 
-
+    d = pcrd.creditdate
     
     cust1 = customer.objects.get(customerid = pcrd.customer.split(" ")[0])
  
@@ -37458,7 +37513,7 @@ def editcreditnote(request, id):
         'sgst':sgst,
         'cmp1':cmp1,
         'cust':cust1,
-
+        'd':d
 
     }
   
@@ -37472,25 +37527,26 @@ def editcreditfun(request,id):
             return redirect('/')
         cmp1 = company.objects.get(id=request.session['uid'])
         if request.method == 'POST':
+            pdebt=salescreditnote.objects.get(screditid=id)
             vendor=request.POST.get('customer')
             address=request.POST.get('address')
             email=request.POST.get('email')
-            supply=request.POST['supply']
-            billno=request.POST['billno']
+            supply=request.POST.get('supply')
+            billno=request.POST.get('billno')
             subtotal=request.POST.get('subtotal')
             taxamount=request.POST.get('taxamount')
             grandtotal=request.POST.get('grandtotal')
-            description=request.POST.get('note')
+            pdebt.description=request.POST.get('note')
             IGST = request.POST.get('igst')
             SGST = request.POST.get('sgst')
             CGST = request.POST.get('cgst')
-            shipping_charge = request.POST.get('ship')
-            pdebt=salescreditnote.objects.get(screditid=id)
+            pdebt.shipping_charge = request.POST.get('ship')
+            
             pdebt.customer = vendor
             pdebt.address = address
 
             pdebt.email=email
-            # pdebt.creditdate=request.POST['debitdate'],
+            pdebt.creditdate=request.POST.get('creditdate')
             pdebt.supply=supply
             pdebt.billno=billno
             pdebt.subtotal=subtotal
@@ -37511,31 +37567,29 @@ def editcreditfun(request,id):
             discount = request.POST.getlist("discount[]")
             total = request.POST.getlist("total[]")
             credid =request.POST.getlist("id[]")
- 
+            print(items)
+            print(credid)
             
             pdebitid=salescreditnote.objects.get(screditid=id)
-            # import pdb; pdb.set_trace()
             
-            
-            if len(items)==len(hsn)==len(quantity)==len(price)==len(tax)==len(discount) == len(total):
-                
+
+            if len(items)==len(hsn)==len(quantity)==len(price)==len(tax)==len(discount)==len(total):
                 mapped=zip(items,hsn,quantity,price,tax,discount,total,credid)
-                
-                mappe=list(mapped)
-            
+                mapped=list(mapped)
                 count = salescreditnote1.objects.filter(scredit=pdebitid).count()
-             
+
                 for ele in mapped:
                     
-                    if int(len(items))>int(count) or ele[7] == 0:
-                        
-                        created = salescreditnote1.objects.get_or_create(items = ele[0],hsn=ele[1],quantity=ele[2],price=ele[3],
-                        tax=ele[4],discount  = ele[5],total=ele[6],scredit=pdebitid)
+                    if int(len(items))>int(count) :
+                        if  int(ele[7]) == 0:
+                            created = salescreditnote1.objects.create(items = ele[0],hsn=ele[1],quantity=ele[2],price=ele[3],
+                            tax=ele[4],discount  = ele[5],total=ele[6],scredit=pdebitid)
+                        else:
+                            created = salescreditnote1.objects.filter(id=ele[7]).update(items = ele[0],hsn = ele[1],quantity=ele[2],price=ele[3],
+                            tax=ele[4],discount = ele[5],total=ele[6])
 
                     else:
-                     
-                        dbs=salescreditnote1.objects.get(id=ele[7],items = ele[0],hsn=ele[1])
-                        created = salescreditnote1.objects.filter(id=ele[7],items = ele[0],hsn=ele[1]).update(items = ele[0],hsn = ele[1],quantity=ele[2],price=ele[3],
+                        created = salescreditnote1.objects.filter(id=ele[7]).update(items = ele[0],hsn = ele[1],quantity=ele[2],price=ele[3],
                         tax=ele[4],discount = ele[5],total=ele[6])
                         
 
