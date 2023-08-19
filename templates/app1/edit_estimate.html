@@ -1431,7 +1431,31 @@
                             </td>
                   </tr>
   
-  `)
+  `);
+  $('.product').each(function(index, dropdown) {
+                    var row = $(dropdown).closest('.items-table-body'); // Assuming each row has a class 'item-row'
+                    $.ajax({
+                        url: "{% url 'item_dropdown' %}",
+                        type: "GET",
+                        dataType: "json",
+                        data: row.find('select').serialize(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+
+                        success: function(data) {
+                            var dropdown = $('.product');
+                            dropdown.empty();
+                            dropdown.append(`<option selected>Select Item</option>`);
+                            $.each(data, function(key, value) {
+                            
+                                dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
+                            });
+
+                        },
+                        error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        }
+                    });
+                });
     
  
                 });
@@ -1514,6 +1538,9 @@
                 clonedRow.attr('id', 'addr0' +(roinc+1));
 
                 clonedRow.find('.nnum').text(roinc+1);
+                var hiddenInput = originalRow.find('input[name="id[]"]').clone();
+                hiddenInput.val(0);
+                clonedRow.find('.nnum').append(hiddenInput);
 
                 clonedRow.find('[id]').each(function() {
                     var oldId = $(this).attr('id');

@@ -4,10 +4,8 @@
 
     {% load static %}
     {% if user.is_authenticated %}
-<!-- 
-    <link rel="stylesheet" href="{% static 'assets/css/search.css' %}"/> -->
-  
-      <style>
+        <!-- <link rel="stylesheet" href="{% static 'assets/css/search.css' %}"/> -->
+    <style>
         @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 body{
@@ -86,10 +84,10 @@ body{
                                 data-toggle="dropdown"> Sort by
                         </button>
                         <div class="dropdown-menu" style="background-color: black;">
-                            <a class="dropdown-item" href="{% url 'gocustomers_asc' %}"
-                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer A-Z</a>
+                            <a class="dropdown-item " href="{% url 'gocustomers_asc' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer <icon class=" fa fa-arrow-down "></icon></a>
                             <a class="dropdown-item" href="{% url 'gocustomers_desc' %}"
-                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer Z-A</a>
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer <icon class=" fa fa-arrow-up"></icon></a>
                             
                                 
                         </div> 
@@ -133,7 +131,7 @@ body{
                     <tbody>
                         {% for customer in customers %}
                             {% if customer.cid_id == cmp1.cid %}
-                                <tr  class="table-row " data-href="{% url 'customer_profile' customer.customerid %}">
+                                <tr  class="table-row ">
                                     <td><a class="idsr" style="list-style: none;"  href="{% url 'customer_profile' customer.customerid %} "> {{ customer.firstname }} {{ customer.lastname }}</a></td>
                                     <td><a class="idsr" style="list-style: none;"  href="{% url 'customer_profile' customer.customerid %} "> {{ customer.gsttype }}</a></td>
                                     <td><a class="idsr" style="list-style: none;"  href="{% url 'customer_profile' customer.customerid %} "> {{ customer.gstin }} </a></td>

@@ -629,13 +629,6 @@ def gocustomers(request):
     except:
         return redirect('godash')
 
-
-
-
-
-
-
-
 @login_required(login_url='regcomp')
 def gopands(request):
     try:
@@ -26607,6 +26600,9 @@ def est_cust_asc(request):
     for e in est1:
         cust = " " . join(e['customer'].split(" ")[1:])
         e['cust'] = cust
+
+    est1 = sorted(est1, key=lambda x: x['cust'])
+
     context = {
         'est1' :est1,
         'cmp1': cmp1
@@ -26619,6 +26615,8 @@ def est_cust_desc(request):
     for e in est1:
         cust = " " . join(e['customer'].split(" ")[1:])
         e['cust'] = cust
+    est1 = sorted(est1, key=lambda x: x['cust'],reverse = True)
+
     context = {
         'est1' :est1,
         'cmp1': cmp1
@@ -26729,7 +26727,7 @@ def estcreate2(request):
                 mapped=zip(items,hsn ,quantity,rate,tax,disc,amount)
                 mapped=list(mapped)
                 for ele in mapped:
-                    itemAdd,created = estimate_item.objects.get_or_create(item = ele[0],hsn=ele[1],
+                    itemAdd  = estimate_item.objects.create(item = ele[0],hsn=ele[1],
                     quantity=ele[2],rate=ele[3],tax=ele[4],discount = ele[5],total=ele[6] ,estimate = estimateid,cid=cmp1)
 
 
@@ -26936,37 +26934,51 @@ def updateestimate2(request, id):
         disc = request.POST.getlist("discount[]")
         amount = request.POST.getlist("total[]")
         estitemid = request.POST.getlist("id[]")
-        
-        # print(upd.estimateid)
+
+        item_ids = [int(id) for id in estitemid]
+
         est= estimate.objects.get(estimateid=upd.estimateid)
+
+        est_item = estimate_item.objects.filter(estimate=est)
+        
+        object_ids = [obj.id for obj in est_item]
+
+        ids_to_delete = [obj_id for obj_id in object_ids if obj_id not in item_ids]
+        print(item_ids)
+        print(object_ids)
+        print(ids_to_delete)
+        estimate_item.objects.filter(id__in=ids_to_delete).delete()
+        
         
         count = estimate_item.objects.filter(estimate=est.estimateid,cid=cmp1).count()
         if len(items)==len(hsn)==len(quantity)==len(rate)==len(tax)==len(disc)==len(amount):
             try:
-                mapped=zip(items,hsn,quantity,rate,tax,disc,amount,estitemid)
+                mapped=zip(items,hsn,quantity,rate,tax,disc,amount,item_ids)
                 mapped=list(mapped)
                 print(mapped)
                 
                 for ele in mapped:
                     
-                    if int(len(items))>int(count) or ele[7] == 0:
-                        print('added')
+                    if int(len(items))>int(count):
+                        if ele[7] == 0:
+                            print('added')
 
-                        itemAdd,created = estimate_item.objects.get_or_create(item = ele[0],hsn=ele[1],
-                        quantity=ele[2],rate=ele[3],tax=ele[4],discount = ele[5],total=ele[6] ,estimate_id=id,cid=cmp1)
+                            itemAdd= estimate_item.objects.create(item = ele[0],hsn=ele[1],
+                            quantity=ele[2],rate=ele[3],tax=ele[4],discount = ele[5],total=ele[6] ,estimate_id=id,cid=cmp1)
 
+                        else:
+                            itemAdd = estimate_item.objects.filter(id=ele[7],cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount= ele[5],total=ele[6])
                     else:
-                        
-                        
-                      
-                        created = estimate_item.objects.filter(id=ele[7],cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount= ele[5],total=ele[6])
+                        itemAdd = estimate_item.objects.filter(id=ele[7],cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount= ele[5],total=ele[6])
+
                    
             except:
-                    mapped=zip(items,hsn,quantity,rate,tax,disc,amount,estitemid)
+                    mapped=zip(items,hsn,quantity,rate,tax,disc,amount,item_ids)
                     mapped=list(mapped)
                     
                     for ele in mapped:
-                        dbs=estimate_item.objects.get(id=ele[7] ,cid=cmp1.cid)
+                        print('cnhh')
+                        # dbs=estimate_item.objects.get(id=ele[7] ,cid=cmp1.cid)
                          
                         created = estimate_item.objects.filter(id=ele[7] ,cid=cmp1).update(item = ele[0],hsn=ele[1],quantity=ele[2],rate=ele[3],tax=ele[4],discount = ele[5],total=ele[6])
 
@@ -27426,6 +27438,8 @@ def sales_cust_asc(request):
     for s in sel1:
         cust = " " . join(s['salename'].split(" ")[1:])
         s['cust'] = cust
+    sel1 = sorted(sel1, key=lambda x: x['cust'] )
+
     context = {
         'sel1' :sel1,
         'cmp1': cmp1
@@ -27442,6 +27456,8 @@ def sales_cust_desc(request):
         print(s['salename'])
         cust = " " . join(s['salename'].split(" ")[1:])
         s['cust'] = cust
+    sel1= sorted(sel1, key=lambda x: x['cust'],reverse = True)
+
     context = {
         'sel1' :sel1,
         'cmp1': cmp1
@@ -27838,31 +27854,36 @@ def updatesales(request, id):
         total = request.POST.getlist("total[]")
 
         itemid = request.POST.getlist("id[]") 
-        print(product)
-        print(itemid)
+        item_ids = [int(id) for id in itemid]
+
 
         saleid=salesorder.objects.get(id =upd.id)
-        # import pdb; pdb.set_trace()
+
+        sale_item = sales_item.objects.filter(salesorder=saleid)
+        
+        object_ids = [obj.id for obj in sale_item]
+
+        ids_to_delete = [obj_id for obj_id in object_ids if obj_id not in item_ids]
+        print(item_ids)
+        # print(sale_item)
+        print(object_ids)
+        print(ids_to_delete)
+        sales_item.objects.filter(id__in=ids_to_delete).delete()
+
+        
         if len(product)==len(hsn)==len(qty)==len(price)==len(discount)==len(tax)==len(total):
             try:
-                mapped=zip(product,hsn, qty,price,tax,discount,total,itemid)
-                print(mapped)
+                mapped=zip(product,hsn, qty,price,tax,discount,total,item_ids)
                 mapped=list(mapped)
-                print(mapped)
-                # for ele in mapped:
-                #     created = sales_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],description=ele[2],
-                #     qty=ele[3],price=ele[4],tax=ele[5],total=ele[6])
-
+                
                 count = sales_item.objects.filter(salesorder=saleid).count()
                     
                 for ele in mapped:
-                    print(ele)
+                    # print(ele)
                     
                     if int(len(product))>int(count):
-                        if int(ele[7]) == 0:
+                        if ele[7] == 0:
 
-                            print('added')
-                            
                             salesorderAdd = sales_item.objects.create(product = ele[0],hsn=ele[1],
                             qty=ele[2],price=ele[3],tax=ele[4],discount = ele[5],total=ele[6],salesorder=saleid, cid=cmp1 )
 
@@ -27871,17 +27892,17 @@ def updatesales(request, id):
                             # dbs=sales_item.objects.filter(id=ele[7],product = ele[0],hsn=ele[1])
                             created = sales_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],
                             price=ele[3],tax=ele[4],discount=ele[5],total=ele[6])
+                    else:
+                            
+                        created = sales_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],
+                        price=ele[3],tax=ele[4],discount=ele[5],total=ele[6])
 
 
                 return redirect('sales_order_view',id)
             except:
-                mapped=zip(product,hsn,qty,price,tax,discount,total,itemid)
+                mapped=zip(product,hsn,qty,price,tax,discount,total,item_ids)
                 mapped=list(mapped)
             
-                # for ele in mapped:
-                #     created = sales_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],description=ele[2],
-                #     qty=ele[3],price=ele[4],tax=ele[5],total=ele[6])
-
                 count = sales_item.objects.filter(salesorder=saleid).count()
                     
                 for ele in mapped:
@@ -28226,6 +28247,9 @@ def inv_cust_asc(request):
         for i in invs:
             cust = " " . join(i['customername'].split(" ")[1:])
             i['cust'] = cust
+
+        invs = sorted(invs, key=lambda x: x['cust'])
+
         context = {'invoice': invs, 'customers': customers, 'cmp1': cmp1}
         return render(request, 'app1/invoices.html', context)
     except:
@@ -28239,6 +28263,8 @@ def inv_cust_desc(request):
         for i in invs:
             cust = " " . join(i['customername'].split(" ")[1:])
             i['cust'] = cust
+        invs = sorted(invs, key=lambda x: x['cust'],reverse = True)
+
         context = {'invoice': invs, 'customers': customers, 'cmp1': cmp1}
         return render(request, 'app1/invoices.html', context)
     except:
@@ -29242,10 +29268,19 @@ def updateinvoice2(request, id):
         total = request.POST.getlist("total[]")
         discount = request.POST.getlist("discount[]")
         itemid = request.POST.getlist("id[]")
+
+        item_ids = [int(id) for id in itemid]
+
+        inv= invoice.objects.get(invoiceid =invoi.invoiceid)
+        inv_item = invoice_item.objects.filter(invoice=inv)
+        object_ids = [obj.id for obj in inv_item]
+        ids_to_delete = [obj_id for obj_id in object_ids if obj_id not in item_ids]
+
+        invoice_item.objects.filter(id__in=ids_to_delete).delete()
  
-        invoiceid=invoice.objects.get(invoiceid =invoi.invoiceid)
+        
         # import pdb; pdb.set_trace()
-        count = invoice_item.objects.filter(invoice=invoiceid).count()
+        count = invoice_item.objects.filter(invoice=inv).count()
         if len(product)==len(hsn)==len(discount)==len(qty)==len(price)==len(tax)==len(total):
             # mapped=zip(product,hsn,description,qty,price,tax,total,itemid)
             # mapped=list(mapped)
@@ -29254,25 +29289,25 @@ def updateinvoice2(request, id):
             #     qty=ele[3],price=ele[4],tax=ele[5],total=ele[6])
 
             try:
-                mapped=zip(product,hsn,qty,price,tax,discount,total,itemid)
+                mapped=zip(product,hsn,qty,price,tax,discount,total,item_ids)
                 mapped=list(mapped)
 
                 for ele in mapped:
                     if int(len(product))>int(count):
                         print(ele)
-                        if int(ele[7]) == 0:
-                            print('no change')
-
+                        if ele[7] == 0:
                             invoiceAdd = invoice_item.objects.create(product = ele[0],hsn=ele[1],qty=ele[2],
-                            price=ele[3],tax=ele[4],discount=ele[5],total=ele[6],invoice=invoiceid,cid=cmp1)
+                            price=ele[3],tax=ele[4],discount=ele[5],total=ele[6],invoice=inv,cid=cmp1)
 
                         else:
-                            print('updation')
                             created = invoice_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],
                             price=ele[3],tax=ele[4],discount=ele[5],total=ele[6])
+                    else:
+                        created = invoice_item.objects.filter(id=ele[7],cid=cmp1).update(product = ele[0],hsn=ele[1],qty=ele[2],
+                        price=ele[3],tax=ele[4],discount=ele[5],total=ele[6])
                         
             except:
-                    mapped=zip(product,hsn,qty,price,tax,total,itemid)
+                    mapped=zip(product,hsn,qty,price,tax,total,item_ids)
                     mapped=list(mapped)
                     
                     for ele in mapped:
@@ -37252,6 +37287,7 @@ def start_reconcile(request,pk):
     return render(request,'app1/start reconcile.html',context)
 
 #credit note
+
 def credit_note(request):
     cmp1 = company.objects.get(id=request.session['uid'])
     pdebit = salescreditnote.objects.filter(cid=cmp1).values() 
@@ -37278,18 +37314,22 @@ def credit_num_desc(request):
 
 def credit_cust_asc(request):
     cmp1 = company.objects.get(id=request.session['uid'])
-    pdebit = salescreditnote.objects.filter(cid=cmp1).order_by('customer').values() 
+    pdebit = salescreditnote.objects.filter(cid=cmp1).values() 
+   
     for p in pdebit:
         cust = " " . join(p['customer'].split(" ")[1:])
         p['cust'] = cust
+    pdebit = sorted(pdebit, key=lambda x: x['cust'])
     return render(request,'app1/credit_note.html',{'cmp1': cmp1,'pdebit':pdebit})
 
 def credit_cust_desc(request):
     cmp1 = company.objects.get(id=request.session['uid'])
-    pdebit = salescreditnote.objects.filter(cid=cmp1).order_by('-customer').values() 
+    pdebit = salescreditnote.objects.filter(cid=cmp1).values() 
     for p in pdebit:
         cust = " " . join(p['customer'].split(" ")[1:])
         p['cust'] = cust
+    pdebit = sorted(pdebit, key=lambda x: x['cust'],reverse = True)
+
     return render(request,'app1/credit_note.html',{'cmp1': cmp1,'pdebit':pdebit})
 
 def credit_date_asc(request):
@@ -37567,21 +37607,31 @@ def editcreditfun(request,id):
             discount = request.POST.getlist("discount[]")
             total = request.POST.getlist("total[]")
             credid =request.POST.getlist("id[]")
-            print(items)
-            print(credid)
+
+            item_ids = [int(id) for id in credid]
+
+            cred= salescreditnote.objects.get(screditid =pdebt.screditid)
+
+            cred_item = salescreditnote1.objects.filter(scredit=cred)
+            
+            object_ids = [obj.id for obj in cred_item]
+
+            ids_to_delete = [obj_id for obj_id in object_ids if obj_id not in item_ids]
+         
+            salescreditnote1.objects.filter(id__in=ids_to_delete).delete()
             
             pdebitid=salescreditnote.objects.get(screditid=id)
             
 
             if len(items)==len(hsn)==len(quantity)==len(price)==len(tax)==len(discount)==len(total):
-                mapped=zip(items,hsn,quantity,price,tax,discount,total,credid)
+                mapped=zip(items,hsn,quantity,price,tax,discount,total,item_ids)
                 mapped=list(mapped)
                 count = salescreditnote1.objects.filter(scredit=pdebitid).count()
 
                 for ele in mapped:
                     
                     if int(len(items))>int(count) :
-                        if  int(ele[7]) == 0:
+                        if  ele[7] == 0:
                             created = salescreditnote1.objects.create(items = ele[0],hsn=ele[1],quantity=ele[2],price=ele[3],
                             tax=ele[4],discount  = ele[5],total=ele[6],scredit=pdebitid)
                         else:

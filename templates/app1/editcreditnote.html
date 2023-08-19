@@ -215,7 +215,6 @@
                                         <td>
                                             <input type="number" name='total[]' id="total{{forloop.counter}}" value="{{pro.total}}"  placeholder='0.00' class="form-control total"/>
                                         </td>
-                                        <!-- <td><button type="button" id="{{forloop.counter}}" class="btn btn-danger remove_row">-</button></td> -->
                                         <td>
                                             <button type="button" id="{{forloop.counter}}" class="btn  font-weight-bold clone_row fa fa-clone px-2 my-1 py-1" title="Clone Row" style="background-color:rgb(88, 107, 143);"></button><br>
                                             <button type="button" id="{{forloop.counter}}" class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close" title="Remove Row"> </button>
@@ -1363,7 +1362,32 @@ $(document).ready(function() {
                                                     
                     `
                 );
-                
+
+                $('.product').each(function(index, dropdown) {
+                    var row = $(dropdown).closest('.items-table-body'); // Assuming each row has a class 'item-row'
+                    $.ajax({
+                        url: "{% url 'item_dropdown' %}",
+                        type: "GET",
+                        dataType: "json",
+                        data: row.find('select').serialize(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+
+                        success: function(data) {
+                            var dropdown = $('.product');
+                            dropdown.empty();
+                            dropdown.append(`<option selected>Select Item</option>`);
+                            $.each(data, function(key, value) {
+                            
+                                dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
+                            });
+
+                        },
+                        error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        }
+                    });
+                });
+                        
             });
 
         });
@@ -1431,9 +1455,37 @@ $(document).ready(function() {
                 var row_id = $(this).attr("id");
                 // console.log(row_id);
                 $('#addr0'+row_id+'').remove();
-                
+
+                // updateRowAttributes();
                 calc();
             });
+           
+            // function updateRowAttributes() {
+            //     var rows = $('.remove_row');
+            //     rows.each(function (index, element) {
+            //         var row_id = $(element).attr("id");
+            //         console.log(row_id)
+            //         var new_row_id = index +1;
+            //         console.log(new_row_id)
+
+            //         $('#addr0' + row_id).attr("id", "addr0" + new_row_id);
+            //         $('#hsn' + row_id).attr("id", "hsn" + new_row_id);
+            //         $('#qty' + row_id).attr("id", "qty" + new_row_id);
+            //         $('#qtyspan' + row_id).attr("id", "qtyspan" + new_row_id);
+            //         $('#unit' + row_id).attr("id", "unit" + new_row_id);
+            //         $('#product' + row_id).attr("id", "product" + new_row_id);
+            //         $('#tax1' + row_id).attr("id", "tax1" + new_row_id);
+            //         $('#tax2' + row_id).attr("id", "tax2" + new_row_id);
+            //         $('#disc' + row_id).attr("id", "disc" + new_row_id);
+            //         $('#total' + row_id).attr("id", "total" + new_row_id);
+            //         $('#taxamount' + row_id).attr("id", "taxamount" + new_row_id);
+            //         $('.remove_row').attr("id", new_row_id);
+            //         $('.clone_row').attr("id", new_row_id);
+            //         $('.numm').html( new_row_id);
+
+            //         $(element).attr("id", new_row_id);
+            //     });
+            // }
         
 
             $(document).on('click','.clone_row',function(){

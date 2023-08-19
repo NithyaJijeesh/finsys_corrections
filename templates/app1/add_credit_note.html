@@ -1244,9 +1244,33 @@
                                                     
                     `
                 );
+                $('.product').each(function(index, dropdown) {
+                    var row = $(dropdown).closest('.items-table-body'); // Assuming each row has a class 'item-row'
+                    $.ajax({
+                        url: "{% url 'item_dropdown' %}",
+                        type: "GET",
+                        dataType: "json",
+                        data: row.find('select').serialize(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+
+                        success: function(data) {
+                            var dropdown = $('.product');
+                            dropdown.empty();
+                            dropdown.append(`<option selected>Select Item</option>`);
+                            $.each(data, function(key, value) {
+                            
+                                dropdown.append($('<option></option>').attr('value', key).text(value).val(value));
+                            });
+
+                        },
+                        error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        }
+                    });
+                });
             });
 
-            
+        });
             // calculation---------------------------
 
             $(document).on('change', '.product',function(){ 
@@ -1327,7 +1351,7 @@
             $('#tax').on('keyup change', function () {
                 calc_total();
             });
-        });
+        
 
         function calc() {
             $('#tab_logic tbody tr').each(function () {
