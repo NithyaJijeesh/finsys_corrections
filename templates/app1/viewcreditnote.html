@@ -286,18 +286,18 @@
                         <div class="collapse navbar-collapse" id="navbarScroll">
                             <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                                 <li class="nav-item active" >
-                                <a class="nav-link text-light btn" role="button" onclick="window.print()"><i class="fa fa-print">&nbsp;Print</i><span class="sr-only">(current)</span></a>
+                                <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey p-1" role="button" onclick="window.print()">&nbsp;&nbsp;Print&nbsp;&nbsp;<span class="sr-only">(current)</span></a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-light btn" role="button" href="{% url 'render_pdf_credit' pcrd.screditid %}">
-                                    <i class="fa fa-file-pdf-o">&nbsp;Pdf</i>
+                                <li class="nav-item mx-1">
+                                    <a class="nav-link text-light btn btn-outline-info rounded-pill text-grey p-1" role="button" href="{% url 'render_pdf_credit' pcrd.screditid %}">
+                                        &nbsp;&nbsp;PDF&nbsp;&nbsp;
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-light btn" role="button" href="{% url 'editcreditnote' pcrd.screditid %}"><i class=" fa fa-pencil">&nbsp;Edit</i></a>
+                                <li class="nav-item mx-1">
+                                    <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey  p-1" role="button" href="{% url 'editcreditnote' pcrd.screditid %}">&nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-light btn" role="button" href="{% url 'deletecredit' pcrd.screditid %}"><i class="fa fa-trash-o delete">&nbsp;Delete</i></a>
+                                <li class="nav-item mx-1">
+                                    <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey p-1" role="button" href="{% url 'deletecredit' pcrd.screditid %}">&nbsp;&nbsp;Delete&nbsp;&nbsp;</a>
                                 </li>
                             </ul>
                         </div>
@@ -701,8 +701,8 @@
               });
           });
       });
-   
-      function printDiv() { 
+//    
+    //   function printDiv() { 
         //   var divContents = document.getElementById("panel").innerHTML; 
         //   var a = window.open('', '', 'height=1000, width=1000'); 
         //   a.document.write('<html>'); 
@@ -712,20 +712,20 @@
         //   a.document.close(); 
         //   a.print(); 
 
-        var printContents = document.getElementById("whatToPrint").innerHTML;
-        var originalContents = document.body.innerHTML;
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
-      } 
+    //     var printContents = document.getElementById("whatToPrint").innerHTML;
+    //     var originalContents = document.body.innerHTML;
+    //     document.body.innerHTML = printContents;
+    //     window.print();
+    //     document.body.innerHTML = originalContents;
+    //   } 
     
-      $('.delete').click(function(e){
-          var result = confirm("Are you sure you want to delete this record? If you delete this, not retrive");
+    //   $('.delete').click(function(e){
+    //       var result = confirm("Are you sure you want to delete this record? If you delete this, not retrive");
 
-          if(!result) {
-              e.preventDefault();
-          }
-      });
+    //       if(!result) {
+    //           e.preventDefault();
+    //       }
+    //   });
 
       
     </script>

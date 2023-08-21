@@ -61,25 +61,27 @@
                     </div>
                     <div class="col-md-2" style="width: 40%; margin-top: 9px;">
                         <div class="dropdown">
-                            <button type="button" class="btn btn-outline-info   text-grey fa fa-sort"
+                            <button type="button" class="btn btn-outline-info   text-grey fas fa-sort"
                                     data-toggle="dropdown"> Sort by
                             </button>
                             <div class="dropdown-menu " style="background-color: black;">
+                                <a class="dropdown-item" href="{% url 'goinvoices' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >All</a>
                             <a class="dropdown-item" href="{% url 'inv_num_asc' %}"
-                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Sales Order Number <icon class=" fa fa-arrow-down"></icon></a>
-                            <a class="dropdown-item  " href="{% url 'inv_num_desc' %}"
-                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Sales Order Number <icon class=" fa fa-arrow-up"></icon></a>
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Sales Order Number </a>
+                            <!-- <a class="dropdown-item  " href="{% url 'inv_num_desc' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Sales Order Number <icon class=" fas fa-arrow-up"></icon></a> -->
 
                             <a class="dropdown-item " href="{% url 'inv_date_asc' %}"
-                                style="height: 40px; font-size: 15px; color: white; text-align: center; " >Date <icon class=" fa fa-arrow-down"></icon></a>
-                            <a class="dropdown-item " href="{% url 'inv_date_desc' %}"
-                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date <icon class=" fa fa-arrow-up"></icon></a>
+                                style="height: 40px; font-size: 15px; color: white; text-align: center; " >Date  </a>
+                            <!-- <a class="dropdown-item " href="{% url 'inv_date_desc' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date <icon class=" fas fa-arrow-up"></icon></a> -->
 
                             <a class="dropdown-item  " href="{% url 'inv_cust_asc' %}"
                                 style="height: 40px; font-size: 15px; color: white; text-align: center;" >
-                                    Customer <icon class=" fa fa-arrow-down"></icon></a>
-                            <a class="dropdown-item  " href="{% url 'inv_cust_desc' %}"
-                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer <icon class=" fa fa-arrow-up"></icon></a>
+                                    Customer </a>
+                            <!-- <a class="dropdown-item  " href="{% url 'inv_cust_desc' %}"
+                                style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer <icon class=" fas fa-arrow-up"></icon></a> -->
                                 
                                     
                             </div> 
@@ -90,7 +92,7 @@
                     <div class="col-md-1 mx-5" style="width: 40%; margin-top: 8px;">
 
                         <div class="dropdown">
-                            <button type="button" class="btn btn-outline-info dropdown-toggle fa fa-filter text-grey"
+                            <button type="button" class="btn btn-outline-info dropdown-toggle fas fa-filter text-grey"
                                     data-toggle="dropdown"> filter by
                             </button>
                             <div class="dropdown-menu" style="background-color: black;">
@@ -108,7 +110,7 @@
                     </div>
                     <div class="col-md-2" >
                         <a href="{% url 'goaddinvoices' %}" >
-                            <button id="myBtn" class="btn btn-outline-info text-grey fa fa-plus" style="margin-top: 8px;">&nbsp; Add
+                            <button id="myBtn" class="btn btn-outline-info text-grey fas fa-plus" style="margin-top: 8px;">&nbsp; Add
                                 Invoices</button>
                         </a>
                     </div>

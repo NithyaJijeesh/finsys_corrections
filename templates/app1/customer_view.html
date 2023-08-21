@@ -133,6 +133,7 @@
             padding: 12px
         }
         
+        
        
     </style>
 <script>
@@ -269,26 +270,26 @@
                             
                             <div>
                                 <center>
-                                    <a href="{% url 'editcustomer' customer.customerid %}" class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3" role="button">
+                                    <a href="{% url 'editcustomer' customer.customerid %}" class=" fas fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3" role="button">
                                         Edit
                                     </a>&nbsp;&nbsp;&nbsp;
                                     {% if customer.status == act%}
-                                    <a href="{% url 'active_cust' customer.customerid %}" class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3" role="button">Inactivate</a> &nbsp;&nbsp;&nbsp;
+                                    <a href="{% url 'active_cust' customer.customerid %}" class=" fas fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3" role="button">Inactivate</a> &nbsp;&nbsp;&nbsp;
                                     {% else %}
-                                    <a href="{% url 'inactive_cust' customer.customerid %}" class=" fa fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3" role="button">Activate</a> &nbsp;&nbsp;&nbsp;
+                                    <a href="{% url 'inactive_cust' customer.customerid %}" class=" fas fa-pencil btn btn-outline-info rounded-pill text-grey mt-3 mb-3" role="button">Activate</a> &nbsp;&nbsp;&nbsp;
                                     {% endif %}
                                    
                                     <a   class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3" role="button"> 
 
                                         <form  action="{% url 'deletecustomer' customer.customerid %}"   > 
-                                           <i class="fa fa-trash-o delete"> Delete</i>
+                                           <i class="fas fa-trash-o delete"> Delete</i>
                                            <input name="_method" type="hidden" value="DELETE">
                                            
                                            </form> </a>
                                 </center>
                             </div>
                             <button type="button"
-                                    class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3 ml-3  dropdown-toggle dropdown-toggle-split fa fa-paperclip"
+                                    class="btn btn-outline-info rounded-pill text-grey mt-3 mb-3 ml-3  dropdown-toggle dropdown-toggle-split fas fa-paperclip"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-top: 8px;">
                                 <span class="sr-only ">Toggle Dropdown</span>
                                 Attach file
@@ -296,7 +297,7 @@
                             <div class="dropdown-menu" >
                                 <a class="dropdown-item"  style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal">Attach file</a>
                                 {% if customer.file != "default.jpg" %}
-                                <a class="dropdown-item fa fa-download" style="cursor: pointer;"download  href="{{customer.file.url }}" >Download file</a>
+                                <a class="dropdown-item fas fa-download" style="cursor: pointer;"download  href="{{customer.file.url }}" >Download file</a>
                                 {% endif %}
                            
                             </div>
@@ -352,7 +353,7 @@
                             <button class="btn btn-outline-info  rounded-pill w-100" type="submit">Search</button>
                         </div>
                         <div class="col-md-2">
-                            <a class="fa fa-print" style="padding: 10px; cursor: pointer; float: right; "  href="javascript:generatePDF()" id="downloadButton" > PDF</a>
+                            <a class="fas fa-print" style="padding: 10px; cursor: pointer; float: right; "  href="javascript:generatePDF()" id="downloadButton" > PDF</a>
                         </div>
                     </div>
                 </form>
@@ -799,7 +800,7 @@
                     <div style=" margin-top: 20px;">
 
                         <a style="padding: 10px; cursor: pointer; font-size: 20px;" onclick="dispinv()" >Invoice</a>
-                        <a href="{% url 'goaddinvoices' %}" class="fa fa-plus" style="float: right; margin-right: 20px;">Add new</a>
+                        <a href="{% url 'goaddinvoices' %}" class="fas fa-plus" style="float: right; margin-right: 20px;">Add new</a>
                         
                     </div> 
                     <div id="invtable" style="display:none;">
@@ -846,7 +847,7 @@
                     <div style=" margin-top: 20px;">
 
                         <a style="padding: 10px; cursor: pointer; font-size: 20px;" onclick="dispay()" >Customer Payment</a>
-                        <a href="{% url 'payment_received' %}" class="fa fa-plus" style="float: right; margin-right: 20px;">Add new</a>
+                        <a href="{% url 'payment_received' %}" class="fas fa-plus" style="float: right; margin-right: 20px;">Add new</a>
                         
                     </div> 
                     <div id="paytable" style="display:none;">
@@ -886,7 +887,7 @@
                     <div style=" margin-top: 20px;">
 
                         <a style="padding: 10px; cursor: pointer; font-size: 20px;" onclick="disest()" >Estimate</a>
-                        <a href="{% url 'estindex2' %}" class="fa fa-plus" style="float: right; margin-right: 20px;">Add new</a>
+                        <a href="{% url 'estindex2' %}" class="fas fa-plus" style="float: right; margin-right: 20px;">Add new</a>
                         
                     </div> 
                     <div id="esttable" style="display:none;">
@@ -926,7 +927,7 @@
                     <div style=" margin-top: 20px;">
 
                         <a style="padding: 10px; cursor: pointer; font-size: 20px;" onclick="dissale()" >Sales Order</a>
-                        <a href="{% url 'newsalesorder' %}" class="fa fa-plus" style="float: right; margin-right: 20px;">Add new</a>
+                        <a href="{% url 'newsalesorder' %}" class="fas fa-plus" style="float: right; margin-right: 20px;">Add new</a>
                         
                     </div> 
                     <div id="saletable" style="display:none;">

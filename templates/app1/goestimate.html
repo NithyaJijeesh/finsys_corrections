@@ -2,8 +2,7 @@
 {% block body %}
 {% load static %}
     {% if user.is_authenticated %}
-    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/svg-with-js.min.css" integrity="sha512-4oP5WpLD1feGamTDxyKyYjJj9a15AlPfKOt78LpGmZ+XfrUcuC7hjHVTuzhJhO4pPvi3RHL6CI2Tyjdoik3AnA==" />
+    <!-- <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script> -->
     
         <style>
             @import url(https://fonts.googleapis.com/css?family=Open+Sans);
@@ -86,27 +85,31 @@
                         </div> 
                         <div class="col-md-2" style="width: 40%; margin-top: 9px;">
                             <div class="dropdown">
-                                <button type="button" class="btn btn-outline-info   text-grey fa fa-sort"
+                                <button type="button" class="btn btn-outline-info   text-grey fas fa-sort"
                                         data-toggle="dropdown"> Sort by
                                 </button>
                                 <div class="dropdown-menu " style="background-color: black;">
+                                    <a class="dropdown-item	" href="{% url 'goestimate' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" > All
+                                    <!-- <icon class=" fas fa-arrow-down"></icon> -->
+                               </a>
                                 <a class="dropdown-item	" href="{% url 'est_num_asc' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" > Estimate Number 
-                                    <icon class=" fa fa-arrow-down"></icon>
-                                </a>
-                                <a class="dropdown-item  " href="{% url 'est_num_desc' %}"
-                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Estimate Number <icon class=" fa fa-arrow-up"></icon></a>
+                                    <!-- <icon class=" fas fa-arrow-down"></icon> -->
+                               </a>
+                                 <!-- <a class="dropdown-item  " href="{% url 'est_num_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Estimate Number <icon class=" fas fa-arrow-up"></icon></a> -->
 
                                 <a class="dropdown-item " href="{% url 'est_date_asc' %}"
-                                    style="height: 40px; font-size: 15px; color: white; text-align: center; " >Date  <icon class=" fa fa-arrow-down"></icon></a>
-                                <a class="dropdown-item " href="{% url 'est_date_desc' %}"
-                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date <icon class=" fa fa-arrow-up"></icon></a>
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center; " >Date  </a>
+                                <!-- <a class="dropdown-item " href="{% url 'est_date_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Date <icon class=" fas fa-arrow-up"></icon></a> -->
 
                                 <a class="dropdown-item  " href="{% url 'est_cust_asc' %}"
                                     style="height: 40px; font-size: 15px; color: white; text-align: center;" >
-                                        Customer <icon class=" fa fa-arrow-down"></icon></a>
-                                <a class="dropdown-item  " href="{% url 'est_cust_desc' %}"
-                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer <icon class=" fa fa-arrow-up"></icon></a>
+                                        Customer  </a>
+                                <!-- <a class="dropdown-item  " href="{% url 'est_cust_desc' %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;" >Customer <icon class=" fas fa-arrow-up"></icon></a> -->
                                     
                                         
                                 </div> 
@@ -117,7 +120,7 @@
                         <div class="col-md-1 mx-5" style="width: 40%; margin-top: 8px;">
 
                             <div class="dropdown">
-                                <button type="button" class="btn btn-outline-info dropdown-toggle fa fa-filter text-grey"
+                                <button type="button" class="btn btn-outline-info dropdown-toggle fas fa-filter text-grey"
                                         data-toggle="dropdown"> filter by
                                 </button>
                                     <div class="dropdown-menu" style="background-color: black;">
@@ -135,7 +138,7 @@
 
                         <div class="col-md-2" >
                             <a href="{% url 'estindex2' %}" >
-                                <button id="myBtn" class="btn btn-outline-info fa fa-plus text-grey" style="margin-top: 8px;"> Add Estimate</button>
+                                <button id="myBtn" class="btn btn-outline-info fas fa-plus text-grey" style="margin-top: 8px;"> Add Estimate</button>
                             </a>
                         </div>
 
